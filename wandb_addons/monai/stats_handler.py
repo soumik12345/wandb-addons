@@ -1,7 +1,7 @@
 from typing import Any, Callable, TYPE_CHECKING
 
 from monai.config import IgniteInfo
-from monai.utils import optional_import
+from monai.utils import optional_import, min_version
 
 if TYPE_CHECKING:
     from ignite.engine import Engine
