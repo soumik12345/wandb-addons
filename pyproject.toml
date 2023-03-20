@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wandb_addons"
+dynamic = ["version"]
+description = "Weights & Biases Addons is a repository consisting of additional unitilities and community contributions for supercharging your Weights & Biases workflows"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "wandb>=0.13.9"
+]
+
+[project.optional-dependencies]
+dev = [
+    "isort==5.10.1",
+    "black==22.6.0",
+    "pytest==7.1.2"
+]
+keras = [
+    "tensorflow"
+]
+monai = [
+    "monai[ignite, nibabel, tensorboard]"
+]
+
+[tool.setuptools]
+packages = ["wandb_addons"]
+
+[project.urls]
+homepage = "https://github.com/soumik12345/wandb-addons"
+repository = "https://github.com/soumik12345/wandb-addons"
