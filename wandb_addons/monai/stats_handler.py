@@ -3,7 +3,7 @@ from typing import Any, Callable, Optional, Sequence, TYPE_CHECKING
 import torch
 import wandb
 
-from monai.handlers import TensorBoardHandler
+from monai.handlers import TensorBoardStatsHandler
 
 from monai.config import IgniteInfo
 from monai.utils import optional_import, min_version, is_scalar
@@ -22,7 +22,7 @@ else:
 DEFAULT_TAG = "Loss"
 
 
-class WandbStatsHandler(TensorBoardHandler):
+class WandbStatsHandler(TensorBoardStatsHandler):
     def __init__(
         self,
         iteration_log: bool = True,
