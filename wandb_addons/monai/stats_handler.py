@@ -1,4 +1,4 @@
-from typing import Any, Callable, Sequence, TYPE_CHECKING
+from typing import Any, Callable, Optional, Sequence, TYPE_CHECKING
 
 import torch
 import wandb
