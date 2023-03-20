@@ -1,4 +1,4 @@
-name: Run MonAI Tests
+name: Run Tests
 on:
   pull_request:
     paths:
