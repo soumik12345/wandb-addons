@@ -22,3 +22,4 @@ jobs:
       - run: |
           pip install -U pip
           pip install -e .
+          python -c "from wandb_addons.monai import WandbStatsHandler"
