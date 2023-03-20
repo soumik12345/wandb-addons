@@ -1,5 +1,6 @@
 from typing import Any, Callable, TYPE_CHECKING
 
+from monai.config import IgniteInfo
 from monai.utils import optional_import
 
 if TYPE_CHECKING:
