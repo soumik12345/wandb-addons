@@ -3,8 +3,6 @@ from typing import Any, Callable, Optional, Sequence, TYPE_CHECKING
 import torch
 import wandb
 
-from monai.handlers import TensorBoardStatsHandler
-
 from monai.config import IgniteInfo
 from monai.utils import optional_import, min_version, is_scalar
 
@@ -22,7 +20,19 @@ else:
 DEFAULT_TAG = "Loss"
 
 
-class WandbStatsHandler(TensorBoardStatsHandler):
+class WandbStatsHandler:
+    """
+    WandbStatsHandler defines a set of Ignite Event-handlers for all the Weights & Biases logging logic.
+    It can be used for any Ignite Engine(trainer, validator and evaluator) and support both epoch level
+    and iteration level.
+    The expected data source is Ignite ``engine.state.output`` and ``engine.state.metrics``.
+    Default behaviors:
+        - When EPOCH_COMPLETED, write each dictionary item in
+          ``engine.state.metrics`` to Weights & Biases.
+        - When ITERATION_COMPLETED, write each dictionary item in
+          ``self.output_transform(engine.state.output)`` to Weights & Biases.
+    """
+
     def __init__(
         self,
         iteration_log: bool = True,
@@ -36,6 +46,32 @@ class WandbStatsHandler(TensorBoardStatsHandler):
         state_attributes: Optional[Sequence[str]] = None,
         tag_name: str = DEFAULT_TAG,
     ):
+        """
+        Args:
+            iteration_log: whether to write data to Weights & Biases when iteration completed, default to `True`.
+            epoch_log: whether to write data to Weights & Biases when epoch completed, default to `True`.
+            epoch_event_writer: customized callable Weights & Biases writer for epoch level.
+                Must accept parameter "engine" and "summary_writer", use default event writer if None.
+            epoch_interval: the epoch interval at which the epoch_event_writer is called. Defaults to 1.
+            iteration_event_writer: customized callable Weights & Biases writer for iteration level.
+                Must accept parameter "engine" and "summary_writer", use default event writer if None.
+            iteration_interval: the iteration interval at which the iteration_event_writer is called. Defaults to 1.
+            output_transform: a callable that is used to transform the
+                ``ignite.engine.state.output`` into a scalar to plot, or a dictionary of {key: scalar}.
+                In the latter case, the output string will be formatted as key: value.
+                By default this value plotting happens when every iteration completed.
+                The default behavior is to print loss from output[0] as output is a decollated list
+                and we replicated loss value for every item of the decollated list.
+                `engine.state` and `output_transform` inherit from the ignite concept:
+                https://pytorch.org/ignite/concepts.html#state, explanation and usage example are in the tutorial:
+                https://github.com/Project-MONAI/tutorials/blob/master/modules/batch_output_transform.ipynb.
+            global_epoch_transform: a callable that is used to customize global epoch number.
+                For example, in evaluation, the evaluator engine might want to use trainer engines epoch number
+                when plotting epoch vs metric curves.
+            state_attributes: expected attributes from `engine.state`, if provided, will extract them
+                when epoch completed.
+            tag_name: when iteration output is a scalar, tag_name is used to plot, defaults to ``'Loss'``.
+        """
         super().__init__(
             summary_writer=None,
             log_dir=None,
@@ -51,7 +87,60 @@ class WandbStatsHandler(TensorBoardStatsHandler):
             tag_name=tag_name,
         )
 
-    def _default_epoch_writer(self, engine: Engine, writer) -> None:
+    def attach(self, engine: Engine) -> None:
+        """
+        Register a set of Ignite Event-Handlers to a specified Ignite engine.
+        Args:
+            engine: Ignite Engine, it can be a trainer, validator or evaluator.
+        """
+        if self.iteration_log and not engine.has_event_handler(
+            self.iteration_completed, Events.ITERATION_COMPLETED
+        ):
+            engine.add_event_handler(
+                Events.ITERATION_COMPLETED(every=self.iteration_interval),
+                self.iteration_completed,
+            )
+        if self.epoch_log and not engine.has_event_handler(
+            self.epoch_completed, Events.EPOCH_COMPLETED
+        ):
+            engine.add_event_handler(
+                Events.EPOCH_COMPLETED(every=self.epoch_interval), self.epoch_completed
+            )
+
+    def epoch_completed(self, engine: Engine) -> None:
+        """
+        Handler for train or validation/evaluation epoch completed Event.
+        Write epoch level events to Weights & Biases, default values are
+        from Ignite `engine.state.metrics` dict.
+        Args:
+            engine: Ignite Engine, it can be a trainer, validator or evaluator.
+        """
+        if self.epoch_event_writer is not None:
+            self.epoch_event_writer(engine)
+        else:
+            self._default_epoch_writer(engine)
+
+    def iteration_completed(self, engine: Engine) -> None:
+        """
+        Handler for train or validation/evaluation iteration completed Event.
+        Write iteration level events to Weighs & Biases, default values are
+        from Ignite `engine.state.output`.
+        Args:
+            engine: Ignite Engine, it can be a trainer, validator or evaluator.
+        """
+        if self.iteration_event_writer is not None:
+            self.iteration_event_writer(engine)
+        else:
+            self._default_iteration_writer(engine)
+
+    def _default_epoch_writer(self, engine: Engine) -> None:
+        """
+        Execute epoch level event write operation.
+        Default to write the values from Ignite `engine.state.metrics` dict and
+        write the values of specified attributes of `engine.state` to Weights & Biases.
+        Args:
+            engine: Ignite Engine, it can be a trainer, validator or evaluator.
+        """
         current_epoch = self.global_epoch_transform(engine.state.epoch)
         summary_dict = engine.state.metrics
 
@@ -66,7 +155,15 @@ class WandbStatsHandler(TensorBoardStatsHandler):
                 value = value.item() if isinstance(value, torch.Tensor) else value
                 wandb.log({attr: value})
 
-    def _default_iteration_writer(self, engine: Engine, writer) -> None:
+    def _default_iteration_writer(self, engine: Engine) -> None:
+        """
+        Execute iteration level event write operation based on Ignite `engine.state.output` data.
+        Extract the values from `self.output_transform(engine.state.output)`.
+        Since `engine.state.output` is a decollated list and we replicated the loss value for every item
+        of the decollated list, the default behavior is to track the loss from `output[0]`.
+        Args:
+            engine: Ignite Engine, it can be a trainer, validator or evaluator.
+        """
         loss = self.output_transform(engine.state.output)
         if loss is None:
             return  # do nothing if output is empty
@@ -97,3 +194,6 @@ class WandbStatsHandler(TensorBoardStatsHandler):
             )
 
         wandb.log(log_dict)
+
+    def close(self):
+        wandb.finish()
