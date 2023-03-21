@@ -6,6 +6,10 @@ import wandb
 from monai.config import IgniteInfo
 from monai.utils import optional_import, min_version, is_scalar
 
+Events, _ = optional_import(
+    "ignite.engine", IgniteInfo.OPT_IMPORT_VERSION, min_version, "Events"
+)
+
 if TYPE_CHECKING:
     from ignite.engine import Engine
 else:
