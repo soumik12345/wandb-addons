@@ -72,20 +72,16 @@ class WandbStatsHandler:
                 when epoch completed.
             tag_name: when iteration output is a scalar, tag_name is used to plot, defaults to ``'Loss'``.
         """
-        super().__init__(
-            summary_writer=None,
-            log_dir=None,
-            iteration_log=iteration_log,
-            epoch_log=epoch_log,
-            epoch_event_writer=epoch_event_writer,
-            epoch_interval=epoch_interval,
-            iteration_event_writer=iteration_event_writer,
-            iteration_interval=iteration_interval,
-            output_transform=output_transform,
-            global_epoch_transform=global_epoch_transform,
-            state_attributes=state_attributes,
-            tag_name=tag_name,
-        )
+        self.iteration_log = iteration_log
+        self.epoch_log = epoch_log
+        self.epoch_event_writer = epoch_event_writer
+        self.epoch_interval = epoch_interval
+        self.iteration_event_writer = iteration_event_writer
+        self.iteration_interval = iteration_interval
+        self.output_transform = output_transform
+        self.global_epoch_transform = global_epoch_transform
+        self.state_attributes = state_attributes
+        self.tag_name = tag_name
 
     def attach(self, engine: Engine) -> None:
         """
