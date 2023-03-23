@@ -1,3 +1,4 @@
+import warnings
 from typing import Any, Callable, Optional, Sequence, TYPE_CHECKING
 
 import torch
@@ -144,7 +145,6 @@ class WandbStatsHandler:
         Args:
             engine: Ignite Engine, it can be a trainer, validator or evaluator.
         """
-        current_epoch = self.global_epoch_transform(engine.state.epoch)
         summary_dict = engine.state.metrics
 
         for key, value in summary_dict.items():
