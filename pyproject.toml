@@ -14,7 +14,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "wandb>=0.13.9"
+    "wandb>=0.14.0"
 ]
 
 [project.optional-dependencies]
