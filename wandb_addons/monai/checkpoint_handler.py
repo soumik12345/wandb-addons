@@ -97,6 +97,6 @@ class WandbModelCheckpointHandler(ModelCheckpoint):
 
     def __call__(self, engine: Engine, to_save: Mapping):
         super().__call__(engine, to_save)
-        artifact = wandb.Artifact(f"run-{wandb.run.id}", type="model")
+        artifact = wandb.Artifact(f"run-{wandb.run.id}-model", type="model")
         artifact.add_file(self.last_checkpoint)
         wandb.log_artifact(artifact)
