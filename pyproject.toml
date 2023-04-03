@@ -13,6 +13,10 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[tool.poetry.authors]
+name = "Soumik Rakshit"
+email = "19soumik.rakshit96@gmail.com"
+
 dependencies = [
     "wandb>=0.14.0"
 ]
@@ -20,8 +24,12 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "isort==5.10.1",
-    "black==22.6.0",
+    "black>=22.6.0",
     "pytest==7.1.2"
+]
+docs = [
+    "Pyment==0.3.3",
+    "keras-autodoc==0.8.0"
 ]
 keras = [
     "tensorflow"
