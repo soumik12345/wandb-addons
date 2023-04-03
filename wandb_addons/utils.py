@@ -14,7 +14,7 @@ def fetch_wandb_artifact(artifact_address: str, artifact_type: str) -> FilePathS
         artifact_type: The type of the artifact, which is used to organize and differentiate artifacts.
             Common types include dataset or model, but you can use any string containing letters, numbers,
             underscores, hyphens, and dots.
-    
+
     Returns:
         (wandb.util.FilePathStr): The path to the downloaded contents.
     """
