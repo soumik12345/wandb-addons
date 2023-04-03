@@ -109,7 +109,7 @@ class WandbStatsHandler:
         Register a set of Ignite Event-Handlers to a specified Ignite engine.
 
         # Arguments:
-            engine: Engine.
+            engine: `~ignite.engine.engine.Engine`.
                 Ignite Engine, it can be a trainer, validator or evaluator.
         """
         if self.iteration_log and not engine.has_event_handler(
@@ -132,7 +132,7 @@ class WandbStatsHandler:
         to Weights & Biases, default values are from Ignite `engine.state.metrics` dict.
 
         # Arguments:
-            engine: Engine.
+            engine: `~ignite.engine.engine.Engine`.
                 Ignite Engine, it can be a trainer, validator or evaluator.
         """
         if self.epoch_event_writer is not None:
@@ -146,7 +146,7 @@ class WandbStatsHandler:
         events to Weighs & Biases, default values are from Ignite `engine.state.output`.
 
         # Arguments:
-            engine: Engine.
+            engine: `~ignite.engine.engine.Engine`.
                 Ignite Engine, it can be a trainer, validator or evaluator.
         """
         if self.iteration_event_writer is not None:
@@ -161,7 +161,7 @@ class WandbStatsHandler:
         to [Weights & Biases](https://wandb.ai/site).
 
         # Arguments:
-            engine: Engine.
+            engine: `~ignite.engine.engine.Engine`.
                 Ignite Engine, it can be a trainer, validator or evaluator.
         """
         summary_dict = engine.state.metrics
@@ -185,7 +185,7 @@ class WandbStatsHandler:
         of the decollated list, the default behavior is to track the loss from `output[0]`.
 
         # Arguments:
-            engine: Engine.
+            engine: `~ignite.engine.engine.Engine`.
                 Ignite Engine, it can be a trainer, validator or evaluator.
         """
         loss = self.output_transform(engine.state.output)
