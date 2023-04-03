@@ -31,7 +31,7 @@ class WandbStatsHandler:
     logic. It can be used for any Ignite Engine(trainer, validator and evaluator) and support both
     epoch level and iteration level. The expected data source is Ignite `engine.state.output` and
     `engine.state.metrics`.
-    
+
     Default behaviors:
         - When EPOCH_COMPLETED, write each dictionary item in `engine.state.metrics` to
             Weights & Biases.
@@ -107,7 +107,7 @@ class WandbStatsHandler:
     def attach(self, engine: Engine) -> None:
         """
         Register a set of Ignite Event-Handlers to a specified Ignite engine.
-        
+
         # Arguments:
             engine: Engine.
                 Ignite Engine, it can be a trainer, validator or evaluator.
@@ -130,7 +130,7 @@ class WandbStatsHandler:
         """
         Handler for train or validation/evaluation epoch completed Event. Write epoch level events
         to Weights & Biases, default values are from Ignite `engine.state.metrics` dict.
-        
+
         # Arguments:
             engine: Engine.
                 Ignite Engine, it can be a trainer, validator or evaluator.
@@ -144,7 +144,7 @@ class WandbStatsHandler:
         """
         Handler for train or validation/evaluation iteration completed Event. Write iteration level
         events to Weighs & Biases, default values are from Ignite `engine.state.output`.
-        
+
         # Arguments:
             engine: Engine.
                 Ignite Engine, it can be a trainer, validator or evaluator.
@@ -159,7 +159,7 @@ class WandbStatsHandler:
         Execute epoch level event write operation. Default to write the values from Ignite
         `engine.state.metrics` dict and write the values of specified attributes of `engine.state`
         to [Weights & Biases](https://wandb.ai/site).
-        
+
         # Arguments:
             engine: Engine.
                 Ignite Engine, it can be a trainer, validator or evaluator.
@@ -183,7 +183,7 @@ class WandbStatsHandler:
         Extract the values from `self.output_transform(engine.state.output)`. Since
         `engine.state.output` is a decollated list and we replicated the loss value for every item
         of the decollated list, the default behavior is to track the loss from `output[0]`.
-        
+
         # Arguments:
             engine: Engine.
                 Ignite Engine, it can be a trainer, validator or evaluator.
