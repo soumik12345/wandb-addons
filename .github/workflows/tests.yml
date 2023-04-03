@@ -34,7 +34,7 @@ jobs:
   
   run-jax-tests:
     runs-on: ubuntu-latest
-    container: _/python
+    container: python
     steps:
       - uses: actions/checkout@v2
       - run: |
