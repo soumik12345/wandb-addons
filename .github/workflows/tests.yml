@@ -14,12 +14,30 @@ jobs:
 
   run-monai-tests:
     runs-on: ubuntu-latest
-    env:
-      WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+    container: pytorch/pytorch
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          pip install -U pip
+          pip install .[monai]
+          python -c "from wandb_addons.monai import WandbStatsHandler"
+  
+  run-keras-tests:
+    runs-on: ubuntu-latest
     container: tensorflow/tensorflow
     steps:
       - uses: actions/checkout@v2
       - run: |
           pip install -U pip
-          pip install -e .[monai]
-          python -c "from wandb_addons.monai import WandbStatsHandler"
+          pip install .[keras]
+          python -c "import tensorflow as tf"
+  
+  run-jax-tests:
+    runs-on: ubuntu-latest
+    container: python
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          pip install -U pip
+          pip install .[jax]
+          python -c "import ciclo"
