@@ -21,13 +21,16 @@ dependencies = [
 dev = [
     "isort==5.10.1",
     "black==22.6.0",
-    "pytest==7.1.2"
+    "pytest==7.1.2",
+    "wandb>=0.14.0"
 ]
 keras = [
-    "tensorflow"
+    "tensorflow",
+    "wandb>=0.14.0"
 ]
 monai = [
-    "monai[ignite, nibabel, tensorboard]"
+    "monai[ignite, nibabel, tensorboard]",
+    "wandb>=0.14.0"
 ]
 
 [tool.setuptools]
