@@ -19,7 +19,12 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "isort==5.10.1",
+    "isort>=5.10.1",
+    "black>=22.6.0",
+    "pytest>=7.1.2"
+]
+docs = [
+    "keras-autodoc>=0.8.0",
     "black==22.6.0",
     "pytest==7.1.2"
 ]
@@ -27,7 +32,7 @@ keras = [
     "tensorflow"
 ]
 monai = [
-    "monai[ignite, nibabel, tensorboard]"
+    "monai>=1.1.0"
 ]
 jax = [
     "ciclo>=0.1.8",
