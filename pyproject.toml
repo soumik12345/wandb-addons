@@ -24,9 +24,7 @@ dev = [
     "pytest>=7.1.2"
 ]
 docs = [
-    "keras-autodoc>=0.8.0",
-    "black==22.6.0",
-    "pytest==7.1.2"
+    "keras-autodoc>=0.8.0"
 ]
 keras = [
     "tensorflow"
