@@ -1,3 +1,6 @@
+from typing import Dict, Any
+from collections.abc import MutableMapping
+
 import wandb
 from wandb.util import FilePathStr
 
@@ -28,3 +31,32 @@ def fetch_wandb_artifact(artifact_address: str, artifact_type: str) -> FilePathS
         if wandb.run is None
         else wandb.use_artifact(artifact_address, type=artifact_type).download()
     )
+
+
+def flatten_nested_dictionaries(d: Dict, parent_key: str = '', sep: str = '/') -> Dict:
+    """A recursive function for flattening nested dictionaries.
+    
+    # Reference:
+        Answer to
+        [**Flatten nested dictionaries, compressing keys**](https://stackoverflow.com/q/6027558)
+        on StackOverflow: [stackoverflow.com/a/6027615](https://stackoverflow.com/a/6027615)
+    
+    # Arguments:
+        d: Dict.
+            The input nested dictionary.
+        parent_key: str.
+            The parent key.
+        sep: str.
+            The separator to use for the flattened keys.
+    
+    # Returns:
+        (Dict): The flattened dictionary.
+    """
+    items = []
+    for k, v in d.items():
+        new_key = parent_key + sep + k if parent_key else k
+        if isinstance(v, MutableMapping):
+            items.extend(flatten_nested_dictionaries(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
