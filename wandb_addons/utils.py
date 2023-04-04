@@ -33,14 +33,14 @@ def fetch_wandb_artifact(artifact_address: str, artifact_type: str) -> FilePathS
     )
 
 
-def flatten_nested_dictionaries(d: Dict, parent_key: str = '', sep: str = '/') -> Dict:
+def flatten_nested_dictionaries(d: Dict, parent_key: str = "", sep: str = "/") -> Dict:
     """A recursive function for flattening nested dictionaries.
-    
+
     # Reference:
         Answer to
         [**Flatten nested dictionaries, compressing keys**](https://stackoverflow.com/q/6027558)
         on StackOverflow: [stackoverflow.com/a/6027615](https://stackoverflow.com/a/6027615)
-    
+
     # Arguments:
         d: Dict.
             The input nested dictionary.
@@ -48,7 +48,7 @@ def flatten_nested_dictionaries(d: Dict, parent_key: str = '', sep: str = '/') -
             The parent key.
         sep: str.
             The separator to use for the flattened keys.
-    
+
     # Returns:
         (Dict): The flattened dictionary.
     """
