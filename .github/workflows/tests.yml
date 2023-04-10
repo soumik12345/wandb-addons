@@ -2,7 +2,7 @@ name: Tests
 on:
   pull_request:
     paths:
-      - .github/**
+      - .github/tests.yml
       - wandb_addons/**
 
 jobs:
@@ -10,7 +10,7 @@ jobs:
     name: Check linting using black magic
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: psf/black@stable
 
   run-monai-tests:
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     container: projectmonai/monai
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: |
           pip install -U pip
           pip install .[monai]
@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     container: tensorflow/tensorflow
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: |
           pip install -U pip
           pip install .[keras]
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     container: python
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: |
           pip install -U pip
           pip install .[jax]
