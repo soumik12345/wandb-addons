@@ -15,9 +15,9 @@ class WandbModelCheckpointHandler(ModelCheckpoint):
     This handler expects two arguments:
         - a `ignite.engine.engine.Engine` object
         - a `dict` mapping names (`str`) to objects that should be saved to disk.
-    
+
     **Usage:**
-    
+
     ```python
     checkpoint_handler = WandbModelCheckpointHandler(
         "./runs_dict/", "net", n_saved=10, require_empty=False
@@ -31,7 +31,7 @@ class WandbModelCheckpointHandler(ModelCheckpoint):
         }
     )
     ```
-    
+
     Args:
         dirname (Union[str, Path]): Directory path where objects will be saved.
         filename_prefix (str): Prefix for the file names to which objects will be saved. See Notes

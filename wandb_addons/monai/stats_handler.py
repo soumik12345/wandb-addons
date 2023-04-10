@@ -37,15 +37,15 @@ class WandbStatsHandler:
             Weights & Biases.
         - When ITERATION_COMPLETED, write each dictionary item in
             `self.output_transform(engine.state.output)` to Weights & Biases.
-    
+
     **Usage:**
-    
+
     ```python
     # WandbStatsHandler for logging training metrics and losses at
     # every iteration to Weights & Biases
     train_wandb_stats_handler = WandbStatsHandler(output_transform=lambda x: x)
     train_wandb_stats_handler.attach(trainer)
-    
+
     # WandbStatsHandler for logging validation metrics and losses at
     # every iteration to Weights & Biases
     val_wandb_stats_handler = WandbStatsHandler(
@@ -54,7 +54,7 @@ class WandbStatsHandler:
     )
     val_wandb_stats_handler.attach(evaluator)
     ```
-    
+
     Args:
         iteration_log (bool): Whether to write data to Weights & Biases when iteration completed,
             default to `True`.
