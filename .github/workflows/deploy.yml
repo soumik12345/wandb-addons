@@ -29,9 +29,6 @@ jobs:
     steps:
       - name: Publish package distributions to TestPyPI
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.x
       - run: |
           pip install -U pip
           pip install .[deploy]
