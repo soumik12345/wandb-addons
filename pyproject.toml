@@ -16,9 +16,6 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
-[project.urls]
-"Homepage" = "https://soumik12345.github.io/wandb-addons/"
-
 dependencies = [
     "wandb>=0.14.0"
 ]
@@ -30,6 +27,15 @@ dev = [
     "pytest>=7.1.2"
 ]
 docs=[
+    "mkdocs",
+    "mkdocstrings[python]",
+    "mkdocs-material>=9.1.5",
+    "mkdocs-minify-plugin",
+    "mkdocs-glightbox",
+    "mkdocs-jupyter"
+]
+deploy=[
+    "twine",
     "mkdocs",
     "mkdocstrings[python]",
     "mkdocs-material>=9.1.5",
@@ -53,5 +59,5 @@ jax = [
 packages = ["wandb_addons"]
 
 [project.urls]
-homepage = "https://github.com/soumik12345/wandb-addons"
+homepage = "https://soumik12345.github.io/wandb-addons"
 repository = "https://github.com/soumik12345/wandb-addons"
