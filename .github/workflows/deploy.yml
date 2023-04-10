@@ -8,26 +8,11 @@ permissions:
   id-token: write
 
 jobs:
-  # documentation:
-  #   name: Update Docuementation on GitHub Pages
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: actions/setup-python@v4
-  #       with:
-  #         python-version: 3.x
-  #     - uses: actions/cache@v2
-  #       with:
-  #         key: ${{ github.ref }}
-  #         path: .cache
-  #     - run: pip install .[docs]
-  #     - run: mkdocs gh-deploy --force
-  
   pypi-publish:
     name: Upload release to TestPyPI
     runs-on: ubuntu-latest
+    container: python
     steps:
-      - name: Publish package distributions to TestPyPI
       - uses: actions/checkout@v2
       - run: |
           pip install -U pip
