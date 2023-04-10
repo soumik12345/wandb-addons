@@ -15,6 +15,9 @@ from ..utils import flatten_nested_dictionaries
 class WandbLogger(LoopCallbackBase[S]):
     """A [ciclo](https://github.com/cgarciae/ciclo) callback for logging to Weights & Biases.
 
+    Example notebooks:
+        - [MNIST classification using Ciclo](../examples/ciclo_MNIST).
+
     Args:
         additional_logging (Optional[Callable]): A function to be called after each logging step
             and can be used to log additional values or media to Weights & Biases.
