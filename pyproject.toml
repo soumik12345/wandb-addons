@@ -4,6 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wandb_addons"
+authors = [
+  { name="Soumik Rakshit", email="19soumik.rakshit96@gmail.com" },
+]
 dynamic = ["version"]
 description = "Weights & Biases Addons is a repository consisting of additional unitilities and community contributions for supercharging your Weights & Biases workflows"
 readme = "README.md"
@@ -12,6 +15,9 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+
+[project.urls]
+"Homepage" = "https://soumik12345.github.io/wandb-addons/"
 
 dependencies = [
     "wandb>=0.14.0"
