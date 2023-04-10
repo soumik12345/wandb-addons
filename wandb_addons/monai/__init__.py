@@ -1,2 +1,3 @@
 from .stats_handler import WandbStatsHandler
 from .checkpoint_handler import WandbModelCheckpointHandler
+from .image_handler import WandbImageHandler
