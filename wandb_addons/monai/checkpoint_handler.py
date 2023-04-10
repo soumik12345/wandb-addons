@@ -35,7 +35,7 @@ class WandbModelCheckpointHandler(ModelCheckpoint):
     ??? example "Example notebooks:"
         - [3D classification using MonAI](../examples/densenet_training_dict).
         - [3D segmentation using MonAI](../examples/unet_3d_segmentation).
-    
+
     ??? note "Pull Request to add `WandbModelCheckpointHandler` to MonAI repository"
 
         There is an [open pull request](https://github.com/Project-MONAI/MONAI/pull/6305)
