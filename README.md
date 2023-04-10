@@ -1,7 +1,7 @@
 # 🐝 Weights & Biases Addons
 
-![](https://github.com/soumik12345/wandb-addons/actions/workflows/tests.yml/badge.svg)
-![](https://github.com/soumik12345/wandb-addons/actions/workflows/docs.yml/badge.svg)
+![Tests](https://github.com/soumik12345/wandb-addons/actions/workflows/tests.yml/badge.svg)
+![Deploy](https://github.com/soumik12345/wandb-addons/actions/workflows/deploy.yml/badge.svg)
 
 Weights & Biases Addons is a repository that provides of integrations and utilities that will supercharge your [Weights & Biases](https://wandb.ai/site) workflows. Its a repositpry built and maintained by `wandb` users for `wandb` users.
 
@@ -14,8 +14,7 @@ Functional callbacks for experiment tracking on [Weights & Biases](https://wandb
 In order to install `wandb-addons` along with the dependencies for the ciclo callbacks, you can run:
 
 ```shell
-git clone https://github.com/soumik12345/wandb-addons
-pip install .[jax]
+pip install wandb_addons[jax]
 ```
 
 Once you've installed `wandb-addons`, you can import it using:
@@ -24,7 +23,7 @@ Once you've installed `wandb-addons`, you can import it using:
 from wandb_addons.ciclo import WandbLogger
 ```
 
-For more information, check out more at the [docs](ciclo/ciclo).
+For more information, check out more at the [docs](https://soumik12345.github.io/wandb-addons/ciclo/ciclo/).
 
 ### [MonAI](https://github.com/Project-MONAI/MONAI)
 
@@ -33,8 +32,7 @@ Event handlers for experiment tracking on [Weights & Biases](https://wandb.ai/si
 In order to install `wandb-addons` along with the dependencies for the ciclo callbacks, you can run:
 
 ```shell
-git clone https://github.com/soumik12345/wandb-addons
-pip install .[monai]
+pip install wandb_addons[monai]
 ```
 
 Once you've installed `wandb-addons`, you can import it using:
@@ -43,7 +41,7 @@ Once you've installed `wandb-addons`, you can import it using:
 from wandb_addons.monai import WandbStatsHandler, WandbModelCheckpointHandler
 ```
 
-For more information, check out more at the [docs](monai/monai).
+For more information, check out more at the [docs](https://soumik12345.github.io/wandb-addons/monai/monai/).
 
 ## Status
 

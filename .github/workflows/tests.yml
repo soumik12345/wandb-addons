@@ -2,42 +2,50 @@ name: Tests
 on:
   pull_request:
     paths:
-      - .github/**
+      - .github/**.yml
       - wandb_addons/**
 
 jobs:
   lint:
+    name: Check linting using black magic
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: psf/black@stable
 
   run-monai-tests:
+    name: Check if MonAI tests pass
     runs-on: ubuntu-latest
     container: projectmonai/monai
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: |
           pip install -U pip
           pip install .[monai]
           python -c "from wandb_addons.monai import WandbStatsHandler"
   
   run-keras-tests:
+    name: Check if Keras and TensorFlow tests pass
     runs-on: ubuntu-latest
     container: tensorflow/tensorflow
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: |
           pip install -U pip
           pip install .[keras]
           python -c "import tensorflow as tf"
+          python -c "from tensorflow import keras"
   
   run-jax-tests:
+    name: Check if JAX, Flax and Cicl tests pass
     runs-on: ubuntu-latest
     container: python
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: |
           pip install -U pip
           pip install .[jax]
+          python -c "import jax"
+          python -c "import flax"
+          python -c "import ciclo"
           python -c "from wandb_addons.ciclo import WandbLogger"

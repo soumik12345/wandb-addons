@@ -4,6 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wandb_addons"
+authors = [
+  { name="Soumik Rakshit", email="19soumik.rakshit96@gmail.com" },
+]
 dynamic = ["version"]
 description = "Weights & Biases Addons is a repository consisting of additional unitilities and community contributions for supercharging your Weights & Biases workflows"
 readme = "README.md"
@@ -31,11 +34,21 @@ docs=[
     "mkdocs-glightbox",
     "mkdocs-jupyter"
 ]
+deploy=[
+    "build",
+    "twine",
+    "mkdocs",
+    "mkdocstrings[python]",
+    "mkdocs-material>=9.1.5",
+    "mkdocs-minify-plugin",
+    "mkdocs-glightbox",
+    "mkdocs-jupyter"
+]
 keras = [
     "tensorflow"
 ]
 monai = [
-    "monai[ignite, nibabel, tensorboard]>=1.1.0"
+    "monai[ignite, nibabel, tensorboard]"
 ]
 jax = [
     "ciclo>=0.1.8",
@@ -47,5 +60,5 @@ jax = [
 packages = ["wandb_addons"]
 
 [project.urls]
-homepage = "https://github.com/soumik12345/wandb-addons"
+homepage = "https://soumik12345.github.io/wandb-addons"
 repository = "https://github.com/soumik12345/wandb-addons"
