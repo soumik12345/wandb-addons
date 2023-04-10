@@ -21,11 +21,11 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
-  - pymdownx.tabbed:
-    alternate_style: true
   - attr_list
   - md_in_html
 
@@ -36,6 +36,7 @@ extra_javascript:
 
 nav:
   - Home: 'index.md'
-  - 'Ciclo': 'ciclo.md'
-  - 'MonAI': 'monai.md'
+  - 'Integrations':
+    - 'Ciclo': 'ciclo.md'
+    - 'MonAI': 'monai.md'
   - 'Utils': 'utils.md'
