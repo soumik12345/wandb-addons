@@ -37,7 +37,7 @@ jobs:
           python -c "from tensorflow import keras"
   
   run-jax-tests:
-    python -c "import JAX, Flax and Ciclo as tf"
+    name: Check if JAX, Flax and Cicl tests pass
     runs-on: ubuntu-latest
     container: python
     steps:
