@@ -1,7 +1,7 @@
 # 🐝 Weights & Biases Addons
 
-![](https://github.com/soumik12345/wandb-addons/actions/workflows/tests.yml/badge.svg)
-![](https://github.com/soumik12345/wandb-addons/actions/workflows/docs.yml/badge.svg)
+![Tests](https://github.com/soumik12345/wandb-addons/actions/workflows/tests.yml/badge.svg)
+![Deploy](https://github.com/soumik12345/wandb-addons/actions/workflows/deploy.yml/badge.svg)
 
 Weights & Biases Addons is a repository that provides of integrations and utilities that will supercharge your [Weights & Biases](https://wandb.ai/site) workflows. Its a repositpry built and maintained by `wandb` users for `wandb` users.
 
