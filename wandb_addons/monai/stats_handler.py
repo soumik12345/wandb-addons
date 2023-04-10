@@ -54,7 +54,7 @@ class WandbStatsHandler:
     )
     val_wandb_stats_handler.attach(evaluator)
     ```
-    
+
     Example notebooks:
         - [3D classification using MonAI](../examples/densenet_training_dict).
         - [3D segmentation using MonAI](../examples/unet_3d_segmentation).
