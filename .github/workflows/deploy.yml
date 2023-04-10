@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     container: python
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: |
           python3 -m pip install -U pip
           python3 -m pip install -U .[deploy]
