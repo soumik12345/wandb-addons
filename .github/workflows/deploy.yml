@@ -31,3 +31,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@v1.8.5
         with:
           repository-url: https://test.pypi.org/legacy/
+          password: ${{ secrets.PIPY_API_KEY }}
