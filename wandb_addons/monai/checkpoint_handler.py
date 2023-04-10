@@ -31,6 +31,10 @@ class WandbModelCheckpointHandler(ModelCheckpoint):
         }
     )
     ```
+    
+    Example notebooks:
+        - [3D classification using MonAI](../examples/densenet_training_dict).
+        - [3D segmentation using MonAI](../examples/unet_3d_segmentation).
 
     Args:
         dirname (Union[str, Path]): Directory path where objects will be saved.
@@ -53,14 +57,14 @@ class WandbModelCheckpointHandler(ModelCheckpoint):
         global_step_transform (Optional[Callable]): Global step transform function to output a
             desired global step. Input of the function is `(engine, event_name)`. Output of function
             should be an integer. Default is None, `global_step` based on attached engine. If
-            provided, uses function output as `global_step`. To setup global step from another engine,
-            please use `ignite.handlers.global_step_from_engine`.
+            provided, uses function output as `global_step`. To setup global step from another
+            engine, please use `ignite.handlers.global_step_from_engine`.
         archived (bool): Deprecated argument as models saved by `torch.save` are already compressed.
-        filename_pattern (Optional[str]): If `filename_pattern` is provided, this pattern will be used
-            to render checkpoint filenames. If the pattern is not defined, the default pattern would be
-            used. See `ignite.handlers.checkpoint.Checkpoint` for details.
-        include_self (bool): Whether to include the `state_dict` of this object in the checkpoint. If
-            `True`, then there must not be another object in `to_save` with key `checkpointer`.
+        filename_pattern (Optional[str]): If `filename_pattern` is provided, this pattern will be
+            used to render checkpoint filenames. If the pattern is not defined, the default pattern
+            would be used. See `ignite.handlers.checkpoint.Checkpoint` for details.
+        include_self (bool): Whether to include the `state_dict` of this object in the checkpoint.
+            If `True`, then there must not be another object in `to_save` with key `checkpointer`.
         greater_or_equal (bool): If `True`, the latest equally scored model is stored. Otherwise, the
             first model. Default, `False`.
         save_on_rank (int): Which rank to save the objects on, in the distributed configuration. Used to
