@@ -15,7 +15,7 @@ from ..utils import flatten_nested_dictionaries
 class WandbLogger(LoopCallbackBase[S]):
     """A [ciclo](https://github.com/cgarciae/ciclo) callback for logging to Weights & Biases.
 
-    Example notebooks:
+    ??? example "Example notebooks:"
         - [MNIST classification using Ciclo](../examples/ciclo_MNIST).
 
     Args:

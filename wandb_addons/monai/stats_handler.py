@@ -55,9 +55,15 @@ class WandbStatsHandler:
     val_wandb_stats_handler.attach(evaluator)
     ```
 
-    Example notebooks:
+    ??? example "Example notebooks:"
         - [3D classification using MonAI](../examples/densenet_training_dict).
         - [3D segmentation using MonAI](../examples/unet_3d_segmentation).
+    
+    ??? note "Pull Request to add `WandbStatsHandler` to MonAI repository"
+
+        There is an [open pull request](https://github.com/Project-MONAI/MONAI/pull/6305)
+        to add `WandbStatsHandler` to [MonAI](https://github.com/Project-MONAI/MONAI).
+
 
     Args:
         iteration_log (bool): Whether to write data to Weights & Biases when iteration completed,
