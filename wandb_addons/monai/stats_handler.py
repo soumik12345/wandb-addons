@@ -238,7 +238,3 @@ class WandbStatsHandler:
             )
 
         wandb.log(log_dict)
-
-    def close(self):
-        """Close `WandbStatsHandler`"""
-        wandb.finish()
