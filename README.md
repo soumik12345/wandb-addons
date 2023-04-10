@@ -22,11 +22,11 @@ import wandb_addons
 
 ### [🌀 Ciclo](https://github.com/cgarciae/ciclo)
 
-Functional callbacks for experiment tracking on [Weights & Biases](https://wandb.ai/site) with [Ciclo](https://github.com/cgarciae/ciclo). Check out more at the [docs](ciclo).
+Functional callbacks for experiment tracking on [Weights & Biases](https://wandb.ai/site) with [Ciclo](https://github.com/cgarciae/ciclo). Check out more at the [docs](ciclo/ciclo).
 
 ### [MonAI](https://github.com/Project-MONAI/MONAI)
 
-Event handlers for experiment tracking on [Weights & Biases](https://wandb.ai/site) with [MonAI](https://github.com/Project-MONAI/MONAI) Engine for deep learning in healthcare imaging. Check out more at the [docs](monai).
+Event handlers for experiment tracking on [Weights & Biases](https://wandb.ai/site) with [MonAI](https://github.com/Project-MONAI/MONAI) Engine for deep learning in healthcare imaging. Check out more at the [docs](monai/monai).
 
 ## Status
 
