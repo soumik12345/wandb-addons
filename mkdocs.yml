@@ -40,3 +40,5 @@ nav:
     - 'Ciclo': 'ciclo.md'
     - 'MonAI': 'monai.md'
   - 'Utils': 'utils.md'
+
+repo_url: https://github.com/soumik12345/wandb-addons
