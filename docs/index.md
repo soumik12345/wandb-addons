@@ -4,29 +4,45 @@
 
 Weights & Biases Addons is a repository that provides of integrations and utilities that will supercharge your [Weights & Biases](https://wandb.ai/site) workflows. Its a repositpry built and maintained by `wandb` users for `wandb` users.
 
-## Getting Started
+## Integrations
 
-To get started with `wandb-addons`, you can install it via `pip`:
+### [🌀 Ciclo](https://github.com/cgarciae/ciclo)
+
+Functional callbacks for experiment tracking on [Weights & Biases](https://wandb.ai/site) with [Ciclo](https://github.com/cgarciae/ciclo).
+
+In order to install `wandb-addons` along with the dependencies for the ciclo callbacks, you can run:
 
 ```shell
-pip install git+https://github.com/soumik12345/wandb-addons.git
+git clone https://github.com/soumik12345/wandb-addons
+pip install .[jax]
 ```
 
 Once you've installed `wandb-addons`, you can import it using:
 
 ```python
-import wandb_addons
+from wandb_addons.ciclo import WandbLogger
 ```
 
-## Integrations
-
-### [🌀 Ciclo](https://github.com/cgarciae/ciclo)
-
-Functional callbacks for experiment tracking on [Weights & Biases](https://wandb.ai/site) with [Ciclo](https://github.com/cgarciae/ciclo). Check out more at the [docs](ciclo/ciclo).
+For more information, check out more at the [docs](ciclo/ciclo).
 
 ### [MonAI](https://github.com/Project-MONAI/MONAI)
 
-Event handlers for experiment tracking on [Weights & Biases](https://wandb.ai/site) with [MonAI](https://github.com/Project-MONAI/MONAI) Engine for deep learning in healthcare imaging. Check out more at the [docs](monai/monai).
+Event handlers for experiment tracking on [Weights & Biases](https://wandb.ai/site) with [MonAI](https://github.com/Project-MONAI/MONAI) Engine for deep learning in healthcare imaging.
+
+In order to install `wandb-addons` along with the dependencies for the ciclo callbacks, you can run:
+
+```shell
+git clone https://github.com/soumik12345/wandb-addons
+pip install .[monai]
+```
+
+Once you've installed `wandb-addons`, you can import it using:
+
+```python
+from wandb_addons.monai import WandbStatsHandler, WandbModelCheckpointHandler
+```
+
+For more information, check out more at the [docs](monai/monai).
 
 ## Status
 
