@@ -12,16 +12,15 @@ import wandb
 from ..utils import flatten_nested_dictionaries
 
 
-class wandb_logging(LoopCallbackBase[S]):
-    """A [ciclo](https://github.com/cgarciae/ciclo) callback for logging to Weights & Biases."""
-
+class WandbLogger(LoopCallbackBase[S]):
+    """A [ciclo](https://github.com/cgarciae/ciclo) callback for logging to Weights & Biases.
+    
+    Args:
+        additional_logging (Optional[Callable]): A function to be called after each logging step
+            and can be used to log additional values or media to Weights & Biases.
+    """
+    
     def __init__(self, additional_logging: Optional[Callable] = None):
-        """
-        # Arguments:
-            additional_logging: Optional[Callable].
-                A function to be called after each logging step and can be used to log
-                additional values/media to Weights & Biases.
-        """
         self.additional_logging = additional_logging
 
     def __call__(self, elapsed: Elapsed, state: S, logs: Optional[Logs] = None):
