@@ -23,8 +23,13 @@ dev = [
     "black>=22.6.0",
     "pytest>=7.1.2"
 ]
-docs = [
-    "keras-autodoc>=0.8.0"
+docs=[
+    "mkdocs",
+    "mkdocstrings[python]",
+    "mkdocs-material>=9.1.5",
+    "mkdocs-minify-plugin",
+    "mkdocs-glightbox",
+    "mkdocs-jupyter"
 ]
 keras = [
     "tensorflow"
