@@ -14,8 +14,7 @@ Functional callbacks for experiment tracking on [Weights & Biases](https://wandb
 In order to install `wandb-addons` along with the dependencies for the ciclo callbacks, you can run:
 
 ```shell
-git clone https://github.com/soumik12345/wandb-addons
-pip install .[jax]
+pip install wandb_addons[jax]
 ```
 
 Once you've installed `wandb-addons`, you can import it using:
@@ -33,8 +32,7 @@ Event handlers for experiment tracking on [Weights & Biases](https://wandb.ai/si
 In order to install `wandb-addons` along with the dependencies for the ciclo callbacks, you can run:
 
 ```shell
-git clone https://github.com/soumik12345/wandb-addons
-pip install .[monai]
+pip install wandb_addons[monai]
 ```
 
 Once you've installed `wandb-addons`, you can import it using:

@@ -48,7 +48,7 @@ keras = [
     "tensorflow"
 ]
 monai = [
-    "monai[ignite, nibabel, tensorboard]>=1.1.0"
+    "monai[ignite, nibabel, tensorboard]"
 ]
 jax = [
     "ciclo>=0.1.8",
