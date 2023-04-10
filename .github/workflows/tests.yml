@@ -2,7 +2,7 @@ name: Tests
 on:
   pull_request:
     paths:
-      - .github/tests.yml
+      - .github/**.yml
       - wandb_addons/**
 
 jobs:
