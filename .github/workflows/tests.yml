@@ -7,12 +7,14 @@ on:
 
 jobs:
   lint:
+    name: Check linting using black magic
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: psf/black@stable
 
   run-monai-tests:
+    name: Check if MonAI tests pass
     runs-on: ubuntu-latest
     container: projectmonai/monai
     steps:
@@ -23,6 +25,7 @@ jobs:
           python -c "from wandb_addons.monai import WandbStatsHandler"
   
   run-keras-tests:
+    name: Check if Keras and TensorFlow tests pass
     runs-on: ubuntu-latest
     container: tensorflow/tensorflow
     steps:
@@ -31,8 +34,10 @@ jobs:
           pip install -U pip
           pip install .[keras]
           python -c "import tensorflow as tf"
+          python -c "from tensorflow import keras"
   
   run-jax-tests:
+    python -c "import JAX, Flax and Ciclo as tf"
     runs-on: ubuntu-latest
     container: python
     steps:
@@ -40,4 +45,7 @@ jobs:
       - run: |
           pip install -U pip
           pip install .[jax]
+          python -c "import jax"
+          python -c "import flax"
+          python -c "import ciclo"
           python -c "from wandb_addons.ciclo import WandbLogger"
