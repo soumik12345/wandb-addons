@@ -22,7 +22,7 @@ jobs:
       - run: |
           pip install -U pip
           pip install .[monai]
-          python -c "from wandb_addons.monai import WandbStatsHandler"
+          python -c "from wandb_addons.monai import WandbStatsHandler, WandbModelCheckpointSaver"
   
   run-keras-tests:
     name: Check if Keras and TensorFlow tests pass
