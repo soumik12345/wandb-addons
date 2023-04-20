@@ -2,9 +2,12 @@ from typing import Callable, TYPE_CHECKING
 
 import torch
 import wandb
+import numpy as np
 
 from monai.config import IgniteInfo
 from monai.utils import optional_import, min_version
+
+from .utils import plot_2d_or_3d_image
 
 Events, _ = optional_import(
     "ignite.engine", IgniteInfo.OPT_IMPORT_VERSION, min_version, "Events"
@@ -79,7 +82,48 @@ class WandBImageHandler:
         if isinstance(show_outputs, torch.Tensor):
             show_outputs = show_outputs.detach().cpu().numpy()
 
-        # To be debugged
-        print(show_images)
-        print(show_labels)
-        print(show_outputs)
+        if show_images is not None:
+            if not isinstance(show_images, np.ndarray):
+                raise TypeError(
+                    "output_transform(engine.state.output)[0] must be None or one of "
+                    f"(numpy.ndarray, torch.Tensor) but is {type(show_images).__name__}."
+                )
+            plot_2d_or_3d_image(
+                image_key=None,
+                # add batch dim and plot the first item
+                data=show_images[None],
+                index=0,
+                max_channels=self.max_channels,
+                frame_dim=self.frame_dim,
+                max_frames=self.max_frames,
+            )
+
+        if show_labels is not None:
+            if not isinstance(show_labels, np.ndarray):
+                raise TypeError(
+                    "batch_transform(engine.state.batch)[1] must be None or one of "
+                    f"(numpy.ndarray, torch.Tensor) but is {type(show_labels).__name__}."
+                )
+            plot_2d_or_3d_image(
+                image_key=None,
+                data=show_labels[None],
+                index=0,
+                max_channels=self.max_channels,
+                frame_dim=self.frame_dim,
+                max_frames=self.max_frames,
+            )
+
+        if show_outputs is not None:
+            if not isinstance(show_outputs, np.ndarray):
+                raise TypeError(
+                    "output_transform(engine.state.output) must be None or one of "
+                    f"(numpy.ndarray, torch.Tensor) but is {type(show_outputs).__name__}."
+                )
+            plot_2d_or_3d_image(
+                image_key=None,
+                data=show_outputs[None],
+                index=0,
+                max_channels=self.max_channels,
+                frame_dim=self.frame_dim,
+                max_frames=self.max_frames,
+            )
