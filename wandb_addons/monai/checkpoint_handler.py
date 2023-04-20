@@ -43,4 +43,5 @@ class WandbModelCheckpointSaver(BaseSaveHandler):
 
     @one_rank_only()
     def remove(self, filename):
-        shutil.rmtree(filename)
+        if os.path.exists(filename):
+            shutil.rmtree(filename)
