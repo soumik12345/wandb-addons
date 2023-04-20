@@ -28,7 +28,7 @@ class WandbModelCheckpointSaver(BaseSaveHandler):
         checkpoint_path = os.path.join(self.checkpoint_dir, filename)
         torch.save(checkpoint, checkpoint_path)
 
-        artifact = wandb.Artifact(f"{wandb.run}-checkpoint", type="model")
+        artifact = wandb.Artifact(f"{wandb.run.id}-checkpoint", type="model")
 
         if os.path.isfile(checkpoint_path):
             artifact.add_file(checkpoint_path)
