@@ -9,12 +9,12 @@ import wandb
 import torch
 
 from ignite.engine import Engine
-from ignite.distributed import idist
+from ignite.distributed import one_rank_only
 from ignite.handlers.checkpoint import BaseSaveHandler
 
 
 class WandbModelCheckpointSaver(BaseSaveHandler):
-    @idist.one_rank_only()
+    @one_rank_only()
     def __init__(self):
         if wandb.run is None:
             raise wandb.Error(
@@ -23,7 +23,7 @@ class WandbModelCheckpointSaver(BaseSaveHandler):
 
         self.checkpoint_dir = tempfile.mkdtemp()
 
-    @idist.one_rank_only()
+    @one_rank_only()
     def __call__(self, checkpoint: Mapping, filename: Union[str, Path]):
         checkpoint_path = os.path.join(self.checkpoint_dir, filename)
         torch.save(checkpoint, checkpoint_path)
@@ -41,6 +41,6 @@ class WandbModelCheckpointSaver(BaseSaveHandler):
 
         wandb.log_artifact(artifact)
 
-    @idist.one_rank_only()
+    @one_rank_only()
     def remove(self, filename):
         shutil.rmtree(filename)
