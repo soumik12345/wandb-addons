@@ -27,6 +27,21 @@ def load_dataset(
     remove_redundant_data_files: bool = True,
     quiet: bool = False,
 ) -> Tuple[Dict[str, tf.data.Dataset], DatasetInfo]:
+    """Load a dataset from a [wandb artifact](https://docs.wandb.ai/guides/artifacts).
+
+    Args:
+        artifact_address (str): A human-readable name for the artifact, which is how you can
+            identify the artifact in the UI or reference it in
+            [`use_artifact`](https://docs.wandb.ai/ref/python/run#use_artifact) calls. Names can
+            contain letters, numbers, underscores, hyphens, and dots. The name must be unique across
+            a project.
+        artifact_type (str): The type of the artifact, which is used to organize and differentiate
+            artifacts. Common typesCinclude dataset or model, but you can use any string containing
+            letters, numbers, underscores, hyphens, and dots.
+        remove_redundant_data_files (bool): Whether to remove the redundant data files from the
+            artifacts directory after building the tfrecord dataset.
+        quiet (bool): Whether to suppress the output of dataset build process or not.
+    """
     artifact_dir = fetch_wandb_artifact(
         artifact_address=artifact_address, artifact_type=artifact_type
     )
