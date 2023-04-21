@@ -130,3 +130,8 @@ dmypy.json
 
 # Conda
 .conda/
+
+# Weights & Biases
+wandb/
+artifacts/
+docs/**/artifacts/

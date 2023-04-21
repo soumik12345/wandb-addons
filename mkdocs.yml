@@ -40,6 +40,7 @@ extra_javascript:
 
 nav:
   - Home: 'index.md'
+  - 'Dataset': 'dataset/dataset_loading.md'
   - 'Integrations':
     - 'Ciclo': 'ciclo/ciclo.md'
     - 'MonAI': 'monai/monai.md'

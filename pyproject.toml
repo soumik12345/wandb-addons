@@ -44,8 +44,9 @@ deploy=[
     "mkdocs-glightbox",
     "mkdocs-jupyter"
 ]
-keras = [
-    "tensorflow"
+tf = [
+    "tensorflow",
+    "tensorflow-datasets"
 ]
 monai = [
     "monai[ignite, nibabel, tensorboard]"
