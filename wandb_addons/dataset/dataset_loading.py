@@ -1,10 +1,11 @@
 import os
 import shlex
 import subprocess
-from typing import Optional
+from typing import Dict, Optional, Tuple
 
 import tensorflow as tf
 import tensorflow_datasets as tfds
+from tensorflow_datasets.core.dataset_info import DatasetInfo
 from tensorflow_datasets.core.dataset_builder import DatasetBuilder
 
 import wandb
@@ -16,6 +17,7 @@ from .utils import (
     _get_dataset_name_from_artifact_address,
     _get_dataset_registration_statement,
     _remove_redundant_files,
+    _build_datasets,
 )
 
 
@@ -24,7 +26,7 @@ def load_dataset(
     artifact_type: Optional[str] = "dataset",
     remove_redundant_data_files: bool = True,
     quiet: bool = False,
-) -> DatasetBuilder:
+) -> Tuple[Dict[str, tf.data.Dataset], DatasetInfo]:
     artifact_dir = fetch_wandb_artifact(
         artifact_address=artifact_address, artifact_type=artifact_type
     )
@@ -37,7 +39,7 @@ def load_dataset(
     dataset_name = _get_dataset_name_from_artifact_address(artifact_address)
 
     # build and prepare the dataset to `~/tensorflow_datasets/
-    wandb.termlog(f"Building dataset {dataset_name}")
+    wandb.termlog(f"Building dataset {dataset_name}...")
     current_working_dir = os.getcwd()
     os.chdir(os.path.join(artifact_dir, dataset_name))
     if not quiet:
@@ -67,5 +69,6 @@ def load_dataset(
 
     dataset_builder = tfds.builder("monkey_species")
     dataset_builder.download_and_prepare()
+    dataset_splits, dataset_builder_info = _build_datasets(dataset_builder)
 
-    return dataset_builder
+    return dataset_splits, dataset_builder_info
