@@ -28,6 +28,24 @@ def load_dataset(
     quiet: bool = False,
 ) -> Tuple[Dict[str, tf.data.Dataset], DatasetInfo]:
     """Load a dataset from a [wandb artifact](https://docs.wandb.ai/guides/artifacts).
+    
+    Using this function you can load a dataset hosted as a
+    [wandb artifact](https://docs.wandb.ai/guides/artifacts) in a single line of code,
+    and use our powerful data processing methods to quickly get your dataset ready for
+    training in a deep learning model.
+    
+    Usage:
+    
+    ```python
+    from wandb_addons.dataset import load_dataset
+    
+    datasets, dataset_builder_info = load_dataset(
+        "geekyrakshit/artifact-accessor/monkey_species:v0", quiet=True
+    )
+    ```
+    
+    !!! example "Example notebooks:"
+        - [🔥 Data Loading with WandB Artifacts 🪄🐝](../examples/load_monkey_dataset).
 
     Args:
         artifact_address (str): A human-readable name for the artifact, which is how you can
@@ -41,6 +59,14 @@ def load_dataset(
         remove_redundant_data_files (bool): Whether to remove the redundant data files from the
             artifacts directory after building the tfrecord dataset.
         quiet (bool): Whether to suppress the output of dataset build process or not.
+    
+    Returns:
+        (Tuple[Dict[str, tf.data.Dataset], DatasetInfo]): A tuple of dictionary Dictionary mapping
+            split aliases to the respective
+            [TensorFlow Prefetched dataset](https://www.tensorflow.org/guide/data_performance#prefetching)
+            objects and the
+            [`tfds.core.DatasetInfo`](https://www.tensorflow.org/datasets/api_docs/python/tfds/core/DatasetInfo)
+            that documents datasets, including its name, version, and features.
     """
     artifact_dir = fetch_wandb_artifact(
         artifact_address=artifact_address, artifact_type=artifact_type
