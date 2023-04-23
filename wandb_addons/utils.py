@@ -1,8 +1,18 @@
+import os
 from collections.abc import MutableMapping
 from typing import Dict
 
 import wandb
 from wandb.util import FilePathStr
+
+
+def upload_wandb_artifact(name: str, artifact_type: str, path: str):
+    if wandb.run is not None:
+        artifact = wandb.Artifact("animals", type="dataset")
+        artifact.add_dir("images")  # Adds multiple files to artifact
+        wandb.log_artifact(artifact)
+    else:
+        raise wandb.Error("You must call `wandb.init()` before logging an artifact.")
 
 
 def fetch_wandb_artifact(artifact_address: str, artifact_type: str) -> FilePathStr:
