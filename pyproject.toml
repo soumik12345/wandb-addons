@@ -45,11 +45,9 @@ deploy=[
     "mkdocs-glightbox",
     "mkdocs-jupyter"
 ]
-tf = [
-    "tensorflow"
-]
 dataset = [
-    "tensorflow-datasets"
+    "tensorflow-cpu",
+    "tfds-nightly"
 ]
 monai = [
     "monai[ignite, nibabel, tensorboard]"

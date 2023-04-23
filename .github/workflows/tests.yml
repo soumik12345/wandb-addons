@@ -32,9 +32,8 @@ jobs:
       - uses: actions/checkout@v3
       - run: |
           pip install -U pip
-          pip install ".[tf, dataset]"
+          pip install ".[dataset]"
           python -c "import tensorflow as tf"
-          python -c "from tensorflow import keras"
           python -c "import tensorflow_datasets as tfds"
 
   run-jax-tests:
