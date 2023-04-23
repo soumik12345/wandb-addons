@@ -45,6 +45,9 @@ deploy=[
     "mkdocs-glightbox",
     "mkdocs-jupyter"
 ]
+test = [
+    "pytest>=7.1.2"
+]
 dataset = [
     "tensorflow-cpu",
     "tfds-nightly"
