@@ -22,17 +22,7 @@ jobs:
           path: .cache
       - run: pip install .[docs]
       - run: mkdocs gh-deploy --force
-  
-  create-release:
-    name: Create a release on GitHub
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: ncipollo/release-action@v1
-      with:
-        artifacts: "**.zip"
-        bodyFile: "README.md"
-  
+
   pypi-publish:
     name: Upload release to PyPI
     runs-on: ubuntu-latest
