@@ -1,9 +1,8 @@
 import os
 import shlex
 import subprocess
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
-import tensorflow as tf
 import tensorflow_datasets as tfds
 from tensorflow_datasets.core.dataset_info import DatasetInfo
 from tensorflow_datasets.core.dataset_builder import DatasetBuilder
@@ -21,12 +20,15 @@ from .utils import (
 )
 
 
+_DATASET_TYPE = Any
+
+
 def load_dataset(
     artifact_address: str,
     artifact_type: Optional[str] = "dataset",
     remove_redundant_data_files: bool = True,
     quiet: bool = False,
-) -> Tuple[Dict[str, tf.data.Dataset], DatasetInfo]:
+) -> Tuple[Dict[str, _DATASET_TYPE], DatasetInfo]:
     """Load a dataset from a [wandb artifact](https://docs.wandb.ai/guides/artifacts).
 
     Using this function you can load a dataset hosted as a
