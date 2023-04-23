@@ -12,6 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: psf/black@stable
+      - uses: isort/isort-action@master
 
   run-monai-tests:
     name: Check if MonAI tests pass

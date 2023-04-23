@@ -5,10 +5,9 @@ from pathlib import Path
 from typing import Dict, Tuple, Union
 
 import tensorflow as tf
-from tensorflow_datasets.core.dataset_info import DatasetInfo
-from tensorflow_datasets.core.dataset_builder import DatasetBuilder
-
 import wandb
+from tensorflow_datasets.core.dataset_builder import DatasetBuilder
+from tensorflow_datasets.core.dataset_info import DatasetInfo
 
 
 def _change_artifact_dir_name(artifact_dir: str) -> str:

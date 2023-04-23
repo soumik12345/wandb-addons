@@ -1,5 +1,5 @@
-from typing import Dict
 from collections.abc import MutableMapping
+from typing import Dict
 
 import wandb
 from wandb.util import FilePathStr

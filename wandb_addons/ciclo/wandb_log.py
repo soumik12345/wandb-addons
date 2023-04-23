@@ -1,13 +1,12 @@
-from typing import Optional, Callable
+from typing import Callable, Optional
 
 import ciclo
-from ciclo.logging import Logs
-from ciclo.types import Batch, S
-from ciclo.timetracking import Elapsed
-from ciclo.loops.loop import LoopCallbackBase
-from ciclo.callbacks import LoopState, CallbackOutput
-
 import wandb
+from ciclo.callbacks import CallbackOutput, LoopState
+from ciclo.logging import Logs
+from ciclo.loops.loop import LoopCallbackBase
+from ciclo.timetracking import Elapsed
+from ciclo.types import Batch, S
 
 from ..utils import flatten_nested_dictionaries
 

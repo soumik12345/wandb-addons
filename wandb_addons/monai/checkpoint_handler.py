@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Any, Callable, Mapping, Optional, Union
 
 import wandb
-
 from ignite.engine import Engine
 from ignite.handlers import ModelCheckpoint
 

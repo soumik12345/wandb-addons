@@ -4,21 +4,19 @@ import subprocess
 from typing import Any, Dict, Optional, Tuple
 
 import tensorflow_datasets as tfds
-from tensorflow_datasets.core.dataset_info import DatasetInfo
-from tensorflow_datasets.core.dataset_builder import DatasetBuilder
-
 import wandb
+from tensorflow_datasets.core.dataset_builder import DatasetBuilder
+from tensorflow_datasets.core.dataset_info import DatasetInfo
 
 from ..utils import fetch_wandb_artifact
 from .utils import (
+    _build_datasets,
     _change_artifact_dir_name,
     _create_empty_file,
     _get_dataset_name_from_artifact_address,
     _get_dataset_registration_statement,
     _remove_redundant_files,
-    _build_datasets,
 )
-
 
 _DATASET_TYPE = Any
 
@@ -88,7 +86,6 @@ def load_dataset(
     if not quiet:
         subprocess.call(shlex.split("tfds build"))
     else:
-        tf.get_logger().setLevel("ERROR")
         subprocess.call(
             shlex.split("tfds build"),
             stderr=subprocess.DEVNULL,
