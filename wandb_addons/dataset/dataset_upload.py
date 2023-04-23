@@ -5,13 +5,13 @@ import subprocess
 from typing import List, Optional
 
 import wandb
-import tensorflow_datasets as tfds
+import tensorflow as tf
 
 from .utils import _create_empty_file
 from ..utils import upload_wandb_artifact
 
 
-def _upload_with_builder_script(name: str, path: str):
+def _upload_with_builder_script(name: str, path: str, quiet: bool):
     builder_script_path = os.path.join(path, f"{name}.py")
 
     if not os.path.isfile(builder_script_path):
@@ -33,7 +33,11 @@ def _upload_with_builder_script(name: str, path: str):
 
     current_working_dir = os.getcwd()
     os.chdir(builder_script_module_path)
-    result = subprocess.run(shlex.split("tfds build"))
+    result = subprocess.run(
+        shlex.split("tfds build"),
+        stderr=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+    )
     os.chdir(current_working_dir)
 
     if result.returncode != 0:
@@ -50,7 +54,7 @@ def _upload_with_builder_script(name: str, path: str):
         _create_empty_file(os.path.join(path, "__init__.py"))
 
 
-def _upload_with_tfds_directory(name: str, path: str):
+def _upload_with_tfds_directory(name: str, path: str, quiet: bool):
     builder_module_path = os.path.join(path, name)
 
     if not os.path.isdir(builder_module_path):
@@ -58,7 +62,11 @@ def _upload_with_tfds_directory(name: str, path: str):
 
     current_working_dir = os.getcwd()
     os.chdir(builder_module_path)
-    result = subprocess.run(shlex.split("tfds build"))
+    result = subprocess.run(
+        shlex.split("tfds build"),
+        stderr=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+    )
     os.chdir(current_working_dir)
 
     if result.returncode != 0:
@@ -71,17 +79,23 @@ def _upload_with_tfds_directory(name: str, path: str):
 
 
 def upload_dataset(
-    name: str, path: str, type: str, aliases: Optional[List[str]] = None
+    name: str,
+    path: str,
+    type: str,
+    aliases: Optional[List[str]] = None,
+    quiet: bool = False,
 ):
+    if quiet:
+        tf.get_logger().setLevel("ERROR")
     try:
-        _upload_with_tfds_directory(name, path)
+        _upload_with_tfds_directory(name, path, quiet)
         wandb.termlog("Successfully verified tfds module.")
         upload_wandb_artifact(name, type, path, aliases)
     except wandb.Error as e:
         print(e)
         wandb.termlog("Attempting to locate builder script...")
         try:
-            _upload_with_builder_script(name, path)
+            _upload_with_builder_script(name, path, quiet)
             wandb.termlog("Successfully verified tfds module.")
             upload_wandb_artifact(name, type, path, aliases)
         except wandb.Error as e:

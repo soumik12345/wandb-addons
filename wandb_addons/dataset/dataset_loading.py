@@ -3,8 +3,9 @@ import shlex
 import subprocess
 from typing import Any, Dict, Optional, Tuple
 
-import tensorflow_datasets as tfds
 import wandb
+import tensorflow as tf
+import tensorflow_datasets as tfds
 from tensorflow_datasets.core.dataset_builder import DatasetBuilder
 from tensorflow_datasets.core.dataset_info import DatasetInfo
 
@@ -86,6 +87,7 @@ def load_dataset(
     if not quiet:
         subprocess.call(shlex.split("tfds build"))
     else:
+        tf.get_logger().setLevel("ERROR")
         subprocess.call(
             shlex.split("tfds build"),
             stderr=subprocess.DEVNULL,
