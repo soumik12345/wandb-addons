@@ -27,6 +27,8 @@ jobs:
   run-keras-tests:
     name: Check if TensorFlow and TFDS tests pass
     runs-on: ubuntu-latest
+    env:
+      WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
     container: tensorflow/tensorflow
     steps:
       - uses: actions/checkout@v3
