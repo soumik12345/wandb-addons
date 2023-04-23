@@ -2,7 +2,7 @@ import os
 import shlex
 import shutil
 import subprocess
-from typing import Union
+from typing import List, Optional
 
 import wandb
 import tensorflow_datasets as tfds
@@ -11,7 +11,7 @@ from .utils import _create_empty_file
 from ..utils import upload_wandb_artifact
 
 
-def _upload_with_builder_script(name: str, path: str) -> Union[bool, None]:
+def _upload_with_builder_script(name: str, path: str):
     builder_script_path = os.path.join(path, f"{name}.py")
 
     if not os.path.isfile(builder_script_path):
@@ -70,15 +70,19 @@ def _upload_with_tfds_directory(name: str, path: str):
         _create_empty_file(os.path.join(path, "__init__.py"))
 
 
-def upload_dataset(name: str, path: str, type: str):
+def upload_dataset(
+    name: str, path: str, type: str, aliases: Optional[List[str]] = None
+):
     try:
         _upload_with_tfds_directory(name, path)
-        upload_wandb_artifact(name, type, path)
+        wandb.termlog("Successfully verified tfds module.")
+        upload_wandb_artifact(name, type, path, aliases)
     except wandb.Error as e:
-        wandb.termwarn(str(e))
+        print(e)
         wandb.termlog("Attempting to locate builder script...")
         try:
             _upload_with_builder_script(name, path)
-            upload_wandb_artifact(name, type, path)
+            wandb.termlog("Successfully verified tfds module.")
+            upload_wandb_artifact(name, type, path, aliases)
         except wandb.Error as e:
-            wandb.termerror(e)
+            print(e)
