@@ -84,9 +84,7 @@ def load_dataset(
     ```python
     from wandb_addons.dataset import load_dataset
 
-    datasets, dataset_builder_info = load_dataset(
-        "geekyrakshit/artifact-accessor/monkey_species:v0", quiet=True
-    )
+    datasets, dataset_builder_info = load_dataset("geekyrakshit/artifact-accessor/monkey_species:v0")
     ```
 
     !!! example "Example notebooks:"

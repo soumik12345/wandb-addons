@@ -128,10 +128,10 @@ def upload_dataset(
     ```
 
     Args:
-        name (str): Name of the dataset. This name should follow the
+        dataset_name (str): Name of the dataset. This name should follow the
             [PEP8 package and module name convenmtions](https://peps.python.org/pep-0008/#package-and-module-names).
         path (str): Path to the dataset.
-        type (str): The type of the artifact, which is used to organize and differentiate
+        dataset_type (str): The type of the artifact, which is used to organize and differentiate
             artifacts. Common typesCinclude dataset or model, but you can use any string containing
             letters, numbers, underscores, hyphens, and dots.
         aliases (Optional[List[str]]): Aliases to apply to this artifact.
