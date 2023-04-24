@@ -24,7 +24,8 @@ dependencies = [
 dev = [
     "isort>=5.10.1",
     "black>=22.6.0",
-    "pytest>=7.1.2"
+    "pytest>=7.1.2",
+    "pre-commit"
 ]
 docs=[
     "mkdocs",
@@ -44,9 +45,12 @@ deploy=[
     "mkdocs-glightbox",
     "mkdocs-jupyter"
 ]
-tf = [
-    "tensorflow",
-    "tensorflow-datasets"
+test = [
+    "pytest>=7.1.2"
+]
+dataset = [
+    "tensorflow-cpu",
+    "tfds-nightly"
 ]
 monai = [
     "monai[ignite, nibabel, tensorboard]"

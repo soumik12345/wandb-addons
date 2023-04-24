@@ -1,11 +1,10 @@
 import warnings
-from typing import Any, Callable, Optional, Sequence, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Optional, Sequence
 
 import torch
 import wandb
-
 from monai.config import IgniteInfo
-from monai.utils import optional_import, min_version, is_scalar
+from monai.utils import is_scalar, min_version, optional_import
 
 Events, _ = optional_import(
     "ignite.engine", IgniteInfo.OPT_IMPORT_VERSION, min_version, "Events"

@@ -1,8 +1,25 @@
-from typing import Dict
+import os
 from collections.abc import MutableMapping
+from typing import Dict, List, Optional
 
 import wandb
 from wandb.util import FilePathStr
+
+
+def upload_wandb_artifact(
+    name: str, artifact_type: str, path: str, aliases: Optional[List[str]] = None
+):
+    if wandb.run is not None:
+        artifact = wandb.Artifact(name, type=artifact_type)
+        if os.path.isdir(path):
+            artifact.add_dir(path)
+        elif os.path.isfile(path):
+            artifact.add_file(path)
+        else:
+            wandb.Error(f"Unable to find local path {path} to add to the artifact.")
+        wandb.log_artifact(artifact, aliases=aliases)
+    else:
+        raise wandb.Error("You must call `wandb.init()` before logging an artifact.")
 
 
 def fetch_wandb_artifact(artifact_address: str, artifact_type: str) -> FilePathStr:
