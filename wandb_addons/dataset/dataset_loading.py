@@ -64,7 +64,7 @@ def _load_dataset_from_tfds_module(
     dataset_builder = tfds.builder(dataset_name)
     dataset_builder.download_and_prepare()
     dataset_splits, dataset_builder_info = _build_datasets(dataset_builder)
-    
+
     return dataset_splits, dataset_builder_info
 
 
