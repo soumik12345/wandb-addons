@@ -82,7 +82,9 @@ def _upload_with_tfds_directory(name: str, path: str, quiet: bool):
 def _upload_tfrecords(
     dataset_name: str, dataset_type: str, aliases: Optional[List[str]] = None
 ):
-    tfrecord_versions_directory = os.path.join(os.path.expanduser('~'), "tensorflow_datasets", dataset_name)
+    tfrecord_versions_directory = os.path.join(
+        os.path.expanduser("~"), "tensorflow_datasets", dataset_name
+    )
     tfrecord_versions = sorted(
         [version.parse(v) for v in os.listdir(tfrecord_versions_directory)]
     )
