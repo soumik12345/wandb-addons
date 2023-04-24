@@ -61,9 +61,11 @@ def _load_dataset_from_tfds_module(
         print(exception)
         raise wandb.Error(f"Unable to register {artifact_dir}.{dataset_name}")
 
-    dataset_builder = tfds.builder("monkey_species")
+    dataset_builder = tfds.builder(dataset_name)
     dataset_builder.download_and_prepare()
     dataset_splits, dataset_builder_info = _build_datasets(dataset_builder)
+    
+    return dataset_splits, dataset_builder_info
 
 
 def load_dataset(
