@@ -85,6 +85,36 @@ def upload_dataset(
     aliases: Optional[List[str]] = None,
     quiet: bool = False,
 ):
+    """Upload and register a dataset with a TFDS module or a TFDS builder script as a
+    Weights & Biases artifact. This function would verify if a TFDS build/registration is possible
+    with the current specified dataset path and upload it as a Weights & Biases artifact.
+
+    !!! example "Check this guide for preparing a dataset for registering in on Weights & Biases"
+        - [Preparing the Dataset](../dataset_preparation).
+
+    Usage:
+
+    ```python
+    import wandb
+    from wandb_addons.dataset import upload_dataset
+
+    # Initialize a W&B Run
+    wandb.init(project="my-awesome-project", job_type="upload_dataset")
+
+    # Note that we should set our dataset name as the name of the artifact
+    upload_dataset(name="my_awesome_dataset", path="./my/dataset/path", type="dataset")
+    ```
+
+    Args:
+        name (str): Name of the dataset. This name should follow the
+            [PEP8 package and module name convenmtions](https://peps.python.org/pep-0008/#package-and-module-names).
+        path (str): Path to the dataset.
+        type (str): The type of the artifact, which is used to organize and differentiate
+            artifacts. Common typesCinclude dataset or model, but you can use any string containing
+            letters, numbers, underscores, hyphens, and dots.
+        aliases (Optional[List[str]]): Aliases to apply to this artifact.
+        quiet (bool): Whether to suppress the output of dataset build process or not.
+    """
     if quiet:
         tf.get_logger().setLevel("ERROR")
     try:
