@@ -2,6 +2,7 @@ import os
 import shlex
 import shutil
 import subprocess
+from packaging import version
 from typing import List, Optional
 
 import wandb
@@ -35,8 +36,8 @@ def _upload_with_builder_script(name: str, path: str, quiet: bool):
     os.chdir(builder_script_module_path)
     result = subprocess.run(
         shlex.split("tfds build"),
-        stderr=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL if quiet else None,
+        stdout=subprocess.DEVNULL if quiet else None,
     )
     os.chdir(current_working_dir)
 
@@ -64,8 +65,8 @@ def _upload_with_tfds_directory(name: str, path: str, quiet: bool):
     os.chdir(builder_module_path)
     result = subprocess.run(
         shlex.split("tfds build"),
-        stderr=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL if quiet else None,
+        stdout=subprocess.DEVNULL if quiet else None,
     )
     os.chdir(current_working_dir)
 
@@ -78,11 +79,30 @@ def _upload_with_tfds_directory(name: str, path: str, quiet: bool):
         _create_empty_file(os.path.join(path, "__init__.py"))
 
 
+def _upload_tfrecords(
+    dataset_name: str, dataset_type: str, aliases: Optional[List[str]] = None
+):
+    tfrecord_versions_directory = os.path.join(os.path.expanduser('~'), "tensorflow_datasets", dataset_name)
+    tfrecord_versions = sorted(
+        [version.parse(v) for v in os.listdir(tfrecord_versions_directory)]
+    )
+    latest_version_directory = os.path.join(
+        tfrecord_versions_directory, str(tfrecord_versions[-1])
+    )
+    upload_wandb_artifact(
+        name=dataset_name,
+        artifact_type=dataset_type,
+        path=latest_version_directory,
+        aliases=aliases,
+    )
+
+
 def upload_dataset(
-    name: str,
+    dataset_name: str,
     path: str,
-    type: str,
+    dataset_type: str,
     aliases: Optional[List[str]] = None,
+    upload_tfrecords: bool = True,
     quiet: bool = False,
 ):
     """Upload and register a dataset with a TFDS module or a TFDS builder script as a
@@ -113,20 +133,28 @@ def upload_dataset(
             artifacts. Common typesCinclude dataset or model, but you can use any string containing
             letters, numbers, underscores, hyphens, and dots.
         aliases (Optional[List[str]]): Aliases to apply to this artifact.
+        upload_tfrecords (bool): Upload dataset as TFRecords or not. If set to `False`, then the dataset is uploaded
+            with a TFDS module.
         quiet (bool): Whether to suppress the output of dataset build process or not.
     """
     if quiet:
         tf.get_logger().setLevel("ERROR")
     try:
-        _upload_with_tfds_directory(name, path, quiet)
+        _upload_with_tfds_directory(dataset_name, path, quiet)
         wandb.termlog("Successfully verified tfds module.")
-        upload_wandb_artifact(name, type, path, aliases)
+        if upload_tfrecords:
+            _upload_tfrecords(dataset_name, dataset_type, aliases)
+        else:
+            upload_wandb_artifact(dataset_name, dataset_type, path, aliases)
     except wandb.Error as e:
         print(e)
         wandb.termlog("Attempting to locate builder script...")
         try:
-            _upload_with_builder_script(name, path, quiet)
+            _upload_with_builder_script(dataset_name, path, quiet)
             wandb.termlog("Successfully verified tfds module.")
-            upload_wandb_artifact(name, type, path, aliases)
+            if upload_tfrecords:
+                _upload_tfrecords(dataset_name, dataset_type, aliases)
+            else:
+                upload_wandb_artifact(dataset_name, dataset_type, path, aliases)
         except wandb.Error as e:
             print(e)
