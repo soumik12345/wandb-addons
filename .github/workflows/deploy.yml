@@ -23,14 +23,14 @@ jobs:
       - run: pip install .[docs]
       - run: mkdocs gh-deploy --force
 
-  pypi-publish:
-    name: Upload release to PyPI
-    runs-on: ubuntu-latest
-    container: python
-    steps:
-      - uses: actions/checkout@v3
-      - run: |
-          python3 -m pip install -U pip
-          python3 -m pip install -U .[deploy]
-          python3 -m build
-          twine upload -u ${{ secrets.PYPI_USERNAME }} -p ${{ secrets.PYPI_PASSWORD }} -r pypi dist/*
+  # pypi-publish:
+  #   name: Upload release to PyPI
+  #   runs-on: ubuntu-latest
+  #   container: python
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - run: |
+  #         python3 -m pip install -U pip
+  #         python3 -m pip install -U .[deploy]
+  #         python3 -m build
+  #         twine upload -u ${{ secrets.PYPI_USERNAME }} -p ${{ secrets.PYPI_PASSWORD }} -r pypi dist/*
