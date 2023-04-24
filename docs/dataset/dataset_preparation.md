@@ -127,7 +127,7 @@
         - [HuggingFace: Create an Image Dataset](https://huggingface.co/docs/datasets/main/en/image_dataset).
 
 5. Now that our dataset is ready with the specifications for loading the features, we can upload it to our Weights & Biases project as an [artifact](https://docs.wandb.ai/guides/artifacts) using the `upload_dataset` function, which would verify if the dataset build is successful or not before uploading the dataset.
-    
+
     ```python
     import wandb
     from wandb_addons.dataset import upload_dataset
@@ -138,5 +138,18 @@
     # Note that we should set our dataset name as the name of the artifact
     upload_dataset(name="my_awesome_dataset", path="./my/dataset/path", type="dataset")
     ```
+
+    In order to load this dataset in your ML workflow you can simply use the `load_dataset` function:
+
+    ```python
+    from wandb_addons.dataset import load_dataset
+
+    datasets, dataset_builder_info = load_dataset("entity-name/my-awesome-project/my_awesome_dataset:v0")
+    ```
+
+    !!! note "Note"
+        - In the `upload_dataset` function by default convert a registered dataset to TFRecords (like [this](https://wandb.ai/geekyrakshit/monkey-dataset/artifacts/dataset/monkey_species/tfrecords/overview) artifact). You can alternatively upload the dataset in its original state along with the added TFDS module containing the builder script by simply setting `upload_tfrecords` parameter to `False`.
+        - Note that this won't affect loading the dataset using `load_dataset`, dataset loading from artifacts would work as long as the artifact contains either the TFRecords or the original dataset with the TFDS module.
+        - The TFRecord artifact has to follow the specification specified in [this](https://www.tensorflow.org/datasets/external_tfrecord) guide. However, if you're using the `upload_dataset` function, you don't need to worry about this.
     
-    You can take a look at [**this**](https://wandb.ai/geekyrakshit/artifact-accessor/artifacts/dataset/monkey_species/v0/overview) artifact that demonstrates the aforementioned directory structure and builder logic.
+    You can take a look at [**this**](https://wandb.ai/geekyrakshit/monkey-dataset/artifacts/dataset/monkey_species/v1/files) artifact that demonstrates the aforementioned directory structure and builder logic.
