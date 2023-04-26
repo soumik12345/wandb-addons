@@ -14,6 +14,26 @@ from ignite.handlers.checkpoint import BaseSaveHandler
 
 
 class WandbModelCheckpointSaver(BaseSaveHandler):
+    """`WandbModelCheckpointSaver` is a save handler for PyTorch Ignite that saves model checkpoints as
+    [Weights & Biases Artifacts](https://docs.wandb.ai/guides/artifacts).
+
+    Usage:
+
+    ```python
+    from wandb_addons.monai import WandbModelCheckpointSaver
+
+    checkpoint_handler = Checkpoint(
+        {"model": model, "optimizer": optimizer},
+        WandbModelCheckpointSaver(),
+        n_saved=1,
+        filename_prefix="best_checkpoint",
+        score_name=metric_name,
+        global_step_transform=global_step_from_engine(trainer)
+    )
+    evaluator.add_event_handler(Events.COMPLETED, checkpoint_handler)
+    ```
+    """
+
     @one_rank_only()
     def __init__(self):
         if wandb.run is None:
