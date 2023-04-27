@@ -6,7 +6,6 @@ from typing import Any, Dict, Optional, Tuple
 import wandb
 import tensorflow as tf
 import tensorflow_datasets as tfds
-from tensorflow_datasets.core.dataset_builder import DatasetBuilder
 from tensorflow_datasets.core.dataset_info import DatasetInfo
 
 from ..utils import fetch_wandb_artifact
