@@ -1,13 +1,20 @@
 import os
+import shlex
 import shutil
+import subprocess
 from glob import glob
 from pathlib import Path
-from typing import Dict, Tuple, Union
+from packaging import version
+from typing import Any, Dict, List, Optional, Tuple, Union
 
-import tensorflow as tf
 import wandb
-from tensorflow_datasets.core.dataset_builder import DatasetBuilder
+import tensorflow as tf
 from tensorflow_datasets.core.dataset_info import DatasetInfo
+from tensorflow_datasets.core.dataset_builder import DatasetBuilder
+
+from ..utils import upload_wandb_artifact
+
+_DATASET_TYPE = tf.data.Dataset
 
 
 def _change_artifact_dir_name(artifact_dir: str) -> str:
@@ -50,7 +57,7 @@ def _build_datasets(
     dataset_builder_info = dataset_builder.info
     splits = dataset_builder_info.splits
     dataset_splits = {}
-    for key, value in splits.items():
+    for key, _ in splits.items():
         num_shards = dataset_builder.info.splits[key].num_shards
         num_examples = dataset_builder.info.splits[key].num_examples
         wandb.termlog(f"Building dataset for split: {key}...")
@@ -59,3 +66,77 @@ def _build_datasets(
             f"Built dataset for split: {key}, num_shards: {num_shards}, num_examples: {num_examples}"
         )
     return dataset_splits, dataset_builder_info
+
+
+def _upload_tfrecords(
+    dataset_name: str, dataset_type: str, aliases: Optional[List[str]] = None
+):
+    tfrecord_versions_directory = os.path.join(
+        os.path.expanduser("~"), "tensorflow_datasets", dataset_name
+    )
+    tfrecord_versions = sorted(
+        [version.parse(v) for v in os.listdir(tfrecord_versions_directory)]
+    )
+    latest_version_directory = os.path.join(
+        tfrecord_versions_directory, str(tfrecord_versions[-1])
+    )
+    upload_wandb_artifact(
+        name=dataset_name,
+        artifact_type=dataset_type,
+        path=latest_version_directory,
+        aliases=aliases,
+    )
+
+
+def _verify_and_create_tfds_module_structure(
+    dataset_name: str, dataset_path: str
+) -> bool:
+    is_tfds_module_structure_valid = False
+    builder_script_path = os.path.join(dataset_path, f"{dataset_name}.py")
+
+    if os.path.isfile(builder_script_path):
+        wandb.termlog(f"Builder script detected at {dataset_path}")
+        # TODO: Create logic to generate TFDS builder module
+        wandb.termlog("Attempting to create TFDS Builder module at {dataset_path}")
+        tfds_module_path = os.path.join(dataset_path, dataset_name)
+        _create_empty_file(os.path.join(dataset_path, "__init__.py"))
+        os.makedirs(tfds_module_path)
+        _create_empty_file(os.path.join(tfds_module_path, "__init__.py"))
+        shutil.move(
+            builder_script_path, os.path.join(tfds_module_path, f"{dataset_name}.py")
+        )
+        is_tfds_module_structure_valid = (
+            os.path.isdir(tfds_module_path)
+            and os.path.isfile(os.path.join(tfds_module_path, "__init__.py"))
+            and os.path.isfile(os.path.join(tfds_module_path, f"{dataset_name}.py"))
+        )
+    else:
+        wandb.termwarn(f"Unable to detect builder script at {dataset_path}")
+        tfds_module_path = os.path.join(dataset_path, dataset_name)
+        is_tfds_module_structure_valid = (
+            os.path.isfile(os.path.join(dataset_path, "__init__.py"))
+            and os.path.isdir(tfds_module_path)
+            and os.path.isfile(os.path.join(tfds_module_path, "__init__.py"))
+            and os.path.isfile(os.path.join(tfds_module_path, f"{dataset_name}.py"))
+        )
+
+    return is_tfds_module_structure_valid
+
+
+def _build_from_tfds_module(
+    dataset_name: str, dataset_path: str, quiet: bool
+) -> Union[None, Tuple[Dict[str, tf.data.Dataset], DatasetInfo]]:
+    current_working_dir = os.getcwd()
+    os.chdir(os.path.join(dataset_path, dataset_name))
+    result = subprocess.run(
+        shlex.split("tfds build"),
+        stderr=subprocess.DEVNULL if quiet else None,
+        stdout=subprocess.DEVNULL if quiet else None,
+    )
+    os.chdir(current_working_dir)
+    if result.returncode != 0:
+        raise wandb.Error("Unable to build Tensorflow Dataset")
+    if os.path.isdir(os.path.join(dataset_path, "__pycache__")):
+        shutil.rmtree(os.path.join(dataset_path, "__pycache__"))
+    if os.path.isdir(os.path.join(dataset_path, dataset_name, "__pycache__")):
+        shutil.rmtree(os.path.join(dataset_path, dataset_name, "__pycache__"))

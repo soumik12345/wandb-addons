@@ -6,11 +6,11 @@ from typing import Any, Dict, Optional, Tuple
 import wandb
 import tensorflow as tf
 import tensorflow_datasets as tfds
-from tensorflow_datasets.core.dataset_builder import DatasetBuilder
 from tensorflow_datasets.core.dataset_info import DatasetInfo
 
 from ..utils import fetch_wandb_artifact
 from .utils import (
+    _DATASET_TYPE,
     _build_datasets,
     _change_artifact_dir_name,
     _create_empty_file,
@@ -19,10 +19,9 @@ from .utils import (
     _remove_redundant_files,
 )
 
-_DATASET_TYPE = Any
-
 
 def _load_dataset_from_tfds_module(
+    artifact_address: str,
     artifact_dir: str,
     dataset_name: str,
     remove_redundant_data_files: bool = True,
@@ -36,16 +35,16 @@ def _load_dataset_from_tfds_module(
     wandb.termlog(f"Building dataset {dataset_name}...")
     current_working_dir = os.getcwd()
     os.chdir(os.path.join(artifact_dir, dataset_name))
-    if not quiet:
-        subprocess.call(shlex.split("tfds build"))
-    else:
+    if quiet:
         tf.get_logger().setLevel("ERROR")
-        subprocess.call(
-            shlex.split("tfds build"),
-            stderr=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-        )
+    result = subprocess.run(
+        shlex.split("tfds build"),
+        stderr=subprocess.DEVNULL if quiet else None,
+        stdout=subprocess.DEVNULL if quiet else None,
+    )
     os.chdir(current_working_dir)
+    if result.returncode != 0:
+        raise wandb.Error(f"Unable to load artifact {artifact_address}")
     wandb.termlog(f"Built dataset {dataset_name}!")
 
     if remove_redundant_data_files:
@@ -90,7 +89,7 @@ def load_dataset(
     ```
 
     !!! example "Example notebooks:"
-        - [🔥 Data Loading with WandB Artifacts 🪄🐝](../examples/load_monkey_dataset).
+        - [🔥 Data Loading with WandB Artifacts 🪄🐝](../examples/load_dataset).
 
     Args:
         artifact_address (str): A human-readable name for the artifact, which is how you can
@@ -128,7 +127,11 @@ def load_dataset(
             "Failed to detect TFRecords in the artifact. Attempting to build tfrecords"
         )
         dataset_splits, dataset_builder_info = _load_dataset_from_tfds_module(
-            artifact_dir, dataset_name, remove_redundant_data_files, quiet
+            artifact_address,
+            artifact_dir,
+            dataset_name,
+            remove_redundant_data_files,
+            quiet,
         )
 
     return dataset_splits, dataset_builder_info
