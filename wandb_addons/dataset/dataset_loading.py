@@ -90,7 +90,7 @@ def load_dataset(
     ```
 
     !!! example "Example notebooks:"
-        - [🔥 Data Loading with WandB Artifacts 🪄🐝](../examples/load_monkey_dataset).
+        - [🔥 Data Loading with WandB Artifacts 🪄🐝](../examples/load_dataset).
 
     Args:
         artifact_address (str): A human-readable name for the artifact, which is how you can
