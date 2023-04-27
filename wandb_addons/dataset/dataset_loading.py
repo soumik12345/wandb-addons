@@ -128,7 +128,11 @@ def load_dataset(
             "Failed to detect TFRecords in the artifact. Attempting to build tfrecords"
         )
         dataset_splits, dataset_builder_info = _load_dataset_from_tfds_module(
-            artifact_address, artifact_dir, dataset_name, remove_redundant_data_files, quiet
+            artifact_address,
+            artifact_dir,
+            dataset_name,
+            remove_redundant_data_files,
+            quiet,
         )
 
     return dataset_splits, dataset_builder_info
