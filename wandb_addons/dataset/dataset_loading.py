@@ -38,7 +38,7 @@ def _load_dataset_from_tfds_module(
     os.chdir(os.path.join(artifact_dir, dataset_name))
     if quiet:
         tf.get_logger().setLevel("ERROR")
-    result = subprocess.call(
+    result = subprocess.run(
         shlex.split("tfds build"),
         stderr=subprocess.DEVNULL if quiet else None,
         stdout=subprocess.DEVNULL if quiet else None,
