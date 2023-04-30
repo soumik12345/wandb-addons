@@ -37,7 +37,8 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
         !!! example "Example Artifacts"
             - [🐒 Monkey Dataset](https://wandb.ai/geekyrakshit/artifact-accessor/artifacts/dataset/monkey_dataset).
 
-        Usage:
+        **Usage:**
+
         ```python
         import os
         from glob import glob

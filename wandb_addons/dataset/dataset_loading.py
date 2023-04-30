@@ -80,7 +80,7 @@ def load_dataset(
     and use our powerful data processing methods to quickly get your dataset ready for
     training in a deep learning model.
 
-    Usage:
+    **Usage:**
 
     ```python
     from wandb_addons.dataset import load_dataset

@@ -24,7 +24,7 @@ def upload_dataset(
     !!! example "Check this guide for preparing a dataset for registering in on Weights & Biases"
         - [Preparing the Dataset with Builder Script or TFDS Module](../dataset_preparation).
 
-    Usage:
+    **Usage:**
 
     ```python
     import wandb
