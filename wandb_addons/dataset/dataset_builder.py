@@ -13,6 +13,8 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
         name: str,
         dataset_path: str,
         features: tfds.features.FeatureConnector,
+        upload_built_dataset: bool = True,
+        upload_raw_dataset: bool = True,
         config: Union[None, str, tfds.core.BuilderConfig] = None,
         data_dir: Optional[epath.PathLike] = None,
         description: Optional[str] = None,
@@ -29,6 +31,8 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
 
         self.name = name
         self.dataset_path = dataset_path
+        self.upload_built_dataset = upload_built_dataset
+        self.upload_raw_dataset = upload_raw_dataset
         self.VERSION = self._get_version()
         self.RELEASE_NOTES = release_notes
         if config:
@@ -44,7 +48,7 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
         self._homepage = homepage
         self._disable_shuffling = disable_shuffling
 
-        self._wandb__artifact = self._initialize_wandb_artifact()
+        self._initialize_wandb_artifact()
 
         super().__init__(
             data_dir=data_dir,
@@ -55,16 +59,25 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
         )
 
     def _initialize_wandb_artifact(self):
-        return wandb.Artifact(
-            name=self.name,
-            type="dataset",
-            description=self._description,
-            metadata={
-                "description": self._description,
-                "release-notes": self.RELEASE_NOTES,
-                "homepage": self._homepage,
-            },
-        )
+        metadata = {
+            "description": self._description,
+            "release-notes": self.RELEASE_NOTES,
+            "homepage": self._homepage,
+        }
+        if self.upload_built_dataset:
+            self._wandb_build_artifact = wandb.Artifact(
+                name=self.name,
+                type="dataset",
+                description=self._description,
+                metadata=metadata,
+            )
+        if self.upload_raw_dataset:
+            self._wandb_raw_artifact = wandb.Artifact(
+                name=self.name,
+                type="dataset",
+                description=self._description,
+                metadata=metadata,
+            )
 
     def _get_version(self) -> tfds.core.utils.Version:
         try:
@@ -73,9 +86,16 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
                 type_name="dataset",
                 name=f"{wandb.run.entity}/{wandb.run.project}/{self.name}",
             )
-            return next(versions).source_version[1:] + ".0.0"
+            version = int(next(versions).source_version[1:])
+            version = (
+                version + 1
+                if self.upload_raw_dataset and self.upload_built_dataset
+                else version
+            )
+            return str(version) + ".0.0"
         except wandb.errors.CommError:
-            return tfds.core.utils.Version("0.0.0")
+            version = 1 if self.upload_raw_dataset and self.upload_built_dataset else 0
+            return tfds.core.utils.Version(str(version) + ".0.0")
 
     def _info(self) -> tfds.core.DatasetInfo:
         return tfds.core.DatasetInfo(
@@ -88,5 +108,9 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
 
     def build_and_upload(self):
         super().download_and_prepare()
-        self._wandb__artifact.add_dir(self.data_dir)
-        wandb.log_artifact(self._wandb__artifact)
+        if self.upload_raw_dataset:
+            self._wandb_raw_artifact.add_dir(self.dataset_path)
+            wandb.log_artifact(self._wandb_raw_artifact, aliases=["raw"])
+        if self.upload_built_dataset:
+            self._wandb_build_artifact.add_dir(self.data_dir)
+            wandb.log_artifact(self._wandb_build_artifact, aliases=["tfrecord"])
