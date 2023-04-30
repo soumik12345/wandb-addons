@@ -22,9 +22,9 @@ def upload_dataset(
     with the current specified dataset path and upload it as a Weights & Biases artifact.
 
     !!! example "Check this guide for preparing a dataset for registering in on Weights & Biases"
-        - [Preparing the Dataset](../dataset_preparation).
+        - [Preparing the Dataset with Builder Script or TFDS Module](../dataset_preparation).
 
-    Usage:
+    **Usage:**
 
     ```python
     import wandb
