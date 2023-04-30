@@ -13,7 +13,6 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
         name: str,
         dataset_path: str,
         features: tfds.features.FeatureConnector,
-        version: Optional[Union[tfds.core.utils.Version, str]] = None,
         config: Union[None, str, tfds.core.BuilderConfig] = None,
         data_dir: Optional[epath.PathLike] = None,
         description: Optional[str] = None,
@@ -30,16 +29,12 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
 
         self.name = name
         self.dataset_path = dataset_path
-        self.VERSION = (
-            tfds.core.utils.Version(version)
-            if version is not None
-            else self._get_version()
-        )
+        self.VERSION = self._get_version()
         self.RELEASE_NOTES = release_notes
         if config:
             if isinstance(config, str):
                 config = tfds.core.BuilderConfig(
-                    name=config, version=version, release_notes=release_notes
+                    name=config, version=self.VERSION, release_notes=release_notes
                 )
             self.BUILDER_CONFIGS = [config]
         self._feature_spec = features
@@ -54,7 +49,7 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
         super().__init__(
             data_dir=data_dir,
             config=config,
-            version=version,
+            version=self.VERSION,
             file_format=file_format,
             **kwargs,
         )
