@@ -9,6 +9,13 @@ Weights & Biases Addons is a repository that provides of integrations and utilit
 
 A set of utilities for easily accessing datasets for various machine learning tasks using [Weights & Biases artifacts](https://docs.wandb.ai/guides/artifacts).
 
+In order to install `wandb-addons` along with the dependencies for the dataset utilities, you can run:
+
+```shell
+git clone https://github.com/soumik12345/wandb-addons
+pip install wandb-addons[dataset]
+```
+
 - **[`WandbDatasetBuilder`](dataset/dataset_loading/#wandb_addons.dataset.dataset_builder.WandbDatasetBuilder):** An abstract class for Dataset builder that enables building a dataset and upload it as a [Weights & Biases Artifact](https://docs.wandb.ai/guides/artifacts).
 
 - **[`upload_dataset`](dataset/dataset_loading/#wandb_addons.dataset.dataset_upload.upload_dataset):** Upload and register a dataset with a TFDS module or a TFDS builder script as a Weights & Biases artifact. This function would verify if a TFDS build/registration is possible with the current specified dataset path and upload it as a Weights & Biases artifact.
