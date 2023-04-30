@@ -9,7 +9,9 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
     """An abstract class for Dataset builder that enables building a dataset and upload it as a
     [Weights & Biases Artifact](https://docs.wandb.ai/guides/artifacts). It expects subclasses
     to override the following functions:
+    
     - **`_split_generators`** to return a dict of splits, generators.
+    
     - **`_generate_examples`** to return a generator or an iterator corresponding to the split.
 
     !!! note "Note"
