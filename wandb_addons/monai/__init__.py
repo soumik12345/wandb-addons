@@ -1,2 +1,2 @@
-from .checkpoint_handler import WandbModelCheckpointHandler
+from .checkpoint_handler import WandbModelCheckpointSaver
 from .stats_handler import WandbStatsHandler
