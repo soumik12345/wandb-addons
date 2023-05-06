@@ -53,7 +53,9 @@ class TableCreator:
             ):
                 data = next(dataset)
                 row = [split] + [
-                    _FEATURE_MAPPING[type(self.features[col]).__name__](data[col], self.features[col])
+                    _FEATURE_MAPPING[type(self.features[col]).__name__](
+                        data[col], self.features[col]
+                    )
                     for col in self._columns[1:]
                 ]
                 self._table.add_data(*row)
