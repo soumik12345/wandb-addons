@@ -1,7 +1,10 @@
+from typing import Optional
+
 import wandb
 from tqdm.auto import tqdm
 
 import numpy as np
+import tensorflow as tf
 import tensorflow_datasets as tfds
 
 from ..utils import flatten_nested_dictionaries
@@ -20,9 +23,11 @@ class TableCreator:
         self,
         dataset_builder: tfds.core.DatasetBuilder,
         dataset_info: tfds.core.DatasetInfo,
+        max_visualizations_per_split: Optional[int] = None,
     ):
         self.dataset_builder = dataset_builder
         self.dataset_info = dataset_info
+        self.max_visualizations_per_split = max_visualizations_per_split
         self.features = flatten_nested_dictionaries(self.dataset_info.features)
         self.splits = flatten_nested_dictionaries(self.dataset_info.splits)
         self._columns = ["Split"] + list(self.features.keys())
@@ -41,15 +46,26 @@ class TableCreator:
                 self.splits[split].num_examples,
                 self.splits[split].num_shards,
             )
+            dataset = self.dataset_builder.as_dataset(split)
+            dataset_cardinality = (
+                tf.data.experimental.cardinality(dataset).numpy().item()
+            )
+            dataset_cardinality = (
+                self.max_visualizations_per_split
+                if self.max_visualizations_per_split < dataset_cardinality
+                else dataset_cardinality
+            )
             wandb.log(
                 {
                     f"{split}/num_examples": num_examples,
                     f"{split}/num_shards": num_shards,
                 },
             )
-            dataset = iter(self.dataset_builder.as_dataset(split))
+            dataset = iter(dataset)
             for _ in tqdm(
-                range(num_examples), desc=f"Populating Table for the {split} split"
+                # range(num_examples),
+                range(dataset_cardinality),
+                desc=f"Populating Table for the {split} split",
             ):
                 data = next(dataset)
                 row = [split] + [
