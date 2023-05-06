@@ -50,7 +50,8 @@ test = [
 ]
 dataset = [
     "tensorflow-cpu",
-    "tfds-nightly"
+    "tfds-nightly",
+    "pillow"
 ]
 monai = [
     "monai[ignite, nibabel, tensorboard]"

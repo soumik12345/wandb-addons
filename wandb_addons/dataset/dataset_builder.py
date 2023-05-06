@@ -4,14 +4,16 @@ import wandb
 from etils import epath
 import tensorflow_datasets as tfds
 
+from .table_creation import TableCreator
+
 
 class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
     """An abstract class for Dataset builder that enables building a dataset and upload it as a
     [Weights & Biases Artifact](https://docs.wandb.ai/guides/artifacts). It expects subclasses
     to override the following functions:
-    
+
     - **`_split_generators`** to return a dict of splits, generators.
-    
+
     - **`_generate_examples`** to return a generator or an iterator corresponding to the split.
 
     !!! note "Note"
@@ -223,8 +225,14 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
             disable_shuffling=self._disable_shuffling,
         )
 
-    def build_and_upload(self):
+    def build_and_upload(self, create_visualizations: bool = False):
         super().download_and_prepare()
+
+        if create_visualizations:
+            table_creator = TableCreator(dataset_builder=self, dataset_info=self.info)
+            table_creator.populate_table()
+            table_creator.log(dataset_name=self.name)
+
         if self.upload_raw_dataset:
             self._wandb_raw_artifact.add_dir(self.dataset_path)
             wandb.log_artifact(self._wandb_raw_artifact, aliases=["raw"])
