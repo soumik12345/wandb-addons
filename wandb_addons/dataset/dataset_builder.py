@@ -295,8 +295,12 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
         max_visualizations_per_split: Optional[int] = None,
     ):
         """Build and prepare the dataset for loading and uploads as a
-        [Weights & Biases Artifact](https://docs.wandb.ai/guides/artifacts).
+        [Weights & Biases Artifact](https://docs.wandb.ai/guides/artifacts). This function also
+        creates a Weights & Biases reports that contains the dataset description, visualizations
+        and all additional metadata logged to Weights & Biases.
 
+        !!! example "Sample Auto-generated Report"
+            [🐒 Dataset: monkey-dataset](https://wandb.ai/geekyrakshit/artifact-accessor/reports/Dataset-monkey-dataset--Vmlldzo0MjgxNTAz)
         Args:
             create_visualizations (bool): Automatically parse the dataset and visualize using a
                 [Weights & Biase Table](https://docs.wandb.ai/guides/data-vis).
