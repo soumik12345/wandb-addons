@@ -139,3 +139,4 @@ docs/**/artifacts/
 # Development
 test.py
 test.ipynb
+build_dir/

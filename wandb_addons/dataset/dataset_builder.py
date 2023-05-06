@@ -1,17 +1,24 @@
 from typing import Any, Mapping, Optional, Union
 
 import wandb
+import wandb.apis.reports as wr
+
+# wandb.require("report-editing")
+
 from etils import epath
 import tensorflow_datasets as tfds
+
+from .table_creation import TableCreator
+from ..utils import flatten_nested_dictionaries
 
 
 class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
     """An abstract class for Dataset builder that enables building a dataset and upload it as a
     [Weights & Biases Artifact](https://docs.wandb.ai/guides/artifacts). It expects subclasses
     to override the following functions:
-    
+
     - **`_split_generators`** to return a dict of splits, generators.
-    
+
     - **`_generate_examples`** to return a generator or an iterator corresponding to the split.
 
     !!! note "Note"
@@ -103,7 +110,8 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
             data_dir="build_dir/",
             description=_DESCRIPTION,
         )
-        builder.build_and_upload()
+
+        builder.build_and_upload(create_visualizations=True)
     ```
 
     Args:
@@ -223,10 +231,97 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
             disable_shuffling=self._disable_shuffling,
         )
 
-    def build_and_upload(self):
+    def _create_report(self):
+        report = wr.Report(project=wandb.run.project)
+
+        dataset_splits = flatten_nested_dictionaries(self.info.splits).keys()
+        scalar_panels = [
+            wr.ScalarChart(
+                title=f"{split}/num_examples", metric=f"{split}/num_examples"
+            )
+            for split in dataset_splits
+        ]
+        scalar_panels += [
+            wr.ScalarChart(title=f"{split}/num_shards", metric=f"{split}/num_shards")
+            for split in dataset_splits
+        ]
+
+        report.title = f"Dataset: {self.name}"
+
+        report.blocks = [
+            wr.MarkdownBlock(
+                text=f"**Disclaimer:** This report was generated automatically."
+            ),
+            wr.H1("Description"),
+            wr.MarkdownBlock(text=self._description),
+            wr.MarkdownBlock("\n"),
+        ]
+
+        if self._homepage is not None:
+            report.blocks += [
+                wr.MarkdownBlock(text=f"**Homepage:** {self._homepage}"),
+                wr.MarkdownBlock("\n"),
+            ]
+
+        report.blocks += [
+            wr.MarkdownBlock(
+                f"""
+            ```python
+            import from wandb_addons.dataset import load_dataset
+
+            datasets, dataset_builder_info = load_dataset("{wandb.run.entity}/{wandb.run.project}/{self.name}:tfrecord")
+            ```
+            """
+            ),
+            wr.MarkdownBlock("\n"),
+        ]
+
+        report.blocks += [
+            wr.PanelGrid(
+                runsets=[wr.Runset(project=wandb.run.project, entity=wandb.run.entity)],
+                panels=scalar_panels
+                + [
+                    wr.WeavePanelSummaryTable(table_name=f"{self.name}-Table"),
+                    wr.WeavePanelArtifact(self.name),
+                ],
+            )
+        ]
+
+        report.save()
+
+    def build_and_upload(
+        self,
+        create_visualizations: bool = False,
+        max_visualizations_per_split: Optional[int] = None,
+    ):
+        """Build and prepare the dataset for loading and uploads as a
+        [Weights & Biases Artifact](https://docs.wandb.ai/guides/artifacts). This function also
+        creates a Weights & Biases reports that contains the dataset description, visualizations
+        and all additional metadata logged to Weights & Biases.
+
+        !!! example "Sample Auto-generated Report"
+            [🐒 Dataset: monkey-dataset](https://wandb.ai/geekyrakshit/artifact-accessor/reports/Dataset-monkey-dataset--Vmlldzo0MjgxNTAz)
+        Args:
+            create_visualizations (bool): Automatically parse the dataset and visualize using a
+                [Weights & Biase Table](https://docs.wandb.ai/guides/data-vis).
+            max_visualizations_per_split (Optional[int]): Maximum number of visualizations per
+                split to be visualized in WandB Table. By default, the whole dataset is visualized.
+        """
         super().download_and_prepare()
+
+        if create_visualizations:
+            table_creator = TableCreator(
+                dataset_builder=self,
+                dataset_info=self.info,
+                max_visualizations_per_split=max_visualizations_per_split,
+            )
+            table_creator.populate_table()
+            table_creator.log(dataset_name=self.name)
+
         if self.upload_raw_dataset:
             self._wandb_raw_artifact.add_dir(self.dataset_path)
             wandb.log_artifact(self._wandb_raw_artifact, aliases=["raw"])
         self._wandb_build_artifact.add_dir(self.data_dir)
         wandb.log_artifact(self._wandb_build_artifact, aliases=["tfrecord"])
+
+        self._create_report()
