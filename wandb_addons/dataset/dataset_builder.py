@@ -105,7 +105,8 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
             data_dir="build_dir/",
             description=_DESCRIPTION,
         )
-        builder.build_and_upload()
+        
+        builder.build_and_upload(create_visualizations=True)
     ```
 
     Args:
@@ -226,6 +227,13 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
         )
 
     def build_and_upload(self, create_visualizations: bool = False):
+        """Build and prepare the dataset for loading and uploads as a
+        [Weights & Biases Artifact](https://docs.wandb.ai/guides/artifacts).
+        
+        Args:
+            create_visualizations (bool): Automatically parse the dataset and visualize using a
+                [Weights & Biase Table](https://docs.wandb.ai/guides/data-vis).
+        """
         super().download_and_prepare()
 
         if create_visualizations:
