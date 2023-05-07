@@ -68,17 +68,31 @@ def convert_to_wandb_report(
 
     **Usage:**
 
-    ```python
-    from wandb_addons.report import convert_to_wandb_report
+    === "CLI"
+        ```shell
+        nb2report \\
+            --filepath Use_WandbMetricLogger_in_your_Keras_workflow.ipynb \\
+            --wandb_project report-to-notebook \\
+            --wandb_entity geekyrakshit \\
+            --report_title "Use WandbMetricLogger in your Keras Workflow" \\
+            --description "A guide to using the WandbMetricLogger callback in your Keras and TensorFlow training worflow" \\
+            --width "readable"
+        ```
 
-    convert_to_wandb_report(
-        filepath="./Use_WandbMetricLogger_in_your_Keras_workflow.ipynb",
-        wandb_project="report-to-notebook",
-        wandb_entity="geekyrakshit",
-        report_title="Use WandbMetricLogger in your Keras Workflow",
-        description="A guide to using the WandbMetricLogger callback in your Keras and TensorFlow training worflow"
-    )
-    ```
+    === "Python API"
+        ```python
+        from wandb_addons.report import convert_to_wandb_report
+
+        convert_to_wandb_report(
+            filepath="Use_WandbMetricLogger_in_your_Keras_workflow.ipynb",
+            wandb_project="report-to-notebook",
+            wandb_entity="geekyrakshit",
+            report_title="Use WandbMetricLogger in your Keras Workflow",
+            description="A guide to using the WandbMetricLogger callback in your Keras and TensorFlow training worflow",
+            width="readable"
+        )
+        ```
+
 
     !!! note
         In order to include panel grids with runsets and line plots in your report, you need to include
@@ -119,6 +133,25 @@ def convert_to_wandb_report(
         ```
 
         Currently only line plots are supported inside panel grids.
+    
+    !!! note "Converting using CLI"
+        Convert an IPython notebook to a Weights & Biases report using the `nb2report` CLI:
+
+        ```shell
+        Usage: nb2report [OPTIONS]
+
+        Options:
+        --filepath TEXT       Path to an IPython notebook
+        --wandb_project TEXT  The name of the Weights & Biases project where you're
+                                creating the project
+        --wandb_entity TEXT   The name of the Weights & Biases entity (username or
+                                team name)
+        --report_title TEXT   The title of the report
+        --description TEXT    The description of the report
+        --width TEXT          Width of the report, one of `'readable'`, `'fixed'`,
+                                or `'fluid'`
+        --help                Show this message and exit.
+        ```
 
     ??? example "Example"
         The following report was generated for [this](https://github.com/wandb/examples/blob/master/colabs/keras/Use_WandbMetricLogger_in_your_Keras_workflow.ipynb) notebook:
