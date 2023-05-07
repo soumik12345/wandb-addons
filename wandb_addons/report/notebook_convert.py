@@ -36,8 +36,10 @@ def _parse_notebook_cells(filepath: str) -> List[str]:
 
 
 def _convert_metadata_to_panelgrid(metadata: Dict[str, Any]) -> wr.PanelGrid:
-    runsets = []
-    for runset_metadata in metadata["panelgrid"]["runsets"]:
+    runsets, line_plots = [], []
+    for runset_metadata in tqdm(
+        metadata["panelgrid"]["runsets"], leave=False, desc="Creating Run Sets"
+    ):
         runsets.append(
             wr.Runset(
                 project=runset_metadata["project"],
@@ -45,7 +47,13 @@ def _convert_metadata_to_panelgrid(metadata: Dict[str, Any]) -> wr.PanelGrid:
                 name=runset_metadata["name"],
             )
         )
-    return wr.PanelGrid(runsets=runsets)
+    for line_plot_metadata in tqdm(
+        metadata["panelgrid"]["lineplots"], leave=False, desc="Creating Line Plots"
+    ):
+        line_plots.append(
+            wr.LinePlot(x=line_plot_metadata["x"], y=line_plot_metadata["y"])
+        )
+    return wr.PanelGrid(runsets=runsets, panels=line_plots)
 
 
 def convert_to_wandb_report(
@@ -56,6 +64,70 @@ def convert_to_wandb_report(
     description: Optional[str] = "",
     width: Optional[str] = "readable",
 ):
+    """Convert an IPython Notebook to a [Weights & Biases Report](https://docs.wandb.ai/guides/reports).
+
+    **Usage:**
+
+    ```python
+    from wandb_addons.report import convert_to_wandb_report
+
+    convert_to_wandb_report(
+        filepath="./Use_WandbMetricLogger_in_your_Keras_workflow.ipynb",
+        wandb_project="report-to-notebook",
+        wandb_entity="geekyrakshit",
+        report_title="Use WandbMetricLogger in your Keras Workflow",
+        description="A guide to using the WandbMetricLogger callback in your Keras and TensorFlow training worflow"
+    )
+    ```
+
+    !!! note
+        In order to include panel grids with runsets and line plots in your report, you need to include
+        YAML metadata regarding the runsets and line plots you want to include in a panel grid in a
+        markdown cell of your notebook in the following format:
+
+        ```yaml
+        ---
+        panelgrid:
+        runsets:
+        - project: report-to-notebook
+            entity: geekyrakshit
+            name: Training-Logs
+        lineplots:
+        - x: batch/batch_step
+            y: batch/accuracy
+        - x: batch/batch_step
+            y: batch/learning_rate
+        - x: batch/batch_step
+            y: batch/loss
+        - x: batch/batch_step
+            y: batch/top@5_accuracy
+        - x: epoch/epoch
+            y: epoch/accuracy
+        - x: epoch/epoch
+            y: epoch/learning_rate
+        - x: epoch/epoch
+            y: epoch/loss
+        - x: epoch/epoch
+            y: epoch/top@5_accuracy
+        - x: epoch/epoch
+            y: epoch/val_accuracy
+        - x: epoch/epoch
+            y: epoch/val_loss
+        - x: epoch/epoch
+            y: epoch/val_top@5_accuracy
+        ---
+        ```
+
+        Currently only line plots are supported inside panel grids.
+
+    Args:
+        filepath (str): Path to an IPython notebook.
+        wandb_project (str): The name of the Weights & Biases project where you're creating the project.
+        wandb_entity (str): The name of the Weights & Biases entity (username or team name).
+        report_title (Optional[str]): The title of the report.
+        description (Optional[str]): The description of the report.
+        width (Optional[str]): Width of the report, one of `"readable"`, `"fixed"`, or `"fluid"`.
+    """
     notebook_cells = _parse_notebook_cells(filepath)
 
     report = wr.Report(
