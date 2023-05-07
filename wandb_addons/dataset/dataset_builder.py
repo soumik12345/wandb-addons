@@ -3,8 +3,6 @@ from typing import Any, Mapping, Optional, Union
 import wandb
 import wandb.apis.reports as wr
 
-# wandb.require("report-editing")
-
 from etils import epath
 import tensorflow_datasets as tfds
 
@@ -29,7 +27,7 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
 
     !!! example "Example Artifacts"
         - [🐒 Monkey Dataset](https://wandb.ai/geekyrakshit/artifact-accessor/artifacts/dataset/monkey_dataset).
-    
+
     ??? example "Example Report"
         <iframe src="https://wandb.ai/geekyrakshit/artifact-accessor/reports/Dataset-monkey-dataset--Vmlldzo0MjgxNTAz" style="border:none;height:1024px;width:100%">
 

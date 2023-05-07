@@ -5,9 +5,11 @@
 
 Weights & Biases Addons is a repository that provides of integrations and utilities that will supercharge your [Weights & Biases](https://wandb.ai/site) workflows. Its a repositpry built and maintained by `wandb` users for `wandb` users.
 
-## WandB Datasets
+## Integrations
 
-A set of utilities for easily accessing datasets for various machine learning tasks using [Weights & Biases artifacts](https://docs.wandb.ai/guides/artifacts).
+### [TensorFlow Datasets](https://www.tensorflow.org/datasets)
+
+A set of utilities for easily accessing datasets for various machine learning tasks using [Weights & Biases artifacts](https://docs.wandb.ai/guides/artifacts) built on top of [**TensorFlow Datasets**](https://www.tensorflow.org/datasets).
 
 In order to install `wandb-addons` along with the dependencies for the dataset utilities, you can run:
 
@@ -21,8 +23,6 @@ pip install wandb-addons[dataset]
 - **[`upload_dataset`](https://soumik12345.github.io/wandb-addons/dataset/dataset_loading/#wandb_addons.dataset.dataset_upload.upload_dataset):** Upload and register a dataset with a TFDS module or a TFDS builder script as a Weights & Biases artifact. This function would verify if a TFDS build/registration is possible with the current specified dataset path and upload it as a Weights & Biases artifact.
 
 - **[`load_dataset`](https://soumik12345.github.io/wandb-addons/dataset/dataset_loading/#wandb_addons.dataset.dataset_loading.load_dataset):** Load a dataset from a wandb artifact. Using this function you can load a dataset hosted as a wandb artifact in a single line of code, and use our powerful data processing methods to quickly get your dataset ready for training in a deep learning model.
-
-## Integrations
 
 ### [🌀 Ciclo](https://github.com/cgarciae/ciclo)
 
@@ -61,6 +61,33 @@ from wandb_addons.monai import WandbStatsHandler, WandbModelCheckpointHandler
 ```
 
 For more information, check out more at the [docs](https://soumik12345.github.io/wandb-addons/monai/monai/).
+
+## Converting IPython Notebooks to [Reports](https://docs.wandb.ai/guides/reports)
+
+A set of utilities to convert an IPython notebook to a Weights & Biases report.
+
+Simply install `wandb-addons` using
+
+```shell
+git clone https://github.com/soumik12345/wandb-addons
+pip install wandb-addons
+```
+
+And you can convert your notebook to a report using the following function:
+
+```python
+from wandb_addons.report import convert_to_wandb_report
+
+convert_to_wandb_report(
+    filepath="./Use_WandbMetricLogger_in_your_Keras_workflow.ipynb",
+    wandb_project="report-to-notebook",
+    wandb_entity="geekyrakshit",
+    report_title="Use WandbMetricLogger in your Keras Workflow",
+    description="A guide to using the WandbMetricLogger callback in your Keras and TensorFlow training worflow"
+)
+```
+
+For more information, check out more at the [docs](https://soumik12345.github.io/wandb-addons/report/).
 
 ## Status
 
