@@ -1,6 +1,7 @@
 import re
 import yaml
-from typing import List, Optional, Union
+import json
+from typing import Any, Dict, List, Optional, Union
 
 from tqdm.auto import tqdm
 
@@ -34,6 +35,19 @@ def _parse_notebook_cells(filepath: str) -> List[str]:
     return cells
 
 
+def _convert_metadata_to_panelgrid(metadata: Dict[str, Any]) -> wr.PanelGrid:
+    runsets = []
+    for runset_metadata in metadata["panelgrid"]["runsets"]:
+        runsets.append(
+            wr.Runset(
+                project=runset_metadata["project"],
+                entity=runset_metadata["entity"],
+                name=runset_metadata["name"],
+            )
+        )
+    return wr.PanelGrid(runsets=runsets)
+
+
 def convert_to_wandb_report(
     filepath: str,
     wandb_project: str,
@@ -58,7 +72,8 @@ def convert_to_wandb_report(
             blocks.append(wr.MarkdownBlock(text=cell["source"]))
         elif cell["type"] == "code":
             blocks.append(wr.MarkdownBlock(text=f"```python\n{cell['source']}\n```"))
-            wr.Runset()
+        elif cell["type"] == "panel_metadata":
+            blocks.append(_convert_metadata_to_panelgrid(metadata=cell["source"]))
 
     report.blocks = blocks
     report.save()
