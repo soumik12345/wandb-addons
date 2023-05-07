@@ -73,7 +73,19 @@ git clone https://github.com/soumik12345/wandb-addons
 pip install wandb-addons
 ```
 
-And you can convert your notebook to a report using the following function:
+You can convert your notebook to a report using the CLI:
+
+```shell
+nb2report \
+    --filepath Use_WandbMetricLogger_in_your_Keras_workflow.ipynb \
+    --wandb_project report-to-notebook \
+    --wandb_entity geekyrakshit \
+    --report_title "Use WandbMetricLogger in your Keras Workflow" \
+    --description "A guide to using the WandbMetricLogger callback in your Keras and TensorFlow training worflow" \
+    --width "readable"
+```
+
+Alternatively, you can also use the Python function:
 
 ```python
 from wandb_addons.report import convert_to_wandb_report

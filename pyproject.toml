@@ -19,7 +19,8 @@ classifiers = [
 dependencies = [
     "wandb>=0.14.0",
     "nbformat",
-    "tqdm>=4.65.0"
+    "tqdm>=4.65.0",
+    "click"
 ]
 
 [project.optional-dependencies]
@@ -66,6 +67,9 @@ jax = [
 
 [tool.setuptools]
 packages = ["wandb_addons"]
+
+[project.scripts]
+nb2report = "wandb_addons.report.cli.convert:convert"
 
 [project.urls]
 homepage = "https://soumik12345.github.io/wandb-addons"

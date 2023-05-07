@@ -6,6 +6,7 @@ theme:
   features:
     - content.code.copy
     - content.code.select
+    - content.tabs.link
 
 plugins:
   - mkdocstrings
