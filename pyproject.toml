@@ -17,7 +17,8 @@ classifiers = [
 ]
 
 dependencies = [
-    "wandb>=0.14.0"
+    "wandb>=0.14.0",
+    "nbformat"
 ]
 
 [project.optional-dependencies]
