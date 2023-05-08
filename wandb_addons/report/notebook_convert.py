@@ -153,9 +153,8 @@ def convert_to_wandb_report(
         --help                Show this message and exit.
         ```
 
-    ??? example "Example"
-        The following report was generated for [this](https://github.com/wandb/examples/blob/master/colabs/keras/Use_WandbMetricLogger_in_your_Keras_workflow.ipynb) notebook:
-        <iframe src="https://wandb.ai/geekyrakshit/report-to-notebook/reports/Use-WandbMetricLogger-in-your-Keras-Workflow--Vmlldzo0Mjg4NTM2" style="border:none;height:1024px;width:100%">
+    !!! example "Example"
+        [Here](https://wandb.ai/geekyrakshit/report-to-notebook/reports/Use-WandbMetricLogger-in-your-Keras-Workflow--Vmlldzo0Mjg4NTM2) is a report was generated for [this](https://github.com/wandb/examples/blob/master/colabs/keras/Use_WandbMetricLogger_in_your_Keras_workflow.ipynb) notebook.
 
     Args:
         filepath (str): Path to an IPython notebook.
