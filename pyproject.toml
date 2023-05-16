@@ -7,7 +7,6 @@ name = "wandb_addons"
 authors = [
   { name="Soumik Rakshit", email="19soumik.rakshit96@gmail.com" },
 ]
-dynamic = ["version"]
 description = "Weights & Biases Addons is a repository consisting of additional unitilities and community contributions for supercharging your Weights & Biases workflows"
 readme = "README.md"
 classifiers = [
@@ -51,8 +50,7 @@ deploy=[
 test = [
     "pytest>=7.1.2"
 ]
-dataset = [
-    "tensorflow-cpu",
+datasets = [
     "tfds-nightly",
     "pillow"
 ]
