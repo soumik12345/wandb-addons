@@ -1,74 +1,18 @@
-[build-system]
-requires = ["setuptools", "setuptools-scm"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "wandb_addons"
-authors = [
-  { name="Soumik Rakshit", email="19soumik.rakshit96@gmail.com" },
-]
+[tool.poetry]
+name = "wandb-addons"
+version = "0.1.0"
 description = "Weights & Biases Addons is a repository consisting of additional unitilities and community contributions for supercharging your Weights & Biases workflows"
+authors = ["Soumik Rakshit <19soumik.rakshit96@gmail.com>"]
 readme = "README.md"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-]
+packages = [{include = "wandb_addons"}]
 
-dependencies = [
-    "wandb>=0.14.0",
-    "nbformat",
-    "tqdm>=4.65.0",
-    "click"
-]
+[tool.poetry.dependencies]
+python = ">=3.8.0,<3.12"
+wandb = "^0.15.2"
+click = "^8.1.3"
+tqdm = "^4.65.0"
+nbformat = "^5.8.0"
+isort = "^5.10.1"
 
-[project.optional-dependencies]
-dev = [
-    "isort>=5.10.1",
-    "black>=22.6.0",
-    "pytest>=7.1.2",
-    "pre-commit"
-]
-docs=[
-    "mkdocs",
-    "mkdocstrings[python]",
-    "mkdocs-material>=9.1.5",
-    "mkdocs-minify-plugin",
-    "mkdocs-glightbox",
-    "mkdocs-jupyter"
-]
-deploy=[
-    "build",
-    "twine",
-    "mkdocs",
-    "mkdocstrings[python]",
-    "mkdocs-material>=9.1.5",
-    "mkdocs-minify-plugin",
-    "mkdocs-glightbox",
-    "mkdocs-jupyter"
-]
-test = [
-    "pytest>=7.1.2"
-]
-datasets = [
-    "tfds-nightly",
-    "pillow"
-]
-monai = [
-    "monai[ignite, nibabel, tensorboard]"
-]
-jax = [
-    "ciclo>=0.1.8",
-    "tensorflow-cpu>=2.0.0",
-    "tensorflow-datasets>=4.0.0"
-]
-
-[tool.setuptools]
-packages = ["wandb_addons"]
-
-[project.scripts]
-nb2report = "wandb_addons.report.cli.convert:convert"
-
-[project.urls]
-homepage = "https://soumik12345.github.io/wandb-addons"
-repository = "https://github.com/soumik12345/wandb-addons"
+[tool.poetry.extras]
+dev = ["isort"]
