@@ -2,8 +2,9 @@ name: Tests
 on:
   pull_request:
     paths:
-      - .github/tests.yml
+      - .github/workflows/tests.yml
       - wandb_addons/**
+      - pyproject.toml
 
 jobs:
   lint:
