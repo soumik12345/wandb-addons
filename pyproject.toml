@@ -39,6 +39,9 @@ dataset = ["tensorflow-datasets", "pillow"]
 monai = ["monai"]
 jax = ["ciclo", "tensorflow-datasets"]
 
+[tool.poetry.scripts]
+nb2report = "wandb_addons.report.cli.convert:convert"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
