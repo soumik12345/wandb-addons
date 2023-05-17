@@ -15,7 +15,7 @@ In order to install `wandb-addons` along with the dependencies for the dataset u
 
 ```shell
 git clone https://github.com/soumik12345/wandb-addons
-pip install wandb-addons[dataset]
+pip install ./wandb-addons[dataset]
 ```
 
 - **[`WandbDatasetBuilder`](https://soumik12345.github.io/wandb-addons/dataset/dataset_loading/#wandb_addons.dataset.dataset_builder.WandbDatasetBuilder):** An abstract class for Dataset builder that enables building a dataset and upload it as a [Weights & Biases Artifact](https://docs.wandb.ai/guides/artifacts).
@@ -32,7 +32,7 @@ In order to install `wandb-addons` along with the dependencies for the ciclo cal
 
 ```shell
 git clone https://github.com/soumik12345/wandb-addons
-pip install wandb-addons[jax]
+pip install ./wandb-addons[jax]
 ```
 
 Once you've installed `wandb-addons`, you can import it using:
@@ -51,7 +51,7 @@ In order to install `wandb-addons` along with the dependencies for the ciclo cal
 
 ```shell
 git clone https://github.com/soumik12345/wandb-addons
-pip install wandb-addons[monai]
+pip install ./wandb-addons[monai]
 ```
 
 Once you've installed `wandb-addons`, you can import it using:
@@ -70,7 +70,7 @@ Simply install `wandb-addons` using
 
 ```shell
 git clone https://github.com/soumik12345/wandb-addons
-pip install wandb-addons
+pip install ./wandb-addons
 ```
 
 You can convert your notebook to a report using the CLI:

@@ -27,7 +27,9 @@ class TableCreator:
     ):
         self.dataset_builder = dataset_builder
         self.dataset_info = dataset_info
-        self.max_visualizations_per_split = max_visualizations_per_split
+        self.max_visualizations_per_split = (
+            0 if max_visualizations_per_split is None else max_visualizations_per_split
+        )
         self.features = flatten_nested_dictionaries(self.dataset_info.features)
         self.splits = flatten_nested_dictionaries(self.dataset_info.splits)
         self._columns = ["Split"] + list(self.features.keys())
