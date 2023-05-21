@@ -26,7 +26,8 @@ mkdocs-minify-plugin = "^0.6.4"
 mkdocs-glightbox = "^0.3.4"
 mkdocs-jupyter = "^0.24.1"
 tensorflow-datasets = "^4.9.2"
-tf-explain = "0.3.1"
+tf-explain = "^0.3.1"
+opencv-python = "^4.7.0.72"
 pillow = "^9.5.0"
 monai = {extras = ["ignite", "nibabel", "tensorboard"], version = "^1.1.0"}
 ciclo = "^0.1.8"
@@ -39,7 +40,7 @@ test = ["pytest"]
 dataset = ["tensorflow-datasets", "pillow"]
 monai = ["monai"]
 jax = ["ciclo", "tensorflow-datasets"]
-tf = ["tf-explain", "tensorflow-datasets"]
+tf = ["tf-explain", "tensorflow-datasets", "opencv-python"]
 
 [tool.poetry.scripts]
 nb2report = "wandb_addons.report.cli.convert:convert"

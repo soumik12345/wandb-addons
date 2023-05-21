@@ -38,14 +38,14 @@ class WandbClassificationCallback(WandbEvalCallback):
     """
     def __init__(
         self,
-        validloader,
+        validation_dataset,
         data_table_columns: Optional[List[str]] = None,
         pred_table_columns: Optional[List[str]] = None,
         num_samples: int = 100,
         id2label: dict = None,
         one_hot_label: bool = True,
     ):
-        self.val_data = validloader.unbatch().take(num_samples)
+        self.val_data = validation_dataset.unbatch().take(num_samples)
         self.id2label = id2label
         self.one_hot_label = one_hot_label
 
