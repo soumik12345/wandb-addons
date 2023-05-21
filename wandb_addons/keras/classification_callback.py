@@ -1,23 +1,26 @@
 from typing import Dict, List, Optional
 
+import cv2
 import numpy as np
 import tensorflow as tf
+from tf_explain.core.grad_cam import GradCAM
 
 import wandb
 from wandb.keras import WandbEvalCallback
 
 
 class WandbClassificationCallback(WandbEvalCallback):
-    """Keras callback for Image Classification Workflow. Logs the images along with the ground-truth
-    and predicted label in Weights & Biases Tables for interactive data visualization and analysis.
+    """Keras callback for Image Classification Workflow. Logs the images along with the ground-truth labels,
+    predicted labels and explainability maps in [Weights & Biases Tables](https://docs.wandb.ai/guides/data-vis)
+    for interactive data visualization and analysis.
 
     **Usage:**
 
     ```python
-    from wandb_addons.keras import WandbClassificationCallback
+    from wandb_addons.keras import WandbExplainabilityCallback
 
-    classification_callback = WandbClassificationCallback(validation_dataset=validation_dataset)
-    model.fit(train_dataset, validation_data=validation_dataset, callbacks=[classification_callback])
+    explainability_callback = WandbExplainabilityCallback(validation_dataset=validation_dataset)
+    model.fit(train_dataset, validation_data=validation_dataset, callbacks=[explainability_callback])
     ```
 
     !!! note "Note"
@@ -33,30 +36,24 @@ class WandbClassificationCallback(WandbEvalCallback):
         id2label (Dict[int, str]): Dictionary mapping the label ids to label names.
         one_hot_label (bool): Whether the labels are one-hot encoded in the `validation_dataset` or not.
     """
-
     def __init__(
         self,
-        validation_dataset: tf.data.Dataset,
+        validloader,
         data_table_columns: Optional[List[str]] = None,
         pred_table_columns: Optional[List[str]] = None,
         num_samples: int = 100,
-        id2label: Dict[int, str] = None,
+        id2label: dict = None,
         one_hot_label: bool = True,
     ):
-        self.val_data = validation_dataset.unbatch().take(num_samples)
+        self.val_data = validloader.unbatch().take(num_samples)
         self.id2label = id2label
         self.one_hot_label = one_hot_label
 
         data_table_columns = ["Index", "Image", "Label"]
-        pred_table_columns = (
-            [
-                "Epoch",
-                "Idx",
-                "Image",
-                "Label",
-                "Prediction",
-            ],
-        )
+        pred_table_columns = ["Epoch", "Index", "Image", "Label", "Prediction"]
+
+        self.explainer = GradCAM()
+        pred_table_columns.append("GradCAM")
 
         super().__init__(data_table_columns, pred_table_columns)
 
@@ -71,11 +68,7 @@ class WandbClassificationCallback(WandbEvalCallback):
                 label = self.id2label.get(label, None)
                 # TODO: Add warning if label is None
 
-            data = [
-                idx,
-                wandb.Image(image),
-                label,
-            ]
+            data = [idx, wandb.Image(image), label]
 
             self.data_table.add_data(*data)
 
@@ -83,6 +76,8 @@ class WandbClassificationCallback(WandbEvalCallback):
         # Get predictions
         preds = self._inference()
         table_idxs = self.data_table_ref.get_index()
+
+        heatmaps = self._gradcam_explain()
 
         for idx in table_idxs:
             pred = preds[idx]
@@ -94,6 +89,8 @@ class WandbClassificationCallback(WandbEvalCallback):
                 self.data_table_ref.data[idx][2],
                 pred,
             ]
+
+            data.append(wandb.Image(heatmaps[idx]))
 
             self.pred_table.add_data(*data)
 
@@ -109,3 +106,22 @@ class WandbClassificationCallback(WandbEvalCallback):
             preds.append(argmax_pred)
 
         return preds
+
+    def _gradcam_explain(self):
+        heatmaps = []
+        for image, label in self.val_data:
+            image = tf.expand_dims(image, axis=0).numpy()
+            label = np.argmax(label) if self.one_hot_label else label.numpy()
+
+            heatmap = self.explainer.explain(
+                validation_data=(image, label),
+                model=self.model,
+                class_index=label,  # class index for the ground truth label (we can experiment with predicted label too)
+                layer_name=None,
+                use_guided_grads=True,
+                colormap=cv2.COLORMAP_VIRIDIS,
+                image_weight=0.7,
+            )
+            heatmaps.append(heatmap)
+
+        return heatmaps
