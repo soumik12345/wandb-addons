@@ -1,4 +1,3 @@
-import cv2
 import numpy as np
 import tensorflow as tf
 
@@ -6,7 +5,7 @@ import wandb
 from wandb.keras import WandbEvalCallback
 
 
-class WandbClfEvalCallback(WandbEvalCallback):
+class WandbClassificationCallback(WandbEvalCallback):
     def __init__(
         self,
         validloader,
