@@ -34,6 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
+          apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
           pip install -U pip
           pip install ".[dataset, tf, test]"
           python -c "import tensorflow as tf"
