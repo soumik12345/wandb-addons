@@ -33,14 +33,14 @@ monai = {extras = ["ignite", "nibabel", "tensorboard"], version = "^1.1.0"}
 ciclo = "^0.1.8"
 
 [tool.poetry.extras]
-dev = ["isort", "black", "pytest", "pre-commit"]
-docs = ["mkdocs", "mkdocstrings", "mkdocs-material", "mkdocs-minify-plugin", "mkdocs-glightbox", "mkdocs-jupyter"]
-deploy = [ "build", "twine", "mkdocs", "mkdocstrings", "mkdocs-material", "mkdocs-minify-plugin", "mkdocs-glightbox", "mkdocs-jupyter"]
-test = ["pytest"]
-dataset = ["tensorflow-datasets", "pillow"]
-monai = ["monai"]
-jax = ["ciclo", "tensorflow-datasets"]
-tf = ["tf-explain", "tensorflow-datasets", "opencv-python"]
+dev = ["wandb", "isort", "black", "pytest", "pre-commit"]
+docs = ["wandb", "mkdocs", "mkdocstrings", "mkdocs-material", "mkdocs-minify-plugin", "mkdocs-glightbox", "mkdocs-jupyter"]
+deploy = ["wandb", "build", "twine", "mkdocs", "mkdocstrings", "mkdocs-material", "mkdocs-minify-plugin", "mkdocs-glightbox", "mkdocs-jupyter"]
+test = ["wandb", "pytest"]
+dataset = ["wandb", "tensorflow-datasets", "pillow"]
+monai = ["wandb", "monai"]
+jax = ["wandb", "ciclo", "tensorflow-datasets"]
+tf = ["wandb", "tf-explain", "tensorflow-datasets", "opencv-python"]
 
 [tool.poetry.scripts]
 nb2report = "wandb_addons.report.cli.convert:convert"
