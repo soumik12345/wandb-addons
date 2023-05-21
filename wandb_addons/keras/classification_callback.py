@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import numpy as np
 import tensorflow as tf
@@ -11,14 +11,8 @@ class WandbClassificationCallback(WandbEvalCallback):
     def __init__(
         self,
         validation_dataset: tf.data.Dataset,
-        data_table_columns: List[str] = ["Index", "Image", "Label"],
-        pred_table_columns: List[str] = [
-            "Epoch",
-            "Idx",
-            "Image",
-            "Label",
-            "Prediction",
-        ],
+        data_table_columns: Optional[List[str]] = None,
+        pred_table_columns: Optional[List[str]] = None,
         num_samples: int = 100,
         id2label: Dict[int, str] = None,
         one_hot_label: bool = True,
@@ -40,8 +34,10 @@ class WandbClassificationCallback(WandbEvalCallback):
 
         Args:
             validation_dataset (tf.data.Dataset): The batched validation dataset.
-            data_table_columns (List[str]): List of data table columns.
-            pred_table_columns (List[str]): List of prediction table columns.
+            data_table_columns (Optional[List[str]]): List of data table columns. By default, it is set to
+                `["Index", "Image", "Label"]`.
+            pred_table_columns (Optional[List[str]]): List of prediction table columns. By default, it is set to
+                `["Epoch", "Idx", "Image", "Label", "Prediction"]`.
             num_samples (int): Maximum number of samples to be visualized.
             id2label (Dict[int, str]): Dictionary mapping the label ids to label names.
             one_hot_label (bool): Whether the labels are one-hot encoded in the `validation_dataset` or not.
@@ -49,6 +45,17 @@ class WandbClassificationCallback(WandbEvalCallback):
         self.val_data = validation_dataset.unbatch().take(num_samples)
         self.id2label = id2label
         self.one_hot_label = one_hot_label
+
+        data_table_columns = ["Index", "Image", "Label"]
+        pred_table_columns = (
+            [
+                "Epoch",
+                "Idx",
+                "Image",
+                "Label",
+                "Prediction",
+            ],
+        )
 
         super().__init__(data_table_columns, pred_table_columns)
 
