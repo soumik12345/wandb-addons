@@ -9,6 +9,14 @@ import wandb
 from wandb.keras import WandbEvalCallback
 
 
+_EXPLAINABILITY_MAPPING = {
+    "gradcam": {
+        "class_name": GradCAM,
+        "column_names": ["GradCAM-Heatmap"],
+    },
+}
+
+
 class WandbClassificationCallback(WandbEvalCallback):
     """Keras callback for Image Classification Workflow. Logs the images along with the ground-truth labels,
     predicted labels and explainability maps in [Weights & Biases Tables](https://docs.wandb.ai/guides/data-vis)
@@ -40,21 +48,31 @@ class WandbClassificationCallback(WandbEvalCallback):
     def __init__(
         self,
         validation_dataset,
+        explainability_method: str,
         data_table_columns: Optional[List[str]] = None,
         pred_table_columns: Optional[List[str]] = None,
         num_samples: int = 100,
         id2label: dict = None,
         one_hot_label: bool = True,
+        **kwargs
     ):
         self.val_data = validation_dataset.unbatch().take(num_samples)
         self.id2label = id2label
         self.one_hot_label = one_hot_label
 
-        data_table_columns = ["Index", "Image", "Label"]
-        pred_table_columns = ["Epoch", "Index", "Image", "Label", "Prediction"]
+        data_table_columns = ["Index", "Image", "Ground-Truth"]
+        pred_table_columns = [
+            "Epoch",
+            "Index",
+            "Image",
+            "Ground-Truth",
+            "Predicted-Label",
+        ]
 
-        self.explainer = GradCAM()
-        pred_table_columns.append("GradCAM")
+        self.alias = explainability_method
+        self.explainer = _EXPLAINABILITY_MAPPING[self.alias]["class_name"](**kwargs)
+        self.explainer_columns = _EXPLAINABILITY_MAPPING[self.alias]["column_names"]
+        pred_table_columns += self.explainer_columns
 
         super().__init__(data_table_columns, pred_table_columns)
 
@@ -78,7 +96,7 @@ class WandbClassificationCallback(WandbEvalCallback):
         preds = self._inference()
         table_idxs = self.data_table_ref.get_index()
 
-        heatmaps = self._gradcam_explain()
+        explained_results = self._explain()
 
         for idx in table_idxs:
             pred = preds[idx]
@@ -91,7 +109,8 @@ class WandbClassificationCallback(WandbEvalCallback):
                 pred,
             ]
 
-            data.append(wandb.Image(heatmaps[idx]))
+            for col_name in self.explainer_columns:
+                data.append(explained_results[idx][col_name])
 
             self.pred_table.add_data(*data)
 
@@ -108,21 +127,22 @@ class WandbClassificationCallback(WandbEvalCallback):
 
         return preds
 
-    def _gradcam_explain(self):
-        heatmaps = []
+    def _explain(self):
+        explained_results = []
         for image, label in self.val_data:
             image = tf.expand_dims(image, axis=0).numpy()
             label = np.argmax(label) if self.one_hot_label else label.numpy()
 
-            heatmap = self.explainer.explain(
-                validation_data=(image, label),
-                model=self.model,
-                class_index=label,  # class index for the ground truth label (we can experiment with predicted label too)
-                layer_name=None,
-                use_guided_grads=True,
-                colormap=cv2.COLORMAP_VIRIDIS,
-                image_weight=0.7,
-            )
-            heatmaps.append(heatmap)
+            if self.explainer.alias == "gradcam":
+                heatmap = self.explainer_entity.explain(
+                    validation_data=(image, label),
+                    model=self.model,
+                    class_index=label,
+                    layer_name=None,
+                    use_guided_grads=True,
+                    colormap=cv2.COLORMAP_VIRIDIS,
+                    image_weight=0.7,
+                )
+                explained_results.append({"GradCAM-Heatmap": wandb.Image(heatmap)})
 
-        return heatmaps
+        return explained_results
