@@ -8,6 +8,32 @@ from wandb.keras import WandbEvalCallback
 
 
 class WandbClassificationCallback(WandbEvalCallback):
+    """Keras callback for Image Classification Workflow. Logs the images along with the ground-truth
+    and predicted label in Weights & Biases Tables for interactive data visualization and analysis.
+
+    **Usage:**
+
+    ```python
+    from wandb_addons.keras import WandbClassificationCallback
+
+    classification_callback = WandbClassificationCallback(validation_dataset=validation_dataset)
+    model.fit(train_dataset, validation_data=validation_dataset, callbacks=[classification_callback])
+    ```
+
+    !!! note "Note"
+        Using this callback required a WandB run to be initialized by calling `wandb.init()`.
+
+    Args:
+        validation_dataset (tf.data.Dataset): The batched validation dataset.
+        data_table_columns (Optional[List[str]]): List of data table columns. By default, it is set to
+            `["Index", "Image", "Label"]`.
+        pred_table_columns (Optional[List[str]]): List of prediction table columns. By default, it is set to
+            `["Epoch", "Idx", "Image", "Label", "Prediction"]`.
+        num_samples (int): Maximum number of samples to be visualized.
+        id2label (Dict[int, str]): Dictionary mapping the label ids to label names.
+        one_hot_label (bool): Whether the labels are one-hot encoded in the `validation_dataset` or not.
+    """
+
     def __init__(
         self,
         validation_dataset: tf.data.Dataset,
@@ -17,31 +43,6 @@ class WandbClassificationCallback(WandbEvalCallback):
         id2label: Dict[int, str] = None,
         one_hot_label: bool = True,
     ):
-        """Keras callback for Image Classification Workflow. Logs the images along with the ground-truth
-        and predicted label in Weights & Biases Tables for interactive data visualization and analysis.
-
-        **Usage:**
-
-        ```python
-        from wandb_addons.keras import WandbClassificationCallback
-
-        classification_callback = WandbClassificationCallback(validation_dataset=validation_dataset)
-        model.fit(train_dataset, validation_data=validation_dataset, callbacks=[classification_callback])
-        ```
-
-        !!! note "Note"
-            Using this callback required a WandB run to be initialized by calling `wandb.init()`.
-
-        Args:
-            validation_dataset (tf.data.Dataset): The batched validation dataset.
-            data_table_columns (Optional[List[str]]): List of data table columns. By default, it is set to
-                `["Index", "Image", "Label"]`.
-            pred_table_columns (Optional[List[str]]): List of prediction table columns. By default, it is set to
-                `["Epoch", "Idx", "Image", "Label", "Prediction"]`.
-            num_samples (int): Maximum number of samples to be visualized.
-            id2label (Dict[int, str]): Dictionary mapping the label ids to label names.
-            one_hot_label (bool): Whether the labels are one-hot encoded in the `validation_dataset` or not.
-        """
         self.val_data = validation_dataset.unbatch().take(num_samples)
         self.id2label = id2label
         self.one_hot_label = one_hot_label
