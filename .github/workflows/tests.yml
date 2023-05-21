@@ -35,9 +35,13 @@ jobs:
       - uses: actions/checkout@v3
       - run: |
           pip install -U pip
-          pip install ".[dataset, test]"
+          pip install ".[dataset, tf, test]"
           python -c "import tensorflow as tf"
           python -c "import tensorflow_datasets as tfds"
+          python -c "from wandb_addons.dataset import load_dataset"
+          python -c "from wandb_addons.dataset import upload_dataset"
+          python -c "from wandb_addons.dataset import WandbDatasetBuilder"
+          python -c "from wandb_addons.keras import WandbClassificationCallback"
           pytest -s .
 
   run-jax-tests:
