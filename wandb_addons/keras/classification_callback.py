@@ -36,6 +36,7 @@ class WandbClassificationCallback(WandbEvalCallback):
         id2label (Dict[int, str]): Dictionary mapping the label ids to label names.
         one_hot_label (bool): Whether the labels are one-hot encoded in the `validation_dataset` or not.
     """
+
     def __init__(
         self,
         validation_dataset,
