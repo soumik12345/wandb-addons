@@ -1,5 +1,11 @@
 import wandb
-from wandb.sdk.data_types.trace_tree import SpanKind, StatusCode, Result, Span, WBTraceTree
+from wandb.sdk.data_types.trace_tree import (
+    SpanKind,
+    StatusCode,
+    Result,
+    Span,
+    WBTraceTree,
+)
 
 
 class Trace:
@@ -20,17 +26,17 @@ class Trace:
     """
 
     def __init__(
-            self,
-            name: str,
-            kind: str = None,
-            status_code: str = None,
-            status_message: str = None,
-            metadata: dict = None,
-            start_time_ms: int = None,
-            end_time_ms: int = None,
-            inputs: dict = None,
-            outputs: dict = None,
-            model_dict: dict = None,
+        self,
+        name: str,
+        kind: str = None,
+        status_code: str = None,
+        status_message: str = None,
+        metadata: dict = None,
+        start_time_ms: int = None,
+        end_time_ms: int = None,
+        inputs: dict = None,
+        outputs: dict = None,
+        model_dict: dict = None,
     ):
 
         self._span = self._assert_and_create_span(
@@ -49,23 +55,23 @@ class Trace:
         self._model_dict = model_dict
 
     def _assert_and_create_span(
-            self,
-            name: str,
-            kind: str,
-            status_code: str,
-            status_message: str = None,
-            metadata: dict = None,
-            start_time_ms: int = None,
-            end_time_ms: int = None,
-            inputs: dict = None,
-            outputs: dict = None,
+        self,
+        name: str,
+        kind: str,
+        status_code: str,
+        status_message: str = None,
+        metadata: dict = None,
+        start_time_ms: int = None,
+        end_time_ms: int = None,
+        inputs: dict = None,
+        outputs: dict = None,
     ):
 
         assert (
-                kind in SpanKind.__members__
+            kind in SpanKind.__members__
         ), "Invalid span kind, can be one of 'LLM', 'AGENT', 'CHAIN', 'TOOL'"
         assert (
-                status_code in StatusCode.__members__
+            status_code in StatusCode.__members__
         ), "Invalid status code, can be one of 'SUCCESS' or 'ERROR'"
 
         if inputs is not None and outputs is not None:
@@ -87,8 +93,8 @@ class Trace:
         )
 
     def add_child(
-            self,
-            child: "Trace",
+        self,
+        child: "Trace",
     ) -> "Trace":
         """Add a child span to the current span of the trace."""
         self._span.add_child_span(child._span)
@@ -104,7 +110,7 @@ class Trace:
             self._span.attributes.update(metadata)
         return self
 
-    def add_result(self, inputs: dict, outputs: dict) -> "Trace":
+    def add_inputs_and_outputs(self, inputs: dict, outputs: dict) -> "Trace":
         """Add a result to the span of the current trace."""
         if self._span.results == [None]:
             result = Result(inputs=inputs, outputs=outputs)
@@ -118,6 +124,6 @@ class Trace:
         """Log the trace to a wandb run"""
         trace_tree = WBTraceTree(self._span, self._model_dict)
         assert (
-                wandb.run is not None
+            wandb.run is not None
         ), "You must call wandb.init() before logging a trace"
         wandb.run.log({name: trace_tree})
