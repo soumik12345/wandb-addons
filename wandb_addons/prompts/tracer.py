@@ -1,3 +1,5 @@
+from typing import Optional
+
 import wandb
 from wandb.sdk.data_types.trace_tree import (
     SpanKind,
@@ -57,23 +59,25 @@ class Trace:
     def _assert_and_create_span(
         self,
         name: str,
-        kind: str,
-        status_code: str,
-        status_message: str = None,
-        metadata: dict = None,
-        start_time_ms: int = None,
-        end_time_ms: int = None,
-        inputs: dict = None,
-        outputs: dict = None,
+        kind: Optional[str] = None,
+        status_code: Optional[str] = None,
+        status_message: Optional[str] = None,
+        metadata: Optional[dict] = None,
+        start_time_ms: Optional[int] = None,
+        end_time_ms: Optional[int] = None,
+        inputs: Optional[dict] = None,
+        outputs: Optional[dict] = None,
     ):
-
-        assert (
-            kind in SpanKind.__members__
-        ), "Invalid span kind, can be one of 'LLM', 'AGENT', 'CHAIN', 'TOOL'"
-        assert (
-            status_code in StatusCode.__members__
-        ), "Invalid status code, can be one of 'SUCCESS' or 'ERROR'"
-
+        if kind is not None:
+            assert (
+                kind.upper() in SpanKind.__members__
+            ), "Invalid span kind, can be one of 'LLM', 'AGENT', 'CHAIN', 'TOOL'"
+            kind = SpanKind(kind.upper())
+        if status_code is not None:
+            assert (
+                status_code.upper() in StatusCode.__members__
+            ), "Invalid status code, can be one of 'SUCCESS' or 'ERROR'"
+            status_code = StatusCode(status_code.upper())
         if inputs is not None and outputs is not None:
             assert isinstance(inputs, dict), "Inputs must be a dictionary"
             assert isinstance(outputs, dict), "Outputs must be a dictionary"
@@ -83,8 +87,8 @@ class Trace:
 
         return Span(
             name=name,
-            span_kind=SpanKind(kind),
-            status_code=StatusCode(status_code),
+            span_kind=kind,
+            status_code=status_code,
             status_message=status_message,
             attributes=metadata,
             start_time_ms=start_time_ms,
