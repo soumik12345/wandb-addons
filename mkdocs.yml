@@ -46,6 +46,7 @@ nav:
   - 'Integrations':
     - 'Ciclo': 'ciclo/ciclo.md'
     - 'MonAI': 'monai/monai.md'
+  - 'Prompts': 'prompts/tracer.md'
   - 'Utils': 'utils.md'
 
 repo_url: https://github.com/soumik12345/wandb-addons
