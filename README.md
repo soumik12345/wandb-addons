@@ -101,6 +101,12 @@ convert_to_wandb_report(
 
 For more information, check out more at the [docs](https://soumik12345.github.io/wandb-addons/report/).
 
+## Trace
+A high level API for Tracing your LLMs workflows with [Weights & Biases Prompts](https://wandb.ai/site/prompts).
+
+You can use the `Trace` class to create objects that can be logged as a WBTraceTree media type. 
+For a more detailed walkthrough please look at the [quickstart tutorial](docs/prompts/examples/Trace_QuickStart.ipynb) in the examples directory 
+
 ## Status
 
 `wandb-addons` is still in early development, the API for integrations and utilities is subject to change, expect things to break. If you are interested in contributing, please feel free to open an issue and/or raise a pull request.
