@@ -40,7 +40,6 @@ class Trace:
         outputs: dict = None,
         model_dict: dict = None,
     ):
-
         self._span = self._assert_and_create_span(
             name=name,
             kind=kind,
