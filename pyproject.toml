@@ -10,6 +10,7 @@ packages = [{include = "wandb_addons"}]
 python = ">=3.8.0,<3.12"
 wandb = "^0.15.4"
 click = "^8.1.3"
+datasets = "^2.13.0"
 tqdm = "^4.65.0"
 nbformat = "^5.9.0"
 poetry = "^1.5.1"
@@ -36,7 +37,7 @@ dev = ["isort", "black", "pytest", "pre-commit"]
 docs = ["mkdocs", "mkdocstrings", "mkdocs-material", "mkdocs-minify-plugin", "mkdocs-glightbox", "mkdocs-jupyter", "jupyter"]
 deploy = [ "build", "twine", "mkdocs", "mkdocstrings", "mkdocs-material", "mkdocs-minify-plugin", "mkdocs-glightbox", "mkdocs-jupyter"]
 test = ["pytest"]
-dataset = ["tensorflow-datasets", "pillow"]
+dataset = ["datasets", "pillow"]
 monai = ["monai"]
 jax = ["ciclo", "tensorflow-datasets"]
 
