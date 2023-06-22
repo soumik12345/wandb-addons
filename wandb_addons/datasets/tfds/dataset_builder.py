@@ -265,7 +265,7 @@ class WandbTFDSDatasetBuilder(tfds.core.GeneratorBasedBuilder):
             wr.MarkdownBlock(
                 f"""
             ```python
-            import from wandb_addons.dataset import load_dataset
+            from wandb_addons.dataset import load_dataset
 
             datasets, dataset_builder_info = load_dataset("{wandb.run.entity}/{wandb.run.project}/{self.name}:tfrecord")
             ```
