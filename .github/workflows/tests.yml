@@ -26,7 +26,7 @@ jobs:
           python -c "from wandb_addons.monai import WandbStatsHandler, WandbModelCheckpointSaver"
 
   run-keras-tests:
-    name: Check if TensorFlow and TFDS tests pass
+    name: Check if TensorFlow tests pass
     runs-on: ubuntu-latest
     env:
       WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
@@ -38,7 +38,20 @@ jobs:
           pip install ".[dataset, test]"
           python -c "import tensorflow as tf"
           python -c "import tensorflow_datasets as tfds"
-          pytest -s .
+  
+  run-datasets-tests:
+    name: Check if Datatsets tests pass
+    runs-on: ubuntu-latest
+    env:
+      WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+    container: tensorflow/tensorflow
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          pip install -U pip
+          pip install ".[dataset, test]"
+          python -c "import tensorflow_datasets as tfds"
+          python -c "import datasets"
 
   run-jax-tests:
     name: Check if JAX, Flax and Cicl tests pass
