@@ -20,7 +20,7 @@ from .utils import (
 )
 
 
-def _load_dataset_from_tfds_module(
+def _load_tfds_dataset_from_tfds_module(
     artifact_address: str,
     artifact_dir: str,
     dataset_name: str,
@@ -67,7 +67,7 @@ def _load_dataset_from_tfds_module(
     return dataset_splits, dataset_builder_info
 
 
-def load_dataset(
+def load_tfds_dataset(
     artifact_address: str,
     artifact_type: Optional[str] = "dataset",
     remove_redundant_data_files: bool = True,
@@ -83,13 +83,13 @@ def load_dataset(
     **Usage:**
 
     ```python
-    from wandb_addons.dataset import load_dataset
+    from wandb_addons.dataset import load_tfds_dataset
 
-    datasets, dataset_builder_info = load_dataset("geekyrakshit/artifact-accessor/monkey_species:v0")
+    datasets, dataset_builder_info = load_tfds_dataset("geekyrakshit/artifact-accessor/monkey_species:v0")
     ```
 
     !!! example "Example notebooks:"
-        - [🔥 Data Loading with WandB Artifacts 🪄🐝](../examples/load_dataset).
+        - [🔥 Data Loading with WandB Artifacts 🪄🐝](../examples/load_tfds_dataset).
 
     Args:
         artifact_address (str): A human-readable name for the artifact, which is how you can
@@ -126,7 +126,7 @@ def load_dataset(
         wandb.termwarn(
             "Failed to detect TFRecords in the artifact. Attempting to build tfrecords"
         )
-        dataset_splits, dataset_builder_info = _load_dataset_from_tfds_module(
+        dataset_splits, dataset_builder_info = _load_tfds_dataset_from_tfds_module(
             artifact_address,
             artifact_dir,
             dataset_name,

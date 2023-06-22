@@ -10,7 +10,7 @@ from .table_creation import TableCreator
 from ..utils import flatten_nested_dictionaries
 
 
-class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
+class WandbTFDSDatasetBuilder(tfds.core.GeneratorBasedBuilder):
     """An abstract class for Dataset builder that enables building a dataset and upload it as a
     [Weights & Biases Artifact](https://docs.wandb.ai/guides/artifacts). It expects subclasses
     to override the following functions:
@@ -39,10 +39,10 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
     import tensorflow_datasets as tfds
 
     import wandb
-    from wandb_addons.dataset import WandbDatasetBuilder
+    from wandb_addons.dataset import WandbTFDSDatasetBuilder
 
 
-    class MonkeyDatasetBuilder(WandbDatasetBuilder):
+    class MonkeyDatasetBuilder(WandbTFDSDatasetBuilder):
         def __init__(
             self,
             *,
@@ -155,7 +155,7 @@ class WandbDatasetBuilder(tfds.core.GeneratorBasedBuilder):
     ):
         if wandb.run is None:
             raise wandb.Error(
-                "You must call `wandb.init()` before instantiating a subclass of `WandbDatasetBuilder`"
+                "You must call `wandb.init()` before instantiating a subclass of `WandbTFDSDatasetBuilder`"
             )
 
         self.name = name

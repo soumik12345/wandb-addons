@@ -1,6 +1,6 @@
 import unittest
 
-from wandb_addons.dataset import load_dataset
+from wandb_addons.datasets import load_dataset
 
 
 class DatasetLoadingFromTFDSModuleTestCase(unittest.TestCase):

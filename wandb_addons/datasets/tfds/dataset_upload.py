@@ -10,7 +10,7 @@ from .utils import (
 from ..utils import upload_wandb_artifact
 
 
-def upload_dataset(
+def upload_tfds_dataset(
     dataset_name: str,
     dataset_path: str,
     aliases: Optional[List[str]] = None,
@@ -28,13 +28,13 @@ def upload_dataset(
 
     ```python
     import wandb
-    from wandb_addons.dataset import upload_dataset
+    from wandb_addons.dataset import upload_tfds_dataset
 
     # Initialize a W&B Run
-    wandb.init(project="my-awesome-project", job_type="upload_dataset")
+    wandb.init(project="my-awesome-project", job_type="upload_tfds_dataset")
 
     # Note that we should set our dataset name as the name of the artifact
-    upload_dataset(dataset_name="my_awesome_dataset", dataset_path="./my/dataset/path")
+    upload_tfds_dataset(dataset_name="my_awesome_dataset", dataset_path="./my/dataset/path")
     ```
 
     Args:
