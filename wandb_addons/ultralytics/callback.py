@@ -33,11 +33,11 @@ class WandBUltralyticsCallback:
         self.model = copy.deepcopy(trainer.model)
         self.predictor.setup_model(model=self.model, verbose=False)
         self.train_validation_table = plot_validation_results(
-            dataloader,
-            class_label_map,
-            self.predictor,
-            self.train_validation_table,
-            trainer.epoch,
+            dataloader=dataloader,
+            class_label_map=class_label_map,
+            predictor=self.predictor,
+            table=self.train_validation_table,
+            epoch=trainer.epoch,
         )
 
     def on_train_end(self, trainer: DetectionTrainer):
@@ -49,7 +49,10 @@ class WandBUltralyticsCallback:
         class_label_map = validator.names
         self.predictor.setup_model(model=self.model, verbose=False)
         self.validation_table = plot_validation_results(
-            dataloader, class_label_map, self.predictor, self.validation_table
+            dataloader=dataloader,
+            class_label_map=class_label_map,
+            predictor=self.predictor,
+            table=self.validation_table,
         )
         wandb.log({"Validation-Table": self.validation_table})
 
