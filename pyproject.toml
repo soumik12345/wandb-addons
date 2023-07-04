@@ -48,6 +48,12 @@ nb2report = "wandb_addons.report.cli.convert:convert"
 [tool.black]
 line-length = 88
 
+[tool.flake8]
+max-line-length = 88
+
+[tool.isort]
+line_length = 88
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
