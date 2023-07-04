@@ -151,7 +151,9 @@ def plot_validation_results(
     data_idx = 0
     for batch_idx, batch in enumerate(dataloader):
         for img_idx, image_path in enumerate(batch["im_file"]):
-            _, prediction_box_data, mean_confidence_map = plot_predictions(predictor(image_path)[0])
+            _, prediction_box_data, mean_confidence_map = plot_predictions(
+                predictor(image_path)[0]
+            )
             try:
                 ground_truth_data = get_ground_truth_annotations(
                     img_idx, image_path, batch, class_label_map
