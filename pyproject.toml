@@ -40,9 +40,13 @@ test = ["pytest"]
 dataset = ["tensorflow-datasets", "pillow"]
 monai = ["monai"]
 jax = ["ciclo", "tensorflow-datasets"]
+yolo = ["ultralytics"]
 
 [tool.poetry.scripts]
 nb2report = "wandb_addons.report.cli.convert:convert"
+
+[tool.black]
+line-length = 88
 
 [build-system]
 requires = ["poetry-core"]
