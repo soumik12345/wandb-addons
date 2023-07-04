@@ -2537,8 +2537,8 @@ files = [
 [package.dependencies]
 numpy = [
     {version = ">1.20", markers = "python_version <= \"3.9\""},
-    {version = ">=1.23.3", markers = "python_version > \"3.10\""},
     {version = ">=1.21.2", markers = "python_version > \"3.9\""},
+    {version = ">=1.23.3", markers = "python_version > \"3.10\""},
 ]
 
 [package.extras]
@@ -5629,8 +5629,9 @@ docs = ["jupyter", "mkdocs", "mkdocs-glightbox", "mkdocs-jupyter", "mkdocs-mater
 jax = ["ciclo", "tensorflow-datasets"]
 monai = ["monai"]
 test = ["pytest"]
+yolo = ["ultralytics"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.0,<3.12"
-content-hash = "6b8fd18b7e172a3b6966a2d0a1ded278d66137fd342678d2e0a6036fada7f451"
+content-hash = "c74cffd75a69d4a6240b7f4cae38fbae276012ffe5f3ed7c13440df45b5415c1"

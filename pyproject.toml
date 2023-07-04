@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Weights & Biases Addons is a repository consisting of additional unitilities and community contributions for supercharging your Weights & Biases workflows"
 authors = ["Soumik Rakshit <19soumik.rakshit96@gmail.com>"]
 readme = "README.md"
-packages = [{include = "wandb_addons"}]
+packages = [{ include = "wandb_addons" }]
 
 [tool.poetry.dependencies]
 python = ">=3.8.0,<3.12"
@@ -20,22 +20,39 @@ pre-commit = "^3.3.3"
 build = "^0.10.0"
 twine = "^4.0.2"
 mkdocs = "^1.4.3"
-mkdocstrings = {extras = ["python"], version = "^0.22.0"}
+mkdocstrings = { extras = ["python"], version = "^0.22.0" }
 mkdocs-material = "^9.1.15"
 mkdocs-minify-plugin = "^0.6.4"
 mkdocs-glightbox = "^0.3.4"
 mkdocs-jupyter = "^0.24.1"
 tensorflow-datasets = "^4.9.2"
 pillow = "^9.5.0"
-monai = {extras = ["ignite", "nibabel", "tensorboard"], version = "^1.2.0"}
+monai = { extras = ["ignite", "nibabel", "tensorboard"], version = "^1.2.0" }
 ciclo = "^0.1.8"
 jupyter = "^1.0.0"
 ultralytics = "^8.0.125"
 
 [tool.poetry.extras]
 dev = ["isort", "black", "pytest", "pre-commit"]
-docs = ["mkdocs", "mkdocstrings", "mkdocs-material", "mkdocs-minify-plugin", "mkdocs-glightbox", "mkdocs-jupyter", "jupyter"]
-deploy = [ "build", "twine", "mkdocs", "mkdocstrings", "mkdocs-material", "mkdocs-minify-plugin", "mkdocs-glightbox", "mkdocs-jupyter"]
+docs = [
+    "mkdocs",
+    "mkdocstrings",
+    "mkdocs-material",
+    "mkdocs-minify-plugin",
+    "mkdocs-glightbox",
+    "mkdocs-jupyter",
+    "jupyter",
+]
+deploy = [
+    "build",
+    "twine",
+    "mkdocs",
+    "mkdocstrings",
+    "mkdocs-material",
+    "mkdocs-minify-plugin",
+    "mkdocs-glightbox",
+    "mkdocs-jupyter",
+]
 test = ["pytest"]
 dataset = ["tensorflow-datasets", "pillow"]
 monai = ["monai"]
@@ -50,6 +67,22 @@ line-length = 88
 
 [tool.flake8]
 max-line-length = 88
+ignore = [
+    "./keras_cv/__init__.py:E402, F401",
+    "./examples/**/*:E402",
+    "**/__init__.py:F401",
+    "E203",
+    "E121",
+    "E123",
+    "E126",
+    "E226",
+    "E24",
+    "E704",
+    "W503",
+    "W504",
+    "N802",
+    "N812",
+]
 
 [tool.isort]
 line_length = 88
