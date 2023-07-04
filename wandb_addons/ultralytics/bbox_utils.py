@@ -85,9 +85,8 @@ def create_prediction_metadata_map(model_predictions):
     return pred_metadata_map
 
 
-def plot_validation_results(dataloader, class_label_map):
-    table = wandb.Table(columns=["Index", "Images"])
-    images, data_idx = [], 0
+def plot_validation_results(dataloader, class_label_map, table: wandb.Table):
+    data_idx = 0
     for batch_idx, batch in enumerate(dataloader):
         for img_idx, image_path in enumerate(batch["im_file"]):
             try:

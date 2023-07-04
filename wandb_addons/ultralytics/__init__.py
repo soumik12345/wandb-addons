@@ -1,3 +1,3 @@
-from .callback import plot_bboxes
+from .callback import add_callback
 
-__all__ = ["plot_bboxes"]
+__all__ = ["add_callback"]
