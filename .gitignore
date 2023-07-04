@@ -141,3 +141,7 @@ test.py
 test.ipynb
 build_dir/
 .vscode/
+datasets/
+runs/
+**.jpeg
+**.pt
