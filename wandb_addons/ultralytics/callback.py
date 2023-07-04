@@ -26,7 +26,7 @@ class WandBUltralyticsCallback:
     from ultralytics.yolo.engine.model import YOLO
 
     import wandb
-    from wandb_addons.ultralytics import add_callback
+    from wandb_addons.ultralytics import add_wandb_callback
 
     # initialize wandb run
     wandb.init(project="YOLOv8")
@@ -35,7 +35,7 @@ class WandBUltralyticsCallback:
     model = YOLO("yolov8n.pt")
 
     # add wandb callback
-    add_callback(model)
+    add_wandb_callback(model)
 
     # train
     model.train(
@@ -119,7 +119,7 @@ class WandBUltralyticsCallback:
         }
 
 
-def add_callback(model: YOLO):
+def add_wandb_callback(model: YOLO):
     """Function to add the `WandBUltralyticsCallback` callback to the `YOLO` model.
 
     Args:
@@ -128,7 +128,7 @@ def add_callback(model: YOLO):
     if RANK in [-1, 0]:
         wandb_callback = WandBUltralyticsCallback(copy.deepcopy(model))
         for event, callback_fn in wandb_callback.callbacks.items():
-            model.add_callback(event, callback_fn)
+            model.add_wandb_callback(event, callback_fn)
     else:
         wandb.termerror(
             "The RANK of the process to add the callbacks was neither 0 or -1. "
