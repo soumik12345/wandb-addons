@@ -2,7 +2,6 @@ from typing import Dict, Optional, Tuple, Union
 
 import wandb
 from ultralytics.yolo.utils import ops
-from ultralytics.yolo.engine.model import YOLO
 from ultralytics.yolo.engine.results import Results
 from ultralytics.yolo.engine.predictor import BasePredictor
 
