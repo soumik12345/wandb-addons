@@ -14,8 +14,8 @@ from .bbox_utils import plot_predictions, plot_validation_results
 
 class WandBUltralyticsCallback:
     def __init__(self, model: YOLO) -> None:
-        self.train_validation_table = wandb.Table(columns=["Epoch", "Index", "Image"])
-        self.validation_table = wandb.Table(columns=["Index", "Image"])
+        self.train_validation_table = wandb.Table(columns=["Epoch", "Index", "Image", "Mean-Confidence"])
+        self.validation_table = wandb.Table(columns=["Index", "Image", "Mean-Confidence"])
         self.prediction_table = wandb.Table(
             columns=["Image", "Num-Objects", "Mean-Confidence"]
         )

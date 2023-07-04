@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import wandb
 from ultralytics.yolo.utils import ops
@@ -88,13 +88,30 @@ def create_prediction_metadata_map(model_predictions):
     return pred_metadata_map
 
 
+def get_mean_confidence_map(
+    classes: List, confidence: List, class_id_to_label: Dict
+) -> Dict:
+    confidence_map = {v: [] for _, v in class_id_to_label.items()}
+    for class_idx, confidence_value in zip(classes, confidence):
+        confidence_map[class_id_to_label[class_idx]].append(confidence_value)
+    for label, confidence_list in confidence_map.items():
+        if len(confidence_list) > 0:
+            confidence_map[label] = sum(confidence_list) / len(confidence_list)
+        else:
+            confidence_map[label] = 0
+    return confidence_map
+
+
 def plot_predictions(
     result: Results, table: Optional[wandb.Table] = None
-) -> Union[wandb.Table, Tuple[Dict, wandb.Image]]:
+) -> Union[wandb.Table, Tuple[wandb.Image, Dict, Dict]]:
     boxes = result.boxes.xywh.to("cpu").long().numpy()
     classes = result.boxes.cls.to("cpu").long().numpy()
     confidence = result.boxes.conf.to("cpu").numpy()
     class_id_to_label = {int(k): str(v) for k, v in result.names.items()}
+    mean_confidence_map = get_mean_confidence_map(
+        classes, confidence, class_id_to_label
+    )
     box_data, total_confidence = [], 0.0
     for idx in range(len(boxes)):
         box_data.append(
@@ -119,9 +136,9 @@ def plot_predictions(
     }
     image = wandb.Image(result.orig_img[:, :, ::-1], boxes=boxes)
     if table is not None:
-        table.add_data(image, len(box_data), total_confidence / len(box_data))
+        table.add_data(image, len(box_data), mean_confidence_map)
         return table
-    return image, boxes["predictions"]
+    return image, boxes["predictions"], mean_confidence_map
 
 
 def plot_validation_results(
@@ -134,7 +151,7 @@ def plot_validation_results(
     data_idx = 0
     for batch_idx, batch in enumerate(dataloader):
         for img_idx, image_path in enumerate(batch["im_file"]):
-            _, prediction_box_data = plot_predictions(predictor(image_path)[0])
+            _, prediction_box_data, mean_confidence_map = plot_predictions(predictor(image_path)[0])
             try:
                 ground_truth_data = get_ground_truth_annotations(
                     img_idx, image_path, batch, class_label_map
@@ -150,9 +167,9 @@ def plot_validation_results(
                     },
                 )
                 if epoch is None:
-                    table.add_data(data_idx, wandb_image)
+                    table.add_data(data_idx, wandb_image, mean_confidence_map)
                 else:
-                    table.add_data(epoch, data_idx, wandb_image)
+                    table.add_data(epoch, data_idx, wandb_image, mean_confidence_map)
                 data_idx += 1
             except TypeError:
                 pass
