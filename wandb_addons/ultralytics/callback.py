@@ -1,9 +1,10 @@
+import copy
 from typing import Callable, Dict
 
 import wandb
 from tqdm.auto import tqdm
 from ultralytics.yolo.utils import RANK
-from ultralytics.yolo.engine.model import YOLO
+from ultralytics.yolo.engine.model import YOLO, TASK_MAP
 from ultralytics.yolo.v8.detect.train import DetectionTrainer
 from ultralytics.yolo.v8.detect.val import DetectionValidator
 from ultralytics.yolo.v8.detect.predict import DetectionPredictor
@@ -12,19 +13,31 @@ from .bbox_utils import plot_predictions, plot_validation_results
 
 
 class WandBUltralyticsCallback:
-    def __init__(self) -> None:
+    def __init__(self, model: YOLO) -> None:
         self.train_validation_table = wandb.Table(columns=["Epoch", "Index", "Image"])
         self.validation_table = wandb.Table(columns=["Index", "Image"])
         self.prediction_table = wandb.Table(
             columns=["Image", "Num-Objects", "Mean-Confidence"]
         )
+        self._make_predictor(model)
+
+    def _make_predictor(self, model: YOLO):
+        overrides = model.overrides.copy()
+        overrides["conf"] = 0.1
+        self.predictor = TASK_MAP[model.task][3](overrides=overrides, _callbacks=None)
 
     def on_fit_epoch_end(self, trainer: DetectionTrainer):
         validator = trainer.validator
         dataloader = validator.dataloader
         class_label_map = validator.names
+        self.model = copy.deepcopy(trainer.model)
+        self.predictor.setup_model(model=self.model, verbose=False)
         self.train_validation_table = plot_validation_results(
-            dataloader, class_label_map, self.train_validation_table, trainer.epoch
+            dataloader,
+            class_label_map,
+            self.predictor,
+            self.train_validation_table,
+            trainer.epoch,
         )
 
     def on_train_end(self, trainer: DetectionTrainer):
@@ -34,8 +47,9 @@ class WandBUltralyticsCallback:
         validator = trainer
         dataloader = validator.dataloader
         class_label_map = validator.names
+        self.predictor.setup_model(model=self.model, verbose=False)
         self.validation_table = plot_validation_results(
-            dataloader, class_label_map, self.validation_table
+            dataloader, class_label_map, self.predictor, self.validation_table
         )
         wandb.log({"Validation-Table": self.validation_table})
 
@@ -57,7 +71,7 @@ class WandBUltralyticsCallback:
 
 def add_callback(model: YOLO):
     if RANK in [-1, 0]:
-        wandb_callback = WandBUltralyticsCallback()
+        wandb_callback = WandBUltralyticsCallback(copy.deepcopy(model))
         for event, callback_fn in wandb_callback.callbacks.items():
             model.add_callback(event, callback_fn)
     else:

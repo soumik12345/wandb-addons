@@ -1,8 +1,10 @@
-from typing import Optional
+from typing import Dict, Optional, Tuple, Union
 
 import wandb
 from ultralytics.yolo.utils import ops
+from ultralytics.yolo.engine.model import YOLO
 from ultralytics.yolo.engine.results import Results
+from ultralytics.yolo.engine.predictor import BasePredictor
 
 
 def scale_bounding_box_to_original_image_shape(
@@ -87,38 +89,9 @@ def create_prediction_metadata_map(model_predictions):
     return pred_metadata_map
 
 
-def plot_validation_results(
-    dataloader, class_label_map, table: wandb.Table, epoch: Optional[int] = None
-) -> wandb.Table:
-    data_idx = 0
-    for batch_idx, batch in enumerate(dataloader):
-        for img_idx, image_path in enumerate(batch["im_file"]):
-            try:
-                ground_truth_data = get_ground_truth_annotations(
-                    img_idx, image_path, batch, class_label_map
-                )
-                wandb_image = wandb.Image(
-                    image_path,
-                    boxes={
-                        "ground-truth": {
-                            "box_data": ground_truth_data,
-                            "class_labels": class_label_map,
-                        }
-                    },
-                )
-                if epoch is None:
-                    table.add_data(data_idx, wandb_image)
-                else:
-                    table.add_data(epoch, data_idx, wandb_image)
-                data_idx += 1
-            except TypeError:
-                pass
-        if batch_idx + 1 == 1:
-            break
-    return table
-
-
-def plot_predictions(result: Results, table: wandb.Table) -> wandb.Table:
+def plot_predictions(
+    result: Results, table: Optional[wandb.Table] = None
+) -> Union[wandb.Table, Tuple[Dict, wandb.Image]]:
     boxes = result.boxes.xywh.to("cpu").long().numpy()
     classes = result.boxes.cls.to("cpu").long().numpy()
     confidence = result.boxes.conf.to("cpu").numpy()
@@ -146,5 +119,44 @@ def plot_predictions(result: Results, table: wandb.Table) -> wandb.Table:
         },
     }
     image = wandb.Image(result.orig_img[:, :, ::-1], boxes=boxes)
-    table.add_data(image, len(box_data), total_confidence / len(box_data))
+    if table is not None:
+        table.add_data(image, len(box_data), total_confidence / len(box_data))
+        return table
+    return image, boxes["predictions"]
+
+
+def plot_validation_results(
+    dataloader,
+    class_label_map,
+    predictor,
+    table: wandb.Table,
+    epoch: Optional[int] = None,
+) -> wandb.Table:
+    data_idx = 0
+    for batch_idx, batch in enumerate(dataloader):
+        for img_idx, image_path in enumerate(batch["im_file"]):
+            _, prediction_box_data = plot_predictions(predictor(image_path)[0])
+            try:
+                ground_truth_data = get_ground_truth_annotations(
+                    img_idx, image_path, batch, class_label_map
+                )
+                wandb_image = wandb.Image(
+                    image_path,
+                    boxes={
+                        "ground-truth": {
+                            "box_data": ground_truth_data,
+                            "class_labels": class_label_map,
+                        },
+                        "predictions": prediction_box_data,
+                    },
+                )
+                if epoch is None:
+                    table.add_data(data_idx, wandb_image)
+                else:
+                    table.add_data(epoch, data_idx, wandb_image)
+                data_idx += 1
+            except TypeError:
+                pass
+        if batch_idx + 1 == 1:
+            break
     return table
