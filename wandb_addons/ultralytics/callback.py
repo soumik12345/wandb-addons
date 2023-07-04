@@ -13,6 +13,48 @@ from .bbox_utils import plot_predictions, plot_validation_results
 
 
 class WandBUltralyticsCallback:
+    """Stateful callback for logging predictions and ground-truth annotations with
+    interactive overlays for bounding boxes to Weights & Biases Tables during
+    training, validation and prediction for a `ultratytics` workflow.
+
+    !!! example "Example"
+        - [Ultralytics Integration Demo](https://wandb.ai/geekyrakshit/YOLOv8/reports/Ultralytics-Integration-Demo--Vmlldzo0Nzk5OTEz).
+
+    **Usage:**
+
+    ```python
+    from ultralytics.yolo.engine.model import YOLO
+
+    import wandb
+    from wandb_addons.ultralytics import add_callback
+
+    # initialize wandb run
+    wandb.init(project="YOLOv8")
+
+    # initialize YOLO model
+    model = YOLO("yolov8n.pt")
+
+    # add wandb callback
+    add_callback(model)
+
+    # train
+    model.train(
+        data="coco128.yaml",
+        epochs=2,
+        imgsz=640,
+    )
+
+    # validate
+    model.val()
+
+    # perform inference
+    model(['img1.jpeg', 'img2.jpeg'])
+    ```
+
+    Args:
+        model (ultralytics.yolo.engine.model.YOLO): YOLO Model.
+    """
+
     def __init__(self, model: YOLO) -> None:
         self.train_validation_table = wandb.Table(
             columns=["Epoch", "Index", "Image", "Mean-Confidence"]
@@ -78,6 +120,11 @@ class WandBUltralyticsCallback:
 
 
 def add_callback(model: YOLO):
+    """Function to add the `WandBUltralyticsCallback` callback to the `YOLO` model.
+
+    Args:
+        model (ultralytics.yolo.engine.model.YOLO): YOLO Model.
+    """
     if RANK in [-1, 0]:
         wandb_callback = WandBUltralyticsCallback(copy.deepcopy(model))
         for event, callback_fn in wandb_callback.callbacks.items():
