@@ -67,7 +67,8 @@ class WandBUltralyticsCallback:
 
     @property
     def callbacks(self) -> Dict[str, Callable]:
-        """Property contains all the relevant callbacks to add to the YOLO model for the Weights & Biases logging."""
+        """Property contains all the relevant callbacks to add to the YOLO model for
+        the Weights & Biases logging."""
         return {
             "on_fit_epoch_end": self.on_fit_epoch_end,
             "on_train_end": self.on_train_end,
@@ -83,7 +84,8 @@ def add_callback(model: YOLO):
             model.add_callback(event, callback_fn)
     else:
         wandb.termerror(
-            "The RANK of the process to add the callbacks was neither 0 or -1."
-            "No Weights & Biases callbacks were added to this instance of the YOLO model."
+            "The RANK of the process to add the callbacks was neither 0 or -1. "
+            "No Weights & Biases callbacks were added to this instance of the "
+            "YOLO model."
         )
     return model
