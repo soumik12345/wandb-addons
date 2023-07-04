@@ -140,3 +140,4 @@ docs/**/artifacts/
 test.py
 test.ipynb
 build_dir/
+.vscode/
