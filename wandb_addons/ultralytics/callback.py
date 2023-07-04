@@ -21,7 +21,10 @@ class WandBUltralyticsCallback:
         validator = trainer
         dataloader = validator.dataloader
         class_label_map = validator.names
-        plot_validation_results(dataloader, class_label_map, self.validation_table)
+        self.validation_table = plot_validation_results(
+            dataloader, class_label_map, self.validation_table
+        )
+        wandb.log({"Validation-Table": self.validation_table})
 
     def on_predict_end(self, predictor: DetectionPredictor):
         for result in tqdm(predictor.results):

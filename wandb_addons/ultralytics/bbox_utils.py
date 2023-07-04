@@ -1,6 +1,8 @@
+from typing import Optional
+
 import wandb
-from ultralytics.yolo.engine.results import Results
 from ultralytics.yolo.utils import ops
+from ultralytics.yolo.engine.results import Results
 
 
 def scale_bounding_box_to_original_image_shape(
@@ -85,7 +87,9 @@ def create_prediction_metadata_map(model_predictions):
     return pred_metadata_map
 
 
-def plot_validation_results(dataloader, class_label_map, table: wandb.Table):
+def plot_validation_results(
+    dataloader, class_label_map, table: wandb.Table, epoch: Optional[int] = None
+) -> wandb.Table:
     data_idx = 0
     for batch_idx, batch in enumerate(dataloader):
         for img_idx, image_path in enumerate(batch["im_file"]):
@@ -102,13 +106,16 @@ def plot_validation_results(dataloader, class_label_map, table: wandb.Table):
                         }
                     },
                 )
-                table.add_data(data_idx, wandb_image)
+                if epoch is None:
+                    table.add_data(data_idx, wandb_image)
+                else:
+                    table.add_data(data_idx, wandb_image, epoch)
                 data_idx += 1
             except TypeError:
                 pass
         if batch_idx + 1 == 1:
             break
-    wandb.log({"Validation-Table": table})
+    return table
 
 
 def plot_predictions(result: Results, table: wandb.Table) -> wandb.Table:
