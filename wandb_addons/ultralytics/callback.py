@@ -4,6 +4,7 @@ import wandb
 from tqdm.auto import tqdm
 from ultralytics.yolo.utils import RANK
 from ultralytics.yolo.engine.model import YOLO
+from ultralytics.yolo.v8.detect.train import DetectionTrainer
 from ultralytics.yolo.v8.detect.val import DetectionValidator
 from ultralytics.yolo.v8.detect.predict import DetectionPredictor
 
@@ -12,10 +13,22 @@ from .bbox_utils import plot_predictions, plot_validation_results
 
 class WandBUltralyticsCallback:
     def __init__(self) -> None:
+        self.train_validation_table = wandb.Table(columns=["Epoch", "Index", "Image"])
         self.validation_table = wandb.Table(columns=["Index", "Image"])
         self.prediction_table = wandb.Table(
             columns=["Image", "Num-Objects", "Mean-Confidence"]
         )
+
+    def on_fit_epoch_end(self, trainer: DetectionTrainer):
+        validator = trainer.validator
+        dataloader = validator.dataloader
+        class_label_map = validator.names
+        self.train_validation_table = plot_validation_results(
+            dataloader, class_label_map, self.train_validation_table, trainer.epoch
+        )
+
+    def on_train_end(self, trainer: DetectionTrainer):
+        wandb.log({"Train-Validation-Table": self.train_validation_table})
 
     def on_val_end(self, trainer: DetectionValidator):
         validator = trainer
@@ -34,7 +47,12 @@ class WandBUltralyticsCallback:
     @property
     def callbacks(self) -> Dict[str, Callable]:
         """Property contains all the relevant callbacks to add to the YOLO model for the Weights & Biases logging."""
-        return {"on_val_end": self.on_val_end, "on_predict_end": self.on_predict_end}
+        return {
+            "on_fit_epoch_end": self.on_fit_epoch_end,
+            "on_train_end": self.on_train_end,
+            "on_val_end": self.on_val_end,
+            "on_predict_end": self.on_predict_end,
+        }
 
 
 def add_callback(model: YOLO):

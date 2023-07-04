@@ -100,7 +100,7 @@ def plot_validation_results(
                 wandb_image = wandb.Image(
                     image_path,
                     boxes={
-                        "ground_truth": {
+                        "ground-truth": {
                             "box_data": ground_truth_data,
                             "class_labels": class_label_map,
                         }
@@ -109,7 +109,7 @@ def plot_validation_results(
                 if epoch is None:
                     table.add_data(data_idx, wandb_image)
                 else:
-                    table.add_data(data_idx, wandb_image, epoch)
+                    table.add_data(epoch, data_idx, wandb_image)
                 data_idx += 1
             except TypeError:
                 pass
