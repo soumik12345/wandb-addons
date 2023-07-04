@@ -3,11 +3,11 @@ from typing import Callable, Dict
 
 import wandb
 from tqdm.auto import tqdm
+from ultralytics.yolo.engine.model import TASK_MAP, YOLO
 from ultralytics.yolo.utils import RANK
-from ultralytics.yolo.engine.model import YOLO, TASK_MAP
+from ultralytics.yolo.v8.detect.predict import DetectionPredictor
 from ultralytics.yolo.v8.detect.train import DetectionTrainer
 from ultralytics.yolo.v8.detect.val import DetectionValidator
-from ultralytics.yolo.v8.detect.predict import DetectionPredictor
 
 from .bbox_utils import plot_predictions, plot_validation_results
 
