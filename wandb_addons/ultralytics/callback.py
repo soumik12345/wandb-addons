@@ -1,6 +1,6 @@
 import copy
 from datetime import datetime
-from typing import Callable, Dict
+from typing import Callable, Dict, Optional
 
 # Use dill (if exists) to serialize the lambda functions where pickle does not do this
 try:
@@ -114,18 +114,22 @@ class WandBUltralyticsCallback:
         validator = trainer.validator
         dataloader = validator.dataloader
         class_label_map = validator.names
-        self.model = copy.deepcopy(trainer.model)
-        self.predictor.setup_model(model=self.model, verbose=False)
-        self.train_validation_table = plot_validation_results(
-            dataloader=dataloader,
-            class_label_map=class_label_map,
-            predictor=self.predictor,
-            table=self.train_validation_table,
-            max_validation_batches=self.max_validation_batches,
-            epoch=trainer.epoch,
-        )
+        with torch.no_grad():
+            self.device = next(trainer.model.parameters()).device
+            trainer.model.to("cpu")
+            self.model = copy.deepcopy(trainer.model).eval().to(self.device)
+            self.predictor.setup_model(model=self.model, verbose=False)
+            self.train_validation_table = plot_validation_results(
+                dataloader=dataloader,
+                class_label_map=class_label_map,
+                predictor=self.predictor,
+                table=self.train_validation_table,
+                max_validation_batches=self.max_validation_batches,
+                epoch=trainer.epoch,
+            )
         if self.enable_model_checkpointing:
             self._save_model(trainer)
+        trainer.model.to(self.device)
 
     def on_train_end(self, trainer: DetectionTrainer):
         wandb.log({"Train-Validation-Table": self.train_validation_table})
@@ -134,14 +138,15 @@ class WandBUltralyticsCallback:
         validator = trainer
         dataloader = validator.dataloader
         class_label_map = validator.names
-        self.predictor.setup_model(model=self.model, verbose=False)
-        self.validation_table = plot_validation_results(
-            dataloader=dataloader,
-            class_label_map=class_label_map,
-            predictor=self.predictor,
-            table=self.validation_table,
-            max_validation_batches=self.max_validation_batches,
-        )
+        with torch.no_grad():
+            self.predictor.setup_model(model=self.model, verbose=False)
+            self.validation_table = plot_validation_results(
+                dataloader=dataloader,
+                class_label_map=class_label_map,
+                predictor=self.predictor,
+                table=self.validation_table,
+                max_validation_batches=self.max_validation_batches,
+            )
         wandb.log({"Validation-Table": self.validation_table})
 
     def on_predict_end(self, predictor: DetectionPredictor):
@@ -163,22 +168,44 @@ class WandBUltralyticsCallback:
 
 def add_wandb_callback(
     model: YOLO,
-    max_validation_batches: int = 1,
     enable_model_checkpointing: bool = False,
+    enable_train_validation_logging: bool = True,
+    enable_validation_logging: bool = True,
+    enable_prediction_logging: bool = True,
+    max_validation_batches: Optional[int] = 1,
 ):
     """Function to add the `WandBUltralyticsCallback` callback to the `YOLO` model.
 
     Args:
         model (ultralytics.yolo.engine.model.YOLO): YOLO Model.
-        max_validation_batches (int): maximum number of validation batches to log to
-            a table per epoch.
         enable_model_checkpointing (bool): enable logging model checkpoints as artifacts
             at the end of eveny epoch if set to `True`.
+        enable_train_validation_logging (bool): enable logging the predictions and
+            ground-truths as interactive image overlays on the images from the validation
+            dataloader to a `wandb.Table` along with mean-confidence of the predictions
+            per-class at the end of each training epoch.
+        enable_validation_logging (bool): enable logging the predictions and
+            ground-truths as interactive image overlays on the images from the validation
+            dataloader to a `wandb.Table` along with mean-confidence of the predictions
+            per-class at the end of validation.
+        enable_prediction_logging (bool): enable logging the predictions and
+            ground-truths as interactive image overlays on the images from the validation
+            dataloader to a `wandb.Table` along with mean-confidence of the predictions
+            per-class at the end of each prediction/inference. 
+        max_validation_batches (int): maximum number of validation batches to log to
+            a table per epoch.
     """
     if RANK in [-1, 0]:
         wandb_callback = WandBUltralyticsCallback(
             copy.deepcopy(model), max_validation_batches, enable_model_checkpointing
         )
+        if enable_train_validation_logging:
+            _ = wandb_callback.callbacks.pop("on_fit_epoch_end")
+            _ = wandb_callback.callbacks.pop("on_train_end")
+        if enable_validation_logging:
+            _ = wandb_callback.callbacks.pop("on_val_end")
+        if enable_prediction_logging:
+            _ = wandb_callback.callbacks.pop("on_predict_end")
         for event, callback_fn in wandb_callback.callbacks.items():
             model.add_callback(event, callback_fn)
     else:
