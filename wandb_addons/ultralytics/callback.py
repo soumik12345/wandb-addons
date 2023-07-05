@@ -199,12 +199,12 @@ def add_wandb_callback(
         wandb_callback = WandBUltralyticsCallback(
             copy.deepcopy(model), max_validation_batches, enable_model_checkpointing
         )
-        if enable_train_validation_logging:
+        if not enable_train_validation_logging:
             _ = wandb_callback.callbacks.pop("on_fit_epoch_end")
             _ = wandb_callback.callbacks.pop("on_train_end")
-        if enable_validation_logging:
+        if not enable_validation_logging:
             _ = wandb_callback.callbacks.pop("on_val_end")
-        if enable_prediction_logging:
+        if not enable_prediction_logging:
             _ = wandb_callback.callbacks.pop("on_predict_end")
         for event, callback_fn in wandb_callback.callbacks.items():
             model.add_callback(event, callback_fn)
