@@ -191,7 +191,7 @@ def add_wandb_callback(
         enable_prediction_logging (bool): enable logging the predictions and
             ground-truths as interactive image overlays on the images from the validation
             dataloader to a `wandb.Table` along with mean-confidence of the predictions
-            per-class at the end of each prediction/inference. 
+            per-class at the end of each prediction/inference.
         max_validation_batches (int): maximum number of validation batches to log to
             a table per epoch.
     """
