@@ -53,6 +53,8 @@ class WandBUltralyticsCallback:
 
     Args:
         model (ultralytics.yolo.engine.model.YOLO): YOLO Model.
+        max_validation_batches (int): maximum number of validation batches to log to
+            a table per epoch.
     """
 
     def __init__(self, model: YOLO, max_validation_batches: int = 1) -> None:
@@ -127,6 +129,8 @@ def add_wandb_callback(model: YOLO, max_validation_batches: int = 1):
 
     Args:
         model (ultralytics.yolo.engine.model.YOLO): YOLO Model.
+        max_validation_batches (int): maximum number of validation batches to log to
+            a table per epoch.
     """
     if RANK in [-1, 0]:
         wandb_callback = WandBUltralyticsCallback(
