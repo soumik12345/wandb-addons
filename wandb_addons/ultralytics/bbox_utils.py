@@ -1,8 +1,8 @@
 from typing import Dict, List, Optional, Tuple, Union
 
-from ultralytics.yolo.engine.predictor import BasePredictor
 from ultralytics.yolo.engine.results import Results
 from ultralytics.yolo.utils import ops
+from ultralytics.yolo.v8.detect.predict import DetectionPredictor
 
 import wandb
 
@@ -145,7 +145,7 @@ def plot_predictions(
 def plot_validation_results(
     dataloader,
     class_label_map,
-    predictor,
+    predictor: DetectionPredictor,
     table: wandb.Table,
     max_validation_batches: int,
     epoch: Optional[int] = None,
