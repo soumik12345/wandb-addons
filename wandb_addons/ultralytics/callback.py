@@ -46,14 +46,10 @@ class WandBUltralyticsCallback:
     model = YOLO("yolov8n.pt")
 
     # add wandb callback
-    add_wandb_callback(model)
+    add_wandb_callback(model, max_validation_batches=2, enable_model_checkpointing=True)
 
     # train
-    model.train(
-        data="coco128.yaml",
-        epochs=2,
-        imgsz=640,
-    )
+    model.train(data="coco128.yaml", epochs=5, imgsz=640)
 
     # validate
     model.val()
