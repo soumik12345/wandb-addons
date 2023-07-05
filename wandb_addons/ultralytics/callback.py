@@ -55,12 +55,13 @@ class WandBUltralyticsCallback:
         model (ultralytics.yolo.engine.model.YOLO): YOLO Model.
     """
 
-    def __init__(self, model: YOLO) -> None:
+    def __init__(self, model: YOLO, max_validation_batches: int = 1) -> None:
+        self.max_validation_batches = max_validation_batches
         self.train_validation_table = wandb.Table(
-            columns=["Epoch", "Index", "Image", "Mean-Confidence"]
+            columns=["Epoch", "Data-Index", "Batch-Index", "Image", "Mean-Confidence"]
         )
         self.validation_table = wandb.Table(
-            columns=["Index", "Image", "Mean-Confidence"]
+            columns=["Data-Index", "Batch-Index", "Image", "Mean-Confidence"]
         )
         self.prediction_table = wandb.Table(
             columns=["Image", "Num-Objects", "Mean-Confidence"]
@@ -83,6 +84,7 @@ class WandBUltralyticsCallback:
             class_label_map=class_label_map,
             predictor=self.predictor,
             table=self.train_validation_table,
+            max_validation_batches=self.max_validation_batches,
             epoch=trainer.epoch,
         )
 
@@ -99,6 +101,7 @@ class WandBUltralyticsCallback:
             class_label_map=class_label_map,
             predictor=self.predictor,
             table=self.validation_table,
+            max_validation_batches=self.max_validation_batches,
         )
         wandb.log({"Validation-Table": self.validation_table})
 
@@ -119,16 +122,18 @@ class WandBUltralyticsCallback:
         }
 
 
-def add_wandb_callback(model: YOLO):
+def add_wandb_callback(model: YOLO, max_validation_batches: int = 1):
     """Function to add the `WandBUltralyticsCallback` callback to the `YOLO` model.
 
     Args:
         model (ultralytics.yolo.engine.model.YOLO): YOLO Model.
     """
     if RANK in [-1, 0]:
-        wandb_callback = WandBUltralyticsCallback(copy.deepcopy(model))
+        wandb_callback = WandBUltralyticsCallback(
+            copy.deepcopy(model), max_validation_batches
+        )
         for event, callback_fn in wandb_callback.callbacks.items():
-            model.add_wandb_callback(event, callback_fn)
+            model.add_callback(event, callback_fn)
     else:
         wandb.termerror(
             "The RANK of the process to add the callbacks was neither 0 or -1. "

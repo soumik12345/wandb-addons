@@ -146,6 +146,7 @@ def plot_validation_results(
     class_label_map,
     predictor,
     table: wandb.Table,
+    max_validation_batches: int,
     epoch: Optional[int] = None,
 ) -> wandb.Table:
     data_idx = 0
@@ -169,12 +170,16 @@ def plot_validation_results(
                     },
                 )
                 if epoch is None:
-                    table.add_data(data_idx, wandb_image, mean_confidence_map)
+                    table.add_data(
+                        data_idx, batch_idx, wandb_image, mean_confidence_map
+                    )
                 else:
-                    table.add_data(epoch, data_idx, wandb_image, mean_confidence_map)
+                    table.add_data(
+                        epoch, data_idx, batch_idx, wandb_image, mean_confidence_map
+                    )
                 data_idx += 1
             except TypeError:
                 pass
-        if batch_idx + 1 == 1:
+        if batch_idx + 1 == max_validation_batches:
             break
     return table
