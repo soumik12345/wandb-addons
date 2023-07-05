@@ -23,7 +23,7 @@ from .bbox_utils import plot_predictions, plot_validation_results
 
 
 class WandBUltralyticsCallback:
-    """Stateful callback for logging model checkpoints, predictions and
+    """Stateful callback for logging model checkpoints, predictions, and
     ground-truth annotations with interactive overlays for bounding boxes
     to Weights & Biases Tables during training, validation and prediction
     for a `ultratytics` workflow.
