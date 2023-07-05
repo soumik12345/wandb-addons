@@ -64,7 +64,7 @@ For more information, check out more at the [docs](https://soumik12345.github.io
 
 ### [Ultralytics](https://github.com/ultralytics/ultralytics)
 
-Callback for logging predictions and ground-truth annotations with interactive overlays for bounding boxes to Weights & Biases Tables during training, validation, and prediction for an `ultratytics` workflow using the `YOLO` models.
+Callback for logging model checkpoint, predictions, and ground-truth annotations with interactive overlays for bounding boxes to Weights & Biases Tables during training, validation, and prediction for an `ultratytics` workflow using the `YOLO` models.
 
 In order to install `wandb-addons` along with the dependencies for the `ultralytics` integration, you can run:
 
