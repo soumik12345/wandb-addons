@@ -62,6 +62,51 @@ from wandb_addons.monai import WandbStatsHandler, WandbModelCheckpointHandler
 
 For more information, check out more at the [docs](https://soumik12345.github.io/wandb-addons/monai/monai/).
 
+### [Ultralytics](https://github.com/ultralytics/ultralytics)
+
+Callback for logging model checkpoint, predictions, and ground-truth annotations with interactive overlays for bounding boxes to Weights & Biases Tables during training, validation, and prediction for an `ultratytics` workflow using the `YOLO` models.
+
+In order to install `wandb-addons` along with the dependencies for the `ultralytics` integration, you can run:
+
+```shell
+git clone https://github.com/soumik12345/wandb-addons
+pip install ./wandb-addons[yolo]
+```
+
+Once you've installed `wandb-addons`, you can use it like following:
+
+```python
+from ultralytics.yolo.engine.model import YOLO
+
+import wandb
+from wandb_addons.ultralytics import add_wandb_callback
+
+# initialize wandb run
+wandb.init(project="YOLOv8")
+
+# initialize YOLO model
+model = YOLO("yolov8n.pt")
+
+# add wandb callback
+add_wandb_callback(model)
+
+# train
+model.train(
+    data="coco128.yaml",
+    epochs=2,
+    imgsz=640,
+)
+
+# validate
+model.val()
+
+# perform inference
+model(['img1.jpeg', 'img2.jpeg'])
+```
+
+For more information, check out more at the [docs](https://soumik12345.github.io/wandb-addons/ultralytics/yolo/).
+
+
 ## Converting IPython Notebooks to [Reports](https://docs.wandb.ai/guides/reports)
 
 A set of utilities to convert an IPython notebook to a Weights & Biases report.

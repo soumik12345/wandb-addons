@@ -46,6 +46,7 @@ nav:
   - 'Integrations':
     - 'Ciclo': 'ciclo/ciclo.md'
     - 'MonAI': 'monai/monai.md'
+    - 'Ultralytics': 'ultralytics/yolo.md'
   - 'Prompts': 'prompts/tracer.md'
   - 'Utils': 'utils.md'
 
