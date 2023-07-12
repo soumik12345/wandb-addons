@@ -96,6 +96,9 @@ class WandbStatsHandler:
         tag_name (str): When iteration output is a scalar, tag_name is used to plot, defaults to `'Loss'`.
     """
 
+    ITERATION_KEY = "iteration"
+    EPOCH_KEY = "epoch"
+
     def __init__(
         self,
         iteration_log: bool = True,
@@ -106,6 +109,7 @@ class WandbStatsHandler:
         iteration_interval: int = 1,
         output_transform: Callable = lambda x: x[0],
         global_epoch_transform: Callable = lambda x: x,
+        global_iter_transform: Callable = lambda x: x,
         state_attributes: Optional[Sequence[str]] = None,
         tag_name: str = DEFAULT_TAG,
     ):
@@ -120,8 +124,18 @@ class WandbStatsHandler:
         self.iteration_interval = iteration_interval
         self.output_transform = output_transform
         self.global_epoch_transform = global_epoch_transform
+        self.global_iter_transform = global_iter_transform
         self.state_attributes = state_attributes
         self.tag_name = tag_name
+
+        self.metrics_history = set()
+
+        # Necessary first step for setting default x-axes on wandb UI
+        wandb.define_metric(self.EPOCH_KEY)
+        self.metrics_history.add(self.EPOCH_KEY)
+
+        wandb.define_metric(self.ITERATION_KEY)
+        self.metrics_history.add(self.ITERATION_KEY)
 
     def attach(self, engine: Engine) -> None:
         """
@@ -173,6 +187,12 @@ class WandbStatsHandler:
         else:
             self._default_iteration_writer(engine)
 
+    def _define_metric_if_new(self, key, step_metric):
+        if key not in self.metrics_history:
+            wandb.define_metric(key, step_metric=step_metric)
+            self.metrics_history.add(key)
+
+
     def _default_epoch_writer(self, engine: Engine) -> None:
         """
         Execute epoch level event write operation. Default to write the values from Ignite
@@ -183,18 +203,27 @@ class WandbStatsHandler:
             engine (ignite.engine.engine.Engine): Ignite Engine, it can be a trainer, validator
                 or evaluator.
         """
-        summary_dict = engine.state.metrics
 
+        epoch_step_dict = dict()
+        epoch_step_dict = {self.EPOCH_KEY: self.global_epoch_transform(engine.state.epoch)}
+
+        summary_dict = engine.state.metrics
         for key, value in summary_dict.items():
             if is_scalar(value):
                 value = value.item() if isinstance(value, torch.Tensor) else value
-                wandb.log({key: value})
+                self._define_metric_if_new(key, self.EPOCH_KEY)
+                log_dict = {key: value}
+                log_dict.update(epoch_step_dict)
+                wandb.log(log_dict)
 
         if self.state_attributes is not None:
             for attr in self.state_attributes:
                 value = getattr(engine.state, attr, None)
                 value = value.item() if isinstance(value, torch.Tensor) else value
-                wandb.log({attr: value})
+                self._define_metric_if_new(attr, self.EPOCH_KEY)
+                log_dict = {attr: value}
+                log_dict.update(epoch_step_dict)
+                wandb.log(log_dict)
 
     def _default_iteration_writer(self, engine: Engine) -> None:
         """
@@ -210,7 +239,8 @@ class WandbStatsHandler:
         loss = self.output_transform(engine.state.output)
         if loss is None:
             return  # do nothing if output is empty
-        log_dict = dict()
+
+        log_dict = {self.ITERATION_KEY: self.global_iter_transform(engine.state.iteration)}
         if isinstance(loss, dict):
             for key, value in loss.items():
                 if not is_scalar(value):
@@ -221,10 +251,12 @@ class WandbStatsHandler:
                         " {}:{}".format(key, type(value))
                     )
                     continue  # not plot multi dimensional output
+                self._define_metric_if_new(key, self.ITERATION_KEY)
                 log_dict[key] = (
                     value.item() if isinstance(value, torch.Tensor) else value
                 )
         elif is_scalar(loss):  # not printing multi dimensional output
+            self._define_metric_if_new(self.tag_name, self.ITERATION_KEY)
             log_dict[self.tag_name] = (
                 loss.item() if isinstance(loss, torch.Tensor) else loss
             )
