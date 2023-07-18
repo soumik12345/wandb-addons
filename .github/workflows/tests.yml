@@ -34,6 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
+          sudo apt install git -y
           pip install -U pip
           pip install ".[keras, test]"
           KERAS_BACKEND="tensorflow" pytest -s ./wandb_addons/tests/keras/test_wandb_metrics_logger.py
@@ -47,6 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
+          sudo apt install git -y
           pip install -U pip
           pip install ".[keras, test]"
           KERAS_BACKEND="torch" pytest -s ./wandb_addons/tests/keras/test_wandb_metrics_logger.py
