@@ -89,6 +89,8 @@ ignore = [
 
 [tool.isort]
 line_length = 88
+known_first_party = ["wandb_addons"]
+default_section = "THIRDPARTY"
 
 [build-system]
 requires = ["poetry-core"]
