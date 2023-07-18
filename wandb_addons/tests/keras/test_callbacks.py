@@ -18,6 +18,28 @@ def _test_run(run_id):
     return config, history
 
 
+def test_callback_run(self):
+    config, epoch_history = _test_run(self.run_id)
+    self.assertTrue("epochs" in config)
+    self.assertTrue("batch_size" in config)
+    self.assertTrue("input_shape" in config)
+    self.assertTrue("num_classes" in config)
+    for history in epoch_history:
+        self.assertTrue("epoch/val_loss" in config)
+        self.assertTrue("epoch/epoch/val_accuracy" in config)
+        self.assertTrue("_runtime" in config)
+        self.assertTrue("_timestamp" in config)
+        self.assertTrue("epoch/accuracy" in config)
+        self.assertTrue("batch/batch_step" in config)
+        self.assertTrue("batch/learning_rate" in config)
+        self.assertTrue("epoch/learning_rate" in config)
+        self.assertTrue("_step" in config)
+        self.assertTrue("batch/loss" in config)
+        self.assertTrue("epoch/epoch" in config)
+        self.assertTrue("batch/accuracy" in config)
+        self.assertTrue("epoch/loss" in config)
+
+
 class KerasCallbackTester(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
@@ -67,26 +89,7 @@ class KerasCallbackTester(unittest.TestCase):
             callbacks=[WandbMetricsLogger(log_freq="batch")],
         )
         wandb.finish()
-        config, epoch_history = _test_run(self.run_id)
-        self.assertTrue("epochs" in config)
-        self.assertTrue("batch_size" in config)
-        self.assertTrue("input_shape" in config)
-        self.assertTrue("num_classes" in config)
-        self.assertEqual(len(epoch_history), 3)
-        for history in epoch_history:
-            self.assertTrue("epoch/val_loss" in config)
-            self.assertTrue("epoch/epoch/val_accuracy" in config)
-            self.assertTrue("_runtime" in config)
-            self.assertTrue("_timestamp" in config)
-            self.assertTrue("epoch/accuracy" in config)
-            self.assertTrue("batch/batch_step" in config)
-            self.assertTrue("batch/learning_rate" in config)
-            self.assertTrue("epoch/learning_rate" in config)
-            self.assertTrue("_step" in config)
-            self.assertTrue("batch/loss" in config)
-            self.assertTrue("epoch/epoch" in config)
-            self.assertTrue("batch/accuracy" in config)
-            self.assertTrue("epoch/loss" in config)
+        test_callback_run(self)
 
     def test_mnist_convnet_lr_scheduler(self):
         wandb.init(project="wandb-keras-callback-unit-test", entity="geekyrakshit")
@@ -141,23 +144,4 @@ class KerasCallbackTester(unittest.TestCase):
             callbacks=[WandbMetricsLogger(log_freq="batch")],
         )
         wandb.finish()
-        config, epoch_history = _test_run(self.run_id)
-        self.assertTrue("epochs" in config)
-        self.assertTrue("batch_size" in config)
-        self.assertTrue("input_shape" in config)
-        self.assertTrue("num_classes" in config)
-        self.assertEqual(len(epoch_history), 3)
-        for history in epoch_history:
-            self.assertTrue("epoch/val_loss" in config)
-            self.assertTrue("epoch/epoch/val_accuracy" in config)
-            self.assertTrue("_runtime" in config)
-            self.assertTrue("_timestamp" in config)
-            self.assertTrue("epoch/accuracy" in config)
-            self.assertTrue("batch/batch_step" in config)
-            self.assertTrue("batch/learning_rate" in config)
-            self.assertTrue("epoch/learning_rate" in config)
-            self.assertTrue("_step" in config)
-            self.assertTrue("batch/loss" in config)
-            self.assertTrue("epoch/epoch" in config)
-            self.assertTrue("batch/accuracy" in config)
-            self.assertTrue("epoch/loss" in config)
+        test_callback_run(self)
