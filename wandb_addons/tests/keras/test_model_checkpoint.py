@@ -62,3 +62,4 @@ class WandbModelCheckpointTester(unittest.TestCase):
         run = api.run(f"geekyrakshit/wandb-keras-callback-unit-test/{self.run_id}")
         artifacts = run.logged_artifacts()
         self.assertEqual(len(artifacts), 3)
+        run.delete(delete_artifacts=True)
