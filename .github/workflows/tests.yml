@@ -51,7 +51,7 @@ jobs:
       - run: |
           apt-get update -y
           apt-get install git -y
-          pip install -U pip
+          pip install -U pip tensorflow-cpu
           pip install ".[keras, test]"
           KERAS_BACKEND="torch" pytest -s ./wandb_addons/tests/keras/
   
