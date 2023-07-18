@@ -34,6 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
+          apt-get update -y
           apt-get install git -y
           pip install -U pip
           pip install ".[keras, test]"
@@ -48,6 +49,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
+          apt-get update -y
           apt-get install git -y
           pip install -U pip
           pip install ".[keras, test]"
