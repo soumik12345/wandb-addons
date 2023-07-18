@@ -13,22 +13,29 @@ def _test_run(run_id):
     api = wandb.Api()
     run = api.run(f"geekyrakshit/wandb-keras-callback-unit-test/{run_id}")
     config = run.config
-    history = run.history()
+    summary = run.summary
     run.delete(delete_artifacts=True)
-    return config, history
+    return config, summary
 
 
 def test_callback_run(self):
-    config, epoch_history = _test_run(self.run_id)
+    config, epoch_summary = _test_run(self.run_id)
     self.assertTrue("epochs" in config)
     self.assertTrue("batch_size" in config)
     self.assertTrue("input_shape" in config)
     self.assertTrue("num_classes" in config)
-    for history in epoch_history:
-        self.assertTrue("batch/batch_step" in history)
-        self.assertTrue("batch/learning_rate" in history)
-        self.assertTrue("batch/loss" in history)
-        self.assertTrue("batch/accuracy" in history)
+    self.assertEqual(epoch_summary, 3)
+    for summary in epoch_summary:
+        self.assertTrue("epoch/learning_rate" in summary)
+        self.assertTrue("epoch/epoch" in summary)
+        self.assertTrue("batch/accuracy" in summary)
+        self.assertTrue("batch/learning_rate" in summary)
+        self.assertTrue("epoch/val_accuracy" in summary)
+        self.assertTrue("epoch/loss" in summary)
+        self.assertTrue("epoch/val_loss" in summary)
+        self.assertTrue("batch/loss" in summary)
+        self.assertTrue("epoch/batch_step" in summary)
+        self.assertTrue("epoch/accuracy" in summary)
 
 
 class KerasCallbackTester(unittest.TestCase):
