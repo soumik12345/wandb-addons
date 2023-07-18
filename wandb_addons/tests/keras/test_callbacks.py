@@ -9,7 +9,16 @@ from keras_core.utils import to_categorical
 from wandb_addons.keras import WandbMetricsLogger
 
 
-class WandbMetricsLoggerTester(unittest.TestCase):
+def _test_run(run_id):
+    api = wandb.Api()
+    run = api.run(f"geekyrakshit/wandb-keras-callback-unit-test/{run_id}")
+    config = run.config
+    history = run.history()
+    run.delete(delete_artifacts=True)
+    return config, history
+
+
+class KerasCallbackTester(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
         self.run_id = None
@@ -58,6 +67,29 @@ class WandbMetricsLoggerTester(unittest.TestCase):
             callbacks=[WandbMetricsLogger(log_freq="batch")],
         )
         wandb.finish()
+
+    def test_mnist_convnet_run(self):
+        config, epoch_history = _test_run(self.run_id)
+        self.assertTrue("epochs" in config)
+        self.assertTrue("batch_size" in config)
+        self.assertTrue("input_shape" in config)
+        self.assertTrue("num_classes" in config)
+        self.assertEqual(len(epoch_history), 3)
+        for history in epoch_history:
+            self.assertTrue("epoch/val_loss" in config)
+            self.assertTrue("epoch/epoch/val_accuracy" in config)
+            self.assertTrue("_runtime" in config)
+            self.assertTrue("_timestamp" in config)
+            self.assertTrue("epoch/accuracy" in config)
+            self.assertTrue("batch/batch_step" in config)
+            self.assertTrue("batch/learning_rate" in config)
+            self.assertTrue("epoch/learning_rate" in config)
+            self.assertTrue("_step" in config)
+            self.assertTrue("batch/loss" in config)
+            self.assertTrue("epoch/epoch" in config)
+            self.assertTrue("batch/accuracy" in config)
+            self.assertTrue("epoch/loss" in config)
+
 
     def test_mnist_convnet_lr_scheduler(self):
         wandb.init(project="wandb-keras-callback-unit-test", entity="geekyrakshit")
@@ -112,3 +144,25 @@ class WandbMetricsLoggerTester(unittest.TestCase):
             callbacks=[WandbMetricsLogger(log_freq="batch")],
         )
         wandb.finish()
+
+    def test_mnist_convnet_lr_scheduler_run(self):
+        config, epoch_history = _test_run(self.run_id)
+        self.assertTrue("epochs" in config)
+        self.assertTrue("batch_size" in config)
+        self.assertTrue("input_shape" in config)
+        self.assertTrue("num_classes" in config)
+        self.assertEqual(len(epoch_history), 3)
+        for history in epoch_history:
+            self.assertTrue("epoch/val_loss" in config)
+            self.assertTrue("epoch/epoch/val_accuracy" in config)
+            self.assertTrue("_runtime" in config)
+            self.assertTrue("_timestamp" in config)
+            self.assertTrue("epoch/accuracy" in config)
+            self.assertTrue("batch/batch_step" in config)
+            self.assertTrue("batch/learning_rate" in config)
+            self.assertTrue("epoch/learning_rate" in config)
+            self.assertTrue("_step" in config)
+            self.assertTrue("batch/loss" in config)
+            self.assertTrue("epoch/epoch" in config)
+            self.assertTrue("batch/accuracy" in config)
+            self.assertTrue("epoch/loss" in config)
