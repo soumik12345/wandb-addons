@@ -32,7 +32,7 @@ def test_callback_run(self):
     self.assertTrue("epoch/loss" in epoch_summary)
     self.assertTrue("epoch/val_loss" in epoch_summary)
     self.assertTrue("batch/loss" in epoch_summary)
-    self.assertTrue("epoch/batch_step" in epoch_summary)
+    self.assertTrue("batch/batch_step" in epoch_summary)
     self.assertTrue("epoch/accuracy" in epoch_summary)
 
 
