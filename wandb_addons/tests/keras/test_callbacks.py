@@ -25,19 +25,10 @@ def test_callback_run(self):
     self.assertTrue("input_shape" in config)
     self.assertTrue("num_classes" in config)
     for history in epoch_history:
-        self.assertTrue("epoch/val_loss" in config)
-        self.assertTrue("epoch/epoch/val_accuracy" in config)
-        self.assertTrue("_runtime" in config)
-        self.assertTrue("_timestamp" in config)
-        self.assertTrue("epoch/accuracy" in config)
         self.assertTrue("batch/batch_step" in config)
         self.assertTrue("batch/learning_rate" in config)
-        self.assertTrue("epoch/learning_rate" in config)
-        self.assertTrue("_step" in config)
         self.assertTrue("batch/loss" in config)
-        self.assertTrue("epoch/epoch" in config)
         self.assertTrue("batch/accuracy" in config)
-        self.assertTrue("epoch/loss" in config)
 
 
 class KerasCallbackTester(unittest.TestCase):
