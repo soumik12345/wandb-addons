@@ -10,6 +10,15 @@ if keras.backend.backend() == "tensorflow":
     from keras_core.utils.module_utils import tensorflow as tf
 
     tf_backend_available = True
+elif keras.backend.backend() == "torch":
+    import torch
+
+    torch_backend_available = True
+elif keras.backend.backend() == "jax":
+    import jax
+    import numpy as np
+
+    jax_backend_available = True
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -90,8 +99,24 @@ class WandbMetricsLogger(Callback):
             if isinstance(self.model.optimizer, keras.optimizers.Optimizer):
                 return float(self.model.optimizer.learning_rate.numpy().item())
         except Exception:
-            wandb.termerror("Unable to log learning rate.", repeat=False)
-            return None
+            if tf_backend_available:
+                if isinstance(self.model.optimizer.learning_rate, tf.Tensor):
+                    return float(self.model.optimizer.learning_rate.numpy().item())
+                else:
+                    wandb.termerror("Unable to log learning rate.", repeat=False)
+                    return None
+            elif torch_backend_available:
+                if isinstance(self.model.optimizer.learning_rate, torch.Tensor):
+                    return float(self.model.optimizer.learning_rate.numpy().item())
+                else:
+                    wandb.termerror("Unable to log learning rate.", repeat=False)
+                    return None
+            elif jax_backend_available:
+                try:
+                    return float(np.array(self.model.optimizer.learning_rate).item())
+                except Exception as e:
+                    wandb.termerror("Unable to log learning rate.", repeat=False)
+                    return None
 
     def on_epoch_end(self, epoch: int, logs: Optional[Dict[str, Any]] = None) -> None:
         """Called at the end of an epoch."""
