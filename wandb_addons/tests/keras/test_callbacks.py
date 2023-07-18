@@ -24,18 +24,16 @@ def test_callback_run(self):
     self.assertTrue("batch_size" in config)
     self.assertTrue("input_shape" in config)
     self.assertTrue("num_classes" in config)
-    self.assertEqual(epoch_summary, 3)
-    for summary in epoch_summary:
-        self.assertTrue("epoch/learning_rate" in summary)
-        self.assertTrue("epoch/epoch" in summary)
-        self.assertTrue("batch/accuracy" in summary)
-        self.assertTrue("batch/learning_rate" in summary)
-        self.assertTrue("epoch/val_accuracy" in summary)
-        self.assertTrue("epoch/loss" in summary)
-        self.assertTrue("epoch/val_loss" in summary)
-        self.assertTrue("batch/loss" in summary)
-        self.assertTrue("epoch/batch_step" in summary)
-        self.assertTrue("epoch/accuracy" in summary)
+    self.assertTrue("epoch/learning_rate" in epoch_summary)
+    self.assertTrue("epoch/epoch" in epoch_summary)
+    self.assertTrue("batch/accuracy" in epoch_summary)
+    self.assertTrue("batch/learning_rate" in epoch_summary)
+    self.assertTrue("epoch/val_accuracy" in epoch_summary)
+    self.assertTrue("epoch/loss" in epoch_summary)
+    self.assertTrue("epoch/val_loss" in epoch_summary)
+    self.assertTrue("batch/loss" in epoch_summary)
+    self.assertTrue("epoch/batch_step" in epoch_summary)
+    self.assertTrue("epoch/accuracy" in epoch_summary)
 
 
 class KerasCallbackTester(unittest.TestCase):
