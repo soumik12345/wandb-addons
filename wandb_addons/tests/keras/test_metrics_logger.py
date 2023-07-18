@@ -18,7 +18,7 @@ def _test_run(run_id):
     return config, summary
 
 
-class KerasCallbackTester(unittest.TestCase):
+class WandbMetricsLoggerTester(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
         self.run_id = None
