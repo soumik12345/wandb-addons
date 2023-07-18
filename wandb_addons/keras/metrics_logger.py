@@ -1,10 +1,15 @@
 import sys
 from typing import Any, Dict, Optional, Union
 
+import keras_core as keras
 import wandb
 from keras_core.callbacks import Callback
-from keras_core.utils.module_utils import tensorflow as tf
 from wandb.sdk.lib import telemetry
+
+if keras.backend.backend() == "tensorflow":
+    from keras_core.utils.module_utils import tensorflow as tf
+
+    tf_backend_available = True
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -81,12 +86,9 @@ class WandbMetricsLogger(Callback):
             wandb.define_metric("epoch/*", step_metric="epoch/epoch")
 
     def _get_lr(self) -> Union[float, None]:
-        if isinstance(self.model.optimizer.learning_rate, tf.Variable):
-            return float(self.model.optimizer.learning_rate.numpy().item())
         try:
-            return float(
-                self.model.optimizer.learning_rate(step=self.global_step).numpy().item()
-            )
+            if isinstance(self.model.optimizer, keras.optimizers.Optimizer):
+                return float(self.model.optimizer.learning_rate.numpy().item())
         except Exception:
             wandb.termerror("Unable to log learning rate.", repeat=False)
             return None
