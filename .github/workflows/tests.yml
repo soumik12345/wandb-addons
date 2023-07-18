@@ -67,7 +67,7 @@ jobs:
           apt-get update -y
           apt-get install git -y
           pip install -U pip
-          pip install jax
+          pip install "jax[cpu]"
           pip install ".[keras, test]"
           KERAS_BACKEND="jax" pytest -s ./wandb_addons/tests/keras/
 
