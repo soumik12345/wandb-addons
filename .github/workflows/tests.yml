@@ -38,7 +38,7 @@ jobs:
           apt-get install git -y
           pip install -U pip
           pip install ".[keras, test]"
-          KERAS_BACKEND="tensorflow" pytest -s ./wandb_addons/tests/keras/test_wandb_metrics_logger.py
+          KERAS_BACKEND="tensorflow" pytest -s ./wandb_addons/tests/keras/
 
   run-keras-callbacks-tests-torch-backend:
     name: Check if unit-tests for the Keras-Core callbacks pass for PyTorch backend.
@@ -53,7 +53,23 @@ jobs:
           apt-get install git -y
           pip install -U pip
           pip install ".[keras, test]"
-          KERAS_BACKEND="torch" pytest -s ./wandb_addons/tests/keras/test_wandb_metrics_logger.py
+          KERAS_BACKEND="torch" pytest -s ./wandb_addons/tests/keras/
+  
+  run-keras-callbacks-tests-jax-backend:
+    name: Check if unit-tests for the Keras-Core callbacks pass for Jax backend.
+    runs-on: ubuntu-latest
+    env:
+      WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+    container: tensorflow/tensorflow
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          apt-get update -y
+          apt-get install git -y
+          pip install -U pip
+          pip install jax
+          pip install ".[keras, test]"
+          KERAS_BACKEND="jax" pytest -s ./wandb_addons/tests/keras/
 
   run-jax-tests:
     name: Check if JAX, Flax and Cicl tests pass
