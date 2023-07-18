@@ -9,6 +9,10 @@ import wandb
 from keras_core.callbacks import Callback
 from wandb.sdk.lib import telemetry
 
+tf_backend_available = False
+torch_backend_available = False
+jax_backend_available = False
+
 if keras.backend.backend() == "tensorflow":
     from keras_core.utils.module_utils import tensorflow as tf
 
