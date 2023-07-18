@@ -90,7 +90,6 @@ class KerasCallbackTester(unittest.TestCase):
             self.assertTrue("batch/accuracy" in config)
             self.assertTrue("epoch/loss" in config)
 
-
     def test_mnist_convnet_lr_scheduler(self):
         wandb.init(project="wandb-keras-callback-unit-test", entity="geekyrakshit")
         config = wandb.config
