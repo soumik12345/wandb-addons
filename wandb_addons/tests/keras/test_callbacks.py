@@ -18,24 +18,6 @@ def _test_run(run_id):
     return config, summary
 
 
-def test_callback_run(self):
-    config, epoch_summary = _test_run(self.run_id)
-    self.assertTrue("epochs" in config)
-    self.assertTrue("batch_size" in config)
-    self.assertTrue("input_shape" in config)
-    self.assertTrue("num_classes" in config)
-    self.assertTrue("epoch/learning_rate" in epoch_summary)
-    self.assertTrue("epoch/epoch" in epoch_summary)
-    self.assertTrue("batch/accuracy" in epoch_summary)
-    self.assertTrue("batch/learning_rate" in epoch_summary)
-    self.assertTrue("epoch/val_accuracy" in epoch_summary)
-    self.assertTrue("epoch/loss" in epoch_summary)
-    self.assertTrue("epoch/val_loss" in epoch_summary)
-    self.assertTrue("batch/loss" in epoch_summary)
-    self.assertTrue("batch/batch_step" in epoch_summary)
-    self.assertTrue("epoch/accuracy" in epoch_summary)
-
-
 class KerasCallbackTester(unittest.TestCase):
     def __init__(self, methodName: str = "runTest") -> None:
         super().__init__(methodName)
@@ -85,7 +67,21 @@ class KerasCallbackTester(unittest.TestCase):
             callbacks=[WandbMetricsLogger(log_freq="batch")],
         )
         wandb.finish()
-        test_callback_run(self)
+        config, epoch_summary = _test_run(self.run_id)
+        self.assertTrue("epochs" in config)
+        self.assertTrue("batch_size" in config)
+        self.assertTrue("input_shape" in config)
+        self.assertTrue("num_classes" in config)
+        self.assertTrue("epoch/learning_rate" in epoch_summary)
+        self.assertTrue("epoch/epoch" in epoch_summary)
+        self.assertTrue("batch/accuracy" in epoch_summary)
+        self.assertTrue("batch/learning_rate" in epoch_summary)
+        self.assertTrue("epoch/val_accuracy" in epoch_summary)
+        self.assertTrue("epoch/loss" in epoch_summary)
+        self.assertTrue("epoch/val_loss" in epoch_summary)
+        self.assertTrue("batch/loss" in epoch_summary)
+        self.assertTrue("batch/batch_step" in epoch_summary)
+        self.assertTrue("epoch/accuracy" in epoch_summary)
 
     def test_mnist_convnet_lr_scheduler(self):
         wandb.init(project="wandb-keras-callback-unit-test", entity="geekyrakshit")
@@ -140,4 +136,18 @@ class KerasCallbackTester(unittest.TestCase):
             callbacks=[WandbMetricsLogger(log_freq="batch")],
         )
         wandb.finish()
-        test_callback_run(self)
+        config, epoch_summary = _test_run(self.run_id)
+        self.assertTrue("epochs" in config)
+        self.assertTrue("batch_size" in config)
+        self.assertTrue("input_shape" in config)
+        self.assertTrue("num_classes" in config)
+        self.assertTrue("epoch/learning_rate" in epoch_summary)
+        self.assertTrue("epoch/epoch" in epoch_summary)
+        self.assertTrue("batch/accuracy" in epoch_summary)
+        self.assertTrue("batch/learning_rate" in epoch_summary)
+        self.assertTrue("epoch/val_accuracy" in epoch_summary)
+        self.assertTrue("epoch/loss" in epoch_summary)
+        self.assertTrue("epoch/val_loss" in epoch_summary)
+        self.assertTrue("batch/loss" in epoch_summary)
+        self.assertTrue("batch/batch_step" in epoch_summary)
+        self.assertTrue("epoch/accuracy" in epoch_summary)
