@@ -67,8 +67,6 @@ class KerasCallbackTester(unittest.TestCase):
             callbacks=[WandbMetricsLogger(log_freq="batch")],
         )
         wandb.finish()
-
-    def test_mnist_convnet_run(self):
         config, epoch_history = _test_run(self.run_id)
         self.assertTrue("epochs" in config)
         self.assertTrue("batch_size" in config)
@@ -143,8 +141,6 @@ class KerasCallbackTester(unittest.TestCase):
             callbacks=[WandbMetricsLogger(log_freq="batch")],
         )
         wandb.finish()
-
-    def test_mnist_convnet_lr_scheduler_run(self):
         config, epoch_history = _test_run(self.run_id)
         self.assertTrue("epochs" in config)
         self.assertTrue("batch_size" in config)
