@@ -145,3 +145,4 @@ datasets/
 runs/
 **.jpeg
 **.pt
+**.keras
