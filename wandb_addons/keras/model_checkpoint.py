@@ -51,7 +51,8 @@ class WandbModelCheckpoint(ModelCheckpoint):
     This callback provides the following features:
         - Save the model that has achieved "best performance" based on "monitor".
         - Save the model at the end of every epoch regardless of the performance.
-        - Save the model at the end of epoch or after a fixed number of training batches.
+        - Save the model at the end of epoch or after a fixed number of training
+            batches.
         - Save only model weights, or save the whole model.
         - Save the model either in SavedModel format or in `.h5` format.
 
@@ -69,8 +70,8 @@ class WandbModelCheckpoint(ModelCheckpoint):
             is considered the "best" and the latest best model according to the
             quantity monitored will not be overwritten. If `filepath` doesn't contain
             formatting options like `{epoch}` then `filepath` will be overwritten by
-            each new better model locally. The model logged as an artifact will still be
-            associated with the correct `monitor`.  Artifacts will be uploaded
+            each new better model locally. The model logged as an artifact will still
+            be associated with the correct `monitor`.  Artifacts will be uploaded
             continuously and versioned separately as a new best model is found.
         save_weights_only (bool): if True, then only the model's weights will be saved.
         mode (Literal["auto", "min", "max"]): one of {'auto', 'min', 'max'}. For
@@ -78,16 +79,13 @@ class WandbModelCheckpoint(ModelCheckpoint):
         save_freq (Union[SaveStrategy, int]): `epoch` or integer. When using `'epoch'`,
             the callback saves the model after each epoch. When using an integer, the
             callback saves the model at end of this many batches.
-            Note that when monitoring validation metrics such as `val_acc` or `val_loss`,
-            save_freq must be set to "epoch" as those metrics are only available at the
-            end of an epoch.
-        options (Optional[str]): Optional `tf.train.CheckpointOptions` object if
-            `save_weights_only` is true or optional `tf.saved_model.SaveOptions`
-            object if `save_weights_only` is false.
+            Note that when monitoring validation metrics such as `val_acc` or
+            `val_loss`, save_freq must be set to "epoch" as those metrics are only
+            available at the end of an epoch.
         initial_value_threshold (Optional[float]): Floating point initial "best" value
             of the metric to be monitored.
     """
-    
+
     def __init__(
         self,
         filepath: StrPath,
