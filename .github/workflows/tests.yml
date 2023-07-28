@@ -17,12 +17,11 @@ jobs:
   run-monai-tests:
     name: Check if MonAI tests pass
     runs-on: ubuntu-latest
-    container: projectmonai/monai
     steps:
       - uses: actions/checkout@v3
       - run: |
           pip install -U pip
-          pip install .[test]
+          pip install .[monai]
           python -c "from wandb_addons.monai import WandbStatsHandler, WandbModelCheckpointSaver"
   
   run-keras-callbacks-tests-tf-backend:
