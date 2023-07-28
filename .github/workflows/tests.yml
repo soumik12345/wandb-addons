@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v3
       - run: |
           pip install -U pip
-          pip install .[monai]
+          pip install .[test]
           python -c "from wandb_addons.monai import WandbStatsHandler, WandbModelCheckpointSaver"
   
   run-keras-callbacks-tests-tf-backend:
