@@ -1,8 +1,5 @@
 import sys
-from typing import Any
-from typing import Dict
-from typing import Optional
-from typing import Union
+from typing import Any, Dict, Optional, Union
 
 import keras_core as keras
 import wandb
@@ -55,11 +52,11 @@ class WandbMetricsLogger(Callback):
     the product of the cardinality of the training dataset and the batch size.
 
     Arguments:
-        log_freq: ("epoch", "batch", or int) if "epoch", logs metrics
-            at the end of each epoch. If "batch", logs metrics at the end
+        log_freq (Union[LogStrategy, int]): ("epoch", "batch", or int) if "epoch",
+            logs metrics at the end of each epoch. If "batch", logs metrics at the end
             of each batch. If an integer, logs metrics at the end of that
             many batches. Defaults to "epoch".
-        initial_global_step: (int) Use this argument to correcly log the
+        initial_global_step (int): Use this argument to correcly log the
             learning rate when you resume training from some `initial_epoch`,
             and a learning rate scheduler is used. This can be computed as
             `step_size * initial_step`. Defaults to 0.
