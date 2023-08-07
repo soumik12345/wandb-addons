@@ -17,16 +17,15 @@ jobs:
   run-monai-tests:
     name: Check if MonAI tests pass
     runs-on: ubuntu-latest
-    container: projectmonai/monai
     steps:
       - uses: actions/checkout@v3
       - run: |
           pip install -U pip
           pip install .[monai]
           python -c "from wandb_addons.monai import WandbStatsHandler, WandbModelCheckpointSaver"
-
-  run-keras-tests:
-    name: Check if TensorFlow and TFDS tests pass
+  
+  run-keras-callbacks-tests-tf-backend:
+    name: Check if unit-tests for the Keras-Core callbacks pass for TensorFlow backend.
     runs-on: ubuntu-latest
     env:
       WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
@@ -34,11 +33,42 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
+          apt-get update -y
+          apt-get install git -y
           pip install -U pip
-          pip install ".[dataset, test]"
-          python -c "import tensorflow as tf"
-          python -c "import tensorflow_datasets as tfds"
-          pytest -s .
+          pip install ".[keras, test]"
+          KERAS_BACKEND="tensorflow" pytest -s ./wandb_addons/tests/keras/
+
+  run-keras-callbacks-tests-torch-backend:
+    name: Check if unit-tests for the Keras-Core callbacks pass for PyTorch backend.
+    runs-on: ubuntu-latest
+    env:
+      WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+    container: pytorch/pytorch
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          apt-get update -y
+          apt-get install git -y
+          pip install -U pip tensorflow-cpu
+          pip install ".[keras, test]"
+          KERAS_BACKEND="torch" pytest -s ./wandb_addons/tests/keras/
+  
+  run-keras-callbacks-tests-jax-backend:
+    name: Check if unit-tests for the Keras-Core callbacks pass for Jax backend.
+    runs-on: ubuntu-latest
+    env:
+      WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+    container: tensorflow/tensorflow
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          apt-get update -y
+          apt-get install git -y
+          pip install -U pip
+          pip install "jax[cpu]"
+          pip install ".[keras, test]"
+          KERAS_BACKEND="jax" pytest -s ./wandb_addons/tests/keras/
 
   run-jax-tests:
     name: Check if JAX, Flax and Cicl tests pass

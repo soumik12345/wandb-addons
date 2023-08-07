@@ -24,6 +24,32 @@ pip install ./wandb-addons[dataset]
 
 - **[`load_dataset`](https://soumik12345.github.io/wandb-addons/dataset/dataset_loading/#wandb_addons.dataset.dataset_loading.load_dataset):** Load a dataset from a wandb artifact. Using this function you can load a dataset hosted as a wandb artifact in a single line of code, and use our powerful data processing methods to quickly get your dataset ready for training in a deep learning model.
 
+### [🦄 Keras](https://github.com/keras-team/keras-core)
+
+Backend-agnostic callbacks integrating Weights & Biases with [Keras-Core](https://github.com/keras-team/keras-core).
+
+In order to install `wandb-addons` along with the dependencies for the ciclo callbacks, you can run:
+
+```shell
+git clone https://github.com/soumik12345/wandb-addons
+pip install ./wandb-addons[keras]
+```
+
+Once you've installed `wandb-addons`, you can import it using:
+
+```python
+from wandb_addons.keras import WandbMetricsLogger, WandbModelCheckpoint
+
+callbacks = [
+    WandbMetricsLogger(),           # Logs metrics to W&B
+    WandbModelCheckpoint(filepath)  # Logs and versions model checkpoints to W&B
+]
+
+model.fit(..., callbacks=callbacks)
+```
+
+For more information, check out more at the [docs](https://soumik12345.github.io/wandb-addons/keras/).
+
 ### [🌀 Ciclo](https://github.com/cgarciae/ciclo)
 
 Functional callbacks for experiment tracking on [Weights & Biases](https://wandb.ai/site) with [Ciclo](https://github.com/cgarciae/ciclo).

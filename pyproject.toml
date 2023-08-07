@@ -31,6 +31,7 @@ monai = { extras = ["ignite", "nibabel", "tensorboard"], version = "^1.2.0" }
 ciclo = "^0.1.8"
 jupyter = "^1.0.0"
 ultralytics = "^8.0.125"
+keras-core = { git = "https://github.com/keras-team/keras-core" }
 
 [tool.poetry.extras]
 dev = ["isort", "black", "pytest", "pre-commit"]
@@ -58,6 +59,7 @@ dataset = ["tensorflow-datasets", "pillow"]
 monai = ["monai"]
 jax = ["ciclo", "tensorflow-datasets"]
 yolo = ["ultralytics"]
+keras = ["keras-core"]
 
 [tool.poetry.scripts]
 nb2report = "wandb_addons.report.cli.convert:convert"
@@ -77,6 +79,7 @@ ignore = [
     "E126",
     "E226",
     "E24",
+    "E501",
     "E704",
     "W503",
     "W504",
@@ -86,6 +89,8 @@ ignore = [
 
 [tool.isort]
 line_length = 88
+known_first_party = ["wandb_addons"]
+default_section = "THIRDPARTY"
 
 [build-system]
 requires = ["poetry-core"]
