@@ -4,7 +4,7 @@ import keras_core as keras
 import numpy as np
 import tensorflow.data as tf_data
 import wandb
-from keras_core import ops
+from keras_core import backend, ops
 from keras_core.callbacks import Callback
 from tqdm.auto import tqdm
 
@@ -75,19 +75,30 @@ class WandBImageClassificationCallback(Callback):
             desc="Populating W&B Table",
         )
         for image, label in data_iterator:
-            predictions = self.model(ops.expand_dims(image, axis=0))
+            if backend.backend() == "jax":
+                predictions = self.model(
+                    ops.expand_dims(ops.convert_to_numpy(image), axis=0)
+                )
+            else:
+                predictions = self.model(ops.expand_dims(image, axis=0))
             predicted_label = self.class_labels[
                 int(ops.convert_to_numpy(ops.argmax(predictions, axis=-1)).item())
             ]
             predicted_probabilities = self.get_predicted_probabilities(predictions)
             image = ops.convert_to_numpy(image)
-            label = (
-                self.class_labels[int(ops.convert_to_numpy(label).item())]
-                if self.labels_from_logits
-                else self.class_labels[
-                    int(ops.convert_to_numpy(ops.argmax(label, axis=-1)).item())
-                ]
-            )
+
+            if self.labels_from_logits:
+                label = self.class_labels[int(ops.convert_to_numpy(label).item())]
+            else:
+                if backend.backend() == "jax":
+                    label = self.class_labels[
+                        int(ops.argmax(ops.convert_to_numpy(label), axis=-1).item())
+                    ]
+                else:
+                    label = self.class_labels[
+                        int(ops.convert_to_numpy(ops.argmax(label, axis=-1)).item())
+                    ]
+
             self.table.add_data(
                 epoch,
                 wandb.Image(image),
