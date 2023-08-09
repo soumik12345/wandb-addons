@@ -150,5 +150,4 @@ class WandbMetricsLogger(Callback):
     def on_train_batch_end(
         self, batch: int, logs: Optional[Dict[str, Any]] = None
     ) -> None:
-        """Called at the end of a training batch in `fit` methods."""
         self.on_batch_end(batch, logs if logs else {})
