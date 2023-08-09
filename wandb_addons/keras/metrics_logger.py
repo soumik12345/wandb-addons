@@ -123,7 +123,6 @@ class WandbMetricsLogger(Callback):
                     return None
 
     def on_epoch_end(self, epoch: int, logs: Optional[Dict[str, Any]] = None) -> None:
-        """Called at the end of an epoch."""
         logs = dict() if logs is None else {f"epoch/{k}": v for k, v in logs.items()}
 
         logs["epoch/epoch"] = epoch
@@ -136,7 +135,6 @@ class WandbMetricsLogger(Callback):
 
     def on_batch_end(self, batch: int, logs: Optional[Dict[str, Any]] = None) -> None:
         self.global_step += 1
-        """An alias for `on_train_batch_end` for backwards compatibility."""
         if self.logging_batch_wise and batch % self.log_freq == 0:
             logs = {f"batch/{k}": v for k, v in logs.items()} if logs else {}
             logs["batch/batch_step"] = self.global_batch
