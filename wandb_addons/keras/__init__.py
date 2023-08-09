@@ -1,5 +1,9 @@
-from .image_classification import ImageClassificationCallback
+from .image_classification import WandBImageClassificationCallback
 from .metrics_logger import WandbMetricsLogger
 from .model_checkpoint import WandbModelCheckpoint
 
-__all__ = ["WandbMetricsLogger", "WandbModelCheckpoint", "ImageClassificationCallback"]
+__all__ = [
+    "WandbMetricsLogger",
+    "WandbModelCheckpoint",
+    "WandBImageClassificationCallback",
+]
