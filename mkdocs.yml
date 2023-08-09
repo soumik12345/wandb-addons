@@ -45,7 +45,8 @@ nav:
   - 'Report': 'report.md'
   - 'Integrations':
     - 'Ciclo': 'ciclo/ciclo.md'
-    - 'Keras': 'keras.md'
+    - '🦄 Keras':
+      - 'Callbacks': 'keras/callbacks.md'
     - 'MonAI': 'monai/monai.md'
     - 'Ultralytics': 'ultralytics/yolo.md'
   - 'Prompts': 'prompts/tracer.md'
