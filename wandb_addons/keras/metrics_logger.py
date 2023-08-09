@@ -11,7 +11,7 @@ torch_backend_available = False
 jax_backend_available = False
 
 if keras.backend.backend() == "tensorflow":
-    from keras_core.utils.module_utils import tensorflow as tf
+    import tensorflow as tf
 
     tf_backend_available = True
 elif keras.backend.backend() == "torch":
