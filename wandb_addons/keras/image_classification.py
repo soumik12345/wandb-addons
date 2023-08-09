@@ -1,9 +1,12 @@
 from typing import List, Optional, Tuple, Union
 
+import keras_core as keras
 import numpy as np
 import tensorflow.data as tf_data
 import wandb
+from keras_core import ops
 from keras_core.callbacks import Callback
+from tqdm.auto import tqdm
 
 
 class ImageClassificationCallback(Callback):
@@ -12,6 +15,7 @@ class ImageClassificationCallback(Callback):
         dataset: Union[tf_data.Dataset, Tuple[np.array, np.array]],
         class_labels: Optional[List[str]],
         unbatch_dataset: bool = True,
+        from_logits: bool = False,
         max_items_for_visualization: Optional[int] = None,
         *args,
         **kwargs
@@ -20,6 +24,7 @@ class ImageClassificationCallback(Callback):
         self.dataset = dataset
         self.class_labels = class_labels
         self.unbatch_dataset = unbatch_dataset
+        self.from_logits = from_logits
         self.max_items_for_visualization = max_items_for_visualization
 
         if self.unbatch_dataset:
@@ -48,10 +53,43 @@ class ImageClassificationCallback(Callback):
         self.table = wandb.Table(
             columns=[
                 "Epoch",
-                "Data-Index",
                 "Image",
                 "Ground-Truth-Label",
                 "Predicted-Label",
                 "Predicted-Probability",
             ]
         )
+
+    def get_predicted_probabilities(self, predictions: np.array):
+        predictions = ops.convert_to_numpy(predictions).tolist()
+        return {
+            self.class_labels[idx]: predictions[idx] for idx in range(len(predictions))
+        }
+
+    def on_epoch_end(self, epoch, logs=None):
+        data_iterator = (
+            next(iter(self.dataset))
+            if isinstance(self.dataset, tf_data.Dataset)
+            else zip(self.dataset)
+        )
+        data_iterator = tqdm(
+            data_iterator,
+            total=self.max_items_for_visualization,
+            desc="Populating W&B Table",
+        )
+        for image, label in data_iterator:
+            predictions = self.model(ops.expand_dims(image))
+            predicted_label = ops.convert_to_numpy(ops.argmax(predictions, axis=-1))
+            predicted_probabilities = self.get_predicted_probabilities(predictions)
+            image = ops.convert_to_numpy(image)
+            label = ops.convert_to_numpy(label)
+            self.table.add_data(
+                epoch,
+                wandb.Image(image),
+                predicted_label,
+                label,
+                predicted_probabilities,
+            )
+
+    def on_train_end(self, logs=None):
+        wandb.log({"Evaluation-Table": self.table})

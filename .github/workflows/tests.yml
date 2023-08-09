@@ -38,6 +38,7 @@ jobs:
           pip install -U pip
           pip install ".[keras, test]"
           KERAS_BACKEND="tensorflow" pytest -s ./wandb_addons/tests/keras/
+          python -c "from wandb_addons.keras import ImageClassificationCallback"
 
   run-keras-callbacks-tests-torch-backend:
     name: Check if unit-tests for the Keras-Core callbacks pass for PyTorch backend.
