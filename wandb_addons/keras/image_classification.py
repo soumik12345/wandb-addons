@@ -36,10 +36,7 @@ class WandBImageClassificationCallback(Callback):
                     self.dataset.take(self.max_items_for_visualization)
                     if tf_data.experimental.cardinality(self.dataset).numpy().item()
                     < self.max_items_for_visualization
-                    else (
-                        self.dataset[0][: self.max_items_for_visualization],
-                        self.dataset[1][: self.max_items_for_visualization],
-                    )
+                    else self.dataset
                 )
         else:
             if isinstance(self.dataset, tf_data.Dataset):
