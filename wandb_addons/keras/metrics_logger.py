@@ -39,10 +39,10 @@ class WandbMetricsLogger(Callback):
     `WandbMetricsLogger` automatically logs the `logs` dictionary that callback methods
     take as argument to wandb.
 
-    This callback automatically logs the following to a W&B run page:
-    * system (CPU/GPU/TPU) metrics,
-    * train and validation metrics defined in `model.compile`,
-    * learning rate (both for a fixed value or a learning rate scheduler)
+    !!! note "This callback automatically logs the following to a W&B run page"
+        - system (CPU/GPU/TPU) metrics
+        - train and validation metrics defined in `model.compile`,
+        - learning rate (both for a fixed value or a learning rate scheduler)
 
     Notes:
     If you resume training by passing `initial_epoch` to `model.fit` and you are using a
