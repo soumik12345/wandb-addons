@@ -79,7 +79,11 @@ class ImageClassificationCallback(Callback):
         )
         for image, label in data_iterator:
             predictions = self.model(ops.expand_dims(image))
-            predicted_label = ops.convert_to_numpy(ops.argmax(predictions, axis=-1))
+            predicted_label = (
+                ops.convert_to_numpy(ops.argmax(predictions, axis=-1))
+                if not self.from_logits
+                else ops.convert_to_numpy(predictions)
+            )
             predicted_probabilities = self.get_predicted_probabilities(predictions)
             image = ops.convert_to_numpy(image)
             label = ops.convert_to_numpy(label)
