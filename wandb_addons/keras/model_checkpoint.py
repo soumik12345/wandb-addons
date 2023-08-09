@@ -55,6 +55,9 @@ class WandbModelCheckpoint(ModelCheckpoint):
             batches.
         - Save only model weights, or save the whole model.
         - Save the model either in SavedModel format or in `.h5` format.
+    
+    !!! example "Example notebooks:"
+        - [Image Classification using Keras Core](../examples/image_classification).
 
     Arguments:
         filepath (wandb.sdk.lib.paths.StrPath): path to save the model file. `filepath`

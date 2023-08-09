@@ -44,12 +44,16 @@ class WandbMetricsLogger(Callback):
         - train and validation metrics defined in `model.compile`,
         - learning rate (both for a fixed value or a learning rate scheduler)
 
-    Notes:
-    If you resume training by passing `initial_epoch` to `model.fit` and you are using a
-    learning rate scheduler, make sure to pass `initial_global_step` to
-    `WandbMetricsLogger`. The `initial_global_step` is `step_size * initial_step`, where
-    `step_size` is number of training steps per epoch. `step_size` can be calculated as
-    the product of the cardinality of the training dataset and the batch size.
+    !!! note "Notes"
+        If you resume training by passing `initial_epoch` to `model.fit` and you are
+        using a learning rate scheduler, make sure to pass `initial_global_step` to
+        `WandbMetricsLogger`. The `initial_global_step` is `step_size * initial_step`,
+        where `step_size` is number of training steps per epoch. `step_size` can be
+        calculated as the product of the cardinality of the training dataset and the
+        batch size.
+
+    !!! example "Example notebooks:"
+        - [Image Classification using Keras Core](../examples/image_classification).
 
     Arguments:
         log_freq (Union[LogStrategy, int]): ("epoch", "batch", or int) if "epoch",
