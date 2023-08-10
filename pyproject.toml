@@ -60,7 +60,7 @@ dataset = ["tensorflow-datasets", "pillow"]
 monai = ["monai"]
 jax = ["ciclo", "tensorflow-datasets"]
 yolo = ["ultralytics"]
-keras = ["keras-core"]
+keras = ["keras-core", "keras-cv"]
 
 [tool.poetry.scripts]
 nb2report = "wandb_addons.report.cli.convert:convert"

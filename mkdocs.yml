@@ -47,6 +47,7 @@ nav:
     - 'Ciclo': 'ciclo/ciclo.md'
     - '🦄 Keras':
       - 'Callbacks': 'keras/callbacks.md'
+      - 'Object-Detection': 'keras/object_detection.md'
     - 'MonAI': 'monai/monai.md'
     - 'Ultralytics': 'ultralytics/yolo.md'
   - 'Prompts': 'prompts/tracer.md'
