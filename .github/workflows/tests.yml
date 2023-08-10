@@ -36,7 +36,12 @@ jobs:
           apt-get update -y
           apt-get install git -y
           pip install -U pip
-          pip install ".[keras, test]"
+          pip install ".[test]"
+          pip install --upgrade -q git+https://github.com/keras-team/keras-cv wandb
+          pip install -q namex
+          apt install python3.10-venv
+          git clone https://github.com/keras-team/keras-core.git && cd keras-core
+          python pip_build.py --install
           KERAS_BACKEND="tensorflow" pytest -s ./wandb_addons/tests/keras/
           python -c "from wandb_addons.keras import WandBImageClassificationCallback"
           python -c "from wandb_addons.keras.detection import log_predictions_to_wandb"
