@@ -55,10 +55,10 @@ def log_predictions_to_wandb(
             images=image_batch,
         )
     )
-    num_detections = prediction_batch["num_detections"].item()
-    predicted_boxes = bounding_boxes[:num_detections]
     table = wandb.Table(columns=["Predictions", "Mean-Confidence"])
     for idx in tqdm(range(batch_size)):
+        num_detections = prediction_batch["num_detections"][idx].item()
+        predicted_boxes = bounding_boxes[idx][:num_detections]
         confidences = prediction_batch["confidence"][idx][:num_detections]
         classes = prediction_batch["classes"][idx][:num_detections]
         wandb_boxes = []
@@ -66,10 +66,10 @@ def log_predictions_to_wandb(
             wandb_boxes.append(
                 {
                     "position": {
-                        "minX": predicted_boxes[idx][box_idx][0] / image_batch.shape[1],
-                        "maxX": predicted_boxes[idx][box_idx][2] / image_batch.shape[1],
-                        "minY": predicted_boxes[idx][box_idx][1] / image_batch.shape[2],
-                        "maxY": predicted_boxes[idx][box_idx][3] / image_batch.shape[2],
+                        "minX": predicted_boxes[box_idx][0] / image_batch[idx].shape[0],
+                        "minY": predicted_boxes[box_idx][1] / image_batch[idx].shape[1],
+                        "maxX": predicted_boxes[box_idx][2] / image_batch[idx].shape[0],
+                        "maxY": predicted_boxes[box_idx][3] / image_batch[idx].shape[1],
                     },
                     "class_id": int(classes[box_idx]),
                     "box_caption": class_mapping[int(classes[box_idx])],
