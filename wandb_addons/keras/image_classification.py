@@ -27,7 +27,7 @@ class WandBImageClassificationCallback(Callback):
             numpy arrays in the form of (image_tensor, label_tensor).
         class_labels (Optional[List[str]]): The list of class names such that the index
             of the class names list corrspond to the labels in the dataset.
-        unbatch_dataset (bool) This should be set to `True` if your dataset is batched
+        unbatch_dataset (bool): This should be set to `True` if your dataset is batched
             and needs to be unbatched.
         labels_from_logits (bool): Whether the labels in the dataset are
             one-hot-encoded or from logits.
