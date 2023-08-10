@@ -35,6 +35,9 @@ def log_predictions_to_wandb(
     [wandb.Table](https://docs.wandb.ai/guides/data-vis) with images overlayed with an
     interactive bounding box overlay corresponding to the predicted boxes.
 
+    !!! example "Example notebooks:"
+        - [Object Detection using KerasCV](../examples/object_detection_inference).
+
     Arguments:
         image_batch (Union[backend.KerasTensor, np.array]): The batch of resized and
             batched images that is also passed to the model.
