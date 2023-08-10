@@ -32,6 +32,7 @@ ciclo = "^0.1.8"
 jupyter = "^1.0.0"
 ultralytics = "^8.0.125"
 keras-core = { git = "https://github.com/keras-team/keras-core" }
+keras-cv = {git = "https://github.com/keras-team/keras-cv"}
 
 [tool.poetry.extras]
 dev = ["isort", "black", "pytest", "pre-commit"]
