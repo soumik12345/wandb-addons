@@ -4,3 +4,5 @@ Utilities and callbacks integrating Weights & Biases with the object detection s
 
 
 ::: wandb_addons.keras.detection.inference
+
+::: wandb_addons.keras.detection.dataset

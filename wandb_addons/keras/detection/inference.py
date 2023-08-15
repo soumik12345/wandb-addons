@@ -45,7 +45,7 @@ def log_predictions_to_wandb(
             that is the output of the detection model.
         class_mapping (Dict[int, str]): A dictionary that maps the index of the classes
             to the corresponding class names.
-        source_bbox_format (bool): Format of the source bounding box, one of `"xyxy"`
+        source_bbox_format (str): Format of the source bounding box, one of `"xyxy"`
             or `"xywh"`.
     """
     batch_size = prediction_batch["boxes"].shape[0]

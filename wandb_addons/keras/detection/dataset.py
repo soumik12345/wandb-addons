@@ -1,68 +1,86 @@
-from typing import Dict
+from typing import Dict, Optional
 
 import keras_cv
-import numpy as np
 import tensorflow as tf
 import wandb
-from keras_core import ops
 from tqdm.auto import tqdm
 
 
 def visualize_dataset(
-    dataset,
+    dataset: tf.data.Dataset,
     class_mapping: Dict[int, str],
     title: str,
-    max_batches_to_visualize: int = 1,
+    max_batches_to_visualize: Optional[int] = 1,
     source_bbox_format: str = "xywh",
 ):
-    dataset = dataset.take(max_batches_to_visualize)
+    """Function to visualize a dataset using a
+    [wandb.Table](https://docs.wandb.ai/guides/data-vis) with 2 columns, one with the
+    images overlayed with an interactive bounding box overlay corresponding to the
+    predicted boxes and another showing the number of bounding boxes corresponding to
+    that image.
+
+    !!! example "Example notebooks:"
+        - [Object Detection using KerasCV](../examples/visualize_dataset).
+
+    Arguments:
+        dataset (tf.data.Dataset): A batched dataset consisting of Ragged Tensors.
+        This can be obtained by applying `ragged_batch()` on a `tf.data.Dataset`.
+        class_mapping (Dict[int, str]): A dictionary that maps the index of the classes
+            to the corresponding class names.
+        title (str): Title under which the table will be logged to the Weights & Biases
+            workspace.
+        max_batches_to_visualize (Optional[int]): Maximum number of batches from the
+            dataset to be visualized.
+        source_bbox_format (str): Format of the source bounding box, one of `"xyxy"`
+            or `"xywh"`.
+    """
     table = wandb.Table(columns=["Images", "Number-of-Objects"])
+    if max_batches_to_visualize is not None:
+        dataset = iter(dataset.take(max_batches_to_visualize))
+    else:
+        dataset = iter(dataset)
+        max_batches_to_visualize = tf.data.experimental.cardinality(dataset).numpy()
 
     for _ in tqdm(range(max_batches_to_visualize)):
-        batched_items = next(iter(dataset))
-        image_batch, ground_truth_boxes = (
-            batched_items["images"],
-            batched_items["bounding_boxes"],
+        sample = next(dataset)
+        images, bounding_boxes = sample["images"], sample["bounding_boxes"]
+        images = keras_cv.utils.to_numpy(images)
+        images = keras_cv.utils.transform_value_range(
+            images, original_range=(0, 255), target_range=(0, 255)
         )
-
-        image_batch = keras_cv.utils.to_numpy(image_batch)
-        for key, val in ground_truth_boxes.items():
-            ground_truth_boxes[key] = keras_cv.utils.to_numpy(val)
-
-        image_batch = ops.convert_to_numpy(image_batch).astype(np.uint8)
-        bounding_boxes = ops.convert_to_numpy(
-            keras_cv.bounding_box.convert_format(
-                ground_truth_boxes["boxes"],
-                source=source_bbox_format,
-                target="xyxy",
-                images=image_batch,
-            )
+        for key, val in bounding_boxes.items():
+            bounding_boxes[key] = keras_cv.utils.to_numpy(val)
+        bounding_boxes["boxes"] = keras_cv.bounding_box.convert_format(
+            bounding_boxes["boxes"],
+            source=source_bbox_format,
+            target="xyxy",
+            images=images,
         )
-
-        batch_size = bounding_boxes.shape[0]
-        table = wandb.Table(columns=["Images", "Number-of-Objects"])
-
-        for idx in tqdm(range(batch_size)):
-            gt_boxes = bounding_boxes[idx]
-            classes = ground_truth_boxes["classes"][idx]
-            classes = classes[: classes.index(-1)]
+        bounding_boxes["boxes"] = keras_cv.utils.to_numpy(bounding_boxes["boxes"])
+        for idx in range(images.shape[0]):
+            classes = [
+                int(class_idx) for class_idx in bounding_boxes["classes"][idx].tolist()
+            ]
+            bboxes = bounding_boxes["boxes"][idx]
+            if -1 in classes:
+                classes = classes[: classes.index(-1)]
             wandb_boxes = []
-            num_objects = classes.shape[0]
-            for box_idx in range(num_objects):
+            for object_idx in range(len(classes)):
                 wandb_boxes.append(
                     {
                         "position": {
-                            "minX": gt_boxes[box_idx][0] / image_batch[idx].shape[0],
-                            "minY": gt_boxes[box_idx][1] / image_batch[idx].shape[1],
-                            "maxX": gt_boxes[box_idx][2] / image_batch[idx].shape[0],
-                            "maxY": gt_boxes[box_idx][3] / image_batch[idx].shape[1],
+                            "minX": int(bboxes[object_idx][0]),
+                            "minY": int(bboxes[object_idx][1]),
+                            "maxX": int(bboxes[object_idx][2]),
+                            "maxY": int(bboxes[object_idx][3]),
                         },
-                        "class_id": int(classes[box_idx]),
-                        "box_caption": class_mapping[int(classes[box_idx])],
+                        "class_id": classes[object_idx],
+                        "box_caption": class_mapping[int(classes[object_idx])],
+                        "domain": "pixel",
                     }
                 )
             wandb_image = wandb.Image(
-                image_batch[idx],
+                images[idx],
                 boxes={
                     "gorund-truth": {
                         "box_data": wandb_boxes,
@@ -70,6 +88,6 @@ def visualize_dataset(
                     },
                 },
             )
-            table.add_data(wandb_image, num_objects)
+            table.add_data(wandb_image, len(classes))
 
     wandb.log({title: table})
