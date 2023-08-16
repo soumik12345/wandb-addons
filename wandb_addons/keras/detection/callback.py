@@ -20,7 +20,7 @@ class WandBDetectionVisualizationCallback(keras.callbacks.Callback):
     boxes and the predicted mean-confidence for each class.
 
     !!! example "Example notebooks:"
-        - [Fine-tuning an Object Detection Model using KerasCV](../examples/visualize_dataset).
+        - [Fine-tuning an Object Detection Model using KerasCV](../examples/train_retinanet).
 
     Arguments:
         dataset (tf.data.Dataset): A batched dataset consisting of Ragged Tensors.
