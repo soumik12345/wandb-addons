@@ -71,7 +71,7 @@ jobs:
   #         KERAS_BACKEND="jax" pytest -s ./wandb_addons/tests/keras/
 
   run-jax-tests:
-    name: Check if JAX, Flax and Cicl tests pass
+    name: Check if JAX, Flax and Ciclo tests pass
     runs-on: ubuntu-latest
     container: python
     steps:
