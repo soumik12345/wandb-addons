@@ -19,8 +19,9 @@ class WandBDetectionVisualizationCallback(keras.callbacks.Callback):
     ground-truth and predicted boudning boxes, the number of ground-truth bounding
     boxes and the predicted mean-confidence for each class.
 
-    !!! example "Example notebooks:"
+    !!! example "Examples:"
         - [Fine-tuning an Object Detection Model using KerasCV](../examples/train_retinanet).
+        - [Sample Results for Fine-tuning an Object Detection Model using KerasCV](https://wandb.ai/geekyrakshit/keras-cv-callbacks/reports/Keras-CV-Integration--Vmlldzo1MTU4Nzk3)
 
     Arguments:
         dataset (tf.data.Dataset): A batched dataset consisting of Ragged Tensors.
