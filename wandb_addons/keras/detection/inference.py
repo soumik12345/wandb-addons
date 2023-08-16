@@ -3,7 +3,6 @@ from typing import Dict
 import keras_cv
 import numpy as np
 import wandb
-from keras_core import ops
 from tqdm.auto import tqdm
 
 
@@ -49,8 +48,8 @@ def log_predictions_to_wandb(
             or `"xywh"`.
     """
     batch_size = prediction_batch["boxes"].shape[0]
-    image_batch = ops.convert_to_numpy(image_batch).astype(np.uint8)
-    bounding_boxes = ops.convert_to_numpy(
+    image_batch = keras_cv.utils.to_numpy(image_batch).astype(np.uint8)
+    bounding_boxes = keras_cv.utils.to_numpy(
         keras_cv.bounding_box.convert_format(
             prediction_batch["boxes"],
             source=source_bbox_format,
