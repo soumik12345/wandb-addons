@@ -48,7 +48,9 @@ callbacks = [
 model.fit(..., callbacks=callbacks)
 ```
 
-For more information, check out more at the [docs](keras/).
+For more information, check out
+- [Backend-agnostic callbacks for KerasCore](keras/callbacks/).
+- [Object-detection integration for KerasCV](keras/object_detection/).
 
 ### [🌀 Ciclo](https://github.com/cgarciae/ciclo)
 

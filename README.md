@@ -48,7 +48,9 @@ callbacks = [
 model.fit(..., callbacks=callbacks)
 ```
 
-For more information, check out more at the [docs](https://soumik12345.github.io/wandb-addons/keras/).
+For more information, check out
+- [Backend-agnostic callbacks for KerasCore](https://geekyrakshit.dev/wandb-addons/keras/callbacks/).
+- [Object-detection integration for KerasCV](https://geekyrakshit.dev/wandb-addons/keras/object_detection/).
 
 ### [🌀 Ciclo](https://github.com/cgarciae/ciclo)
 
