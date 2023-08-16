@@ -43,6 +43,15 @@ class WandBDetectionVisualizationCallback(keras.callbacks.Callback):
         y_pred_batch = self.model.predict(image_batch)
         y_pred = keras_cv.bounding_box.to_ragged(y_pred_batch)
         image_batch = keras_cv.utils.to_numpy(image_batch).astype(np.uint8)
+        ground_truth_bounding_boxes = keras_cv.utils.to_numpy(
+            keras_cv.bounding_box.convert_format(
+                y_true_batch["boxes"],
+                source=self.source_bounding_box_format,
+                target="xyxy",
+                images=image_batch,
+            )
+        )
+        ground_truth_classes = keras_cv.utils.to_numpy(y_true_batch["classes"])
         predicted_bounding_boxes = keras_cv.utils.to_numpy(
             keras_cv.bounding_box.convert_format(
                 y_pred["boxes"],
@@ -51,13 +60,23 @@ class WandBDetectionVisualizationCallback(keras.callbacks.Callback):
                 images=image_batch,
             )
         )
-        for idx in tqdm(range(image_batch.shape[0])):
+        for idx in range(image_batch.shape[0]):
             num_detections = y_pred["num_detections"][idx].item()
             predicted_boxes = predicted_bounding_boxes[idx][:num_detections]
             confidences = keras_cv.utils.to_numpy(
                 y_pred["confidence"][idx][:num_detections]
             )
-            classes = keras_cv.utils.to_numpy(y_pred["classes"][idx][:num_detections])
+            predicted_classes = keras_cv.utils.to_numpy(
+                y_pred["classes"][idx][:num_detections]
+            )
+
+            gt_classes = [
+                int(class_idx) for class_idx in ground_truth_classes[idx].tolist()
+            ]
+            gt_boxes = ground_truth_bounding_boxes[idx]
+            if -1 in gt_classes:
+                gt_classes = gt_classes[: gt_classes.index(-1)]
+
             wandb_prediction_boxes = []
             for box_idx in range(num_detections):
                 wandb_prediction_boxes.append(
@@ -72,14 +91,36 @@ class WandBDetectionVisualizationCallback(keras.callbacks.Callback):
                             "maxY": predicted_boxes[box_idx][3]
                             / image_batch[idx].shape[1],
                         },
-                        "class_id": int(classes[box_idx]),
-                        "box_caption": self.class_mapping[int(classes[box_idx])],
+                        "class_id": int(predicted_classes[box_idx]),
+                        "box_caption": self.class_mapping[
+                            int(predicted_classes[box_idx])
+                        ],
                         "scores": {"confidence": float(confidences[box_idx])},
+                    }
+                )
+
+            wandb_ground_truth_boxes = []
+            for box_idx in range(len(gt_classes)):
+                wandb_ground_truth_boxes.append(
+                    {
+                        "position": {
+                            "minX": int(gt_boxes[box_idx][0]),
+                            "minY": int(gt_boxes[box_idx][1]),
+                            "maxX": int(gt_boxes[box_idx][2]),
+                            "maxY": int(gt_boxes[box_idx][3]),
+                        },
+                        "class_id": gt_classes[box_idx],
+                        "box_caption": self.class_mapping[int(gt_classes[box_idx])],
+                        "domain": "pixel",
                     }
                 )
             wandb_image = wandb.Image(
                 image_batch[idx],
                 boxes={
+                    "ground-truth": {
+                        "box_data": wandb_ground_truth_boxes,
+                        "class_labels": self.class_mapping,
+                    },
                     "predictions": {
                         "box_data": wandb_prediction_boxes,
                         "class_labels": self.class_mapping,
@@ -87,14 +128,14 @@ class WandBDetectionVisualizationCallback(keras.callbacks.Callback):
                 },
             )
             mean_confidence_dict = get_mean_confidence_per_class(
-                confidences, classes, self.class_mapping
+                confidences, predicted_classes, self.class_mapping
             )
             self.table.add_data(epoch, wandb_image, mean_confidence_dict)
 
     def on_epoch_end(self, epoch, logs):
         original_prediction_decoder = self.model._prediction_decoder
         self.model.prediction_decoder = self.prediction_decoder
-        for _ in range(self.max_batches_for_vis):
+        for _ in tqdm(range(self.max_batches_for_vis)):
             image_batch, y_true_batch = next(iter(self.dataset))
             self.plot_prediction(epoch, image_batch, y_true_batch)
         self.model.prediction_decoder = original_prediction_decoder
