@@ -8,8 +8,8 @@ from tqdm.auto import tqdm
 
 
 def get_mean_confidence_per_class(
-    confidences: Union[backend.KerasTensor, np.array],
-    classes: Union[backend.KerasTensor, np.array],
+    confidences: np.array,
+    classes: np.array,
     class_mapping: Dict[int, str],
 ):
     mean_confidence_dict = {class_name: [] for idx, class_name in class_mapping.items()}
@@ -26,8 +26,8 @@ def get_mean_confidence_per_class(
 
 
 def log_predictions_to_wandb(
-    image_batch: Union[backend.KerasTensor, np.array],
-    prediction_batch: Union[backend.KerasTensor, np.array],
+    image_batch: np.array,
+    prediction_batch: np.array,
     class_mapping: Dict[int, str],
     source_bbox_format: str = "xywh",
 ):
