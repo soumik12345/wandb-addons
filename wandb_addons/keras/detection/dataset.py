@@ -1,13 +1,13 @@
 from typing import Dict, Optional
 
 import keras_cv
-import tensorflow as tf
 import wandb
+from tensorflow import data as tf_data
 from tqdm.auto import tqdm
 
 
 def visualize_dataset(
-    dataset: tf.data.Dataset,
+    dataset: tf_data.Dataset,
     class_mapping: Dict[int, str],
     title: str,
     max_batches_to_visualize: Optional[int] = 1,
@@ -39,7 +39,7 @@ def visualize_dataset(
         dataset = iter(dataset.take(max_batches_to_visualize))
     else:
         dataset = iter(dataset)
-        max_batches_to_visualize = tf.data.experimental.cardinality(dataset).numpy()
+        max_batches_to_visualize = tf_data.experimental.cardinality(dataset).numpy()
 
     for _ in tqdm(range(max_batches_to_visualize)):
         sample = next(dataset)

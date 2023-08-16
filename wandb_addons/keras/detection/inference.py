@@ -1,9 +1,9 @@
-from typing import Dict, Union
+from typing import Dict
 
 import keras_cv
 import numpy as np
 import wandb
-from keras_core import backend, ops
+from keras_core import ops
 from tqdm.auto import tqdm
 
 
