@@ -10,6 +10,31 @@ from tqdm.auto import tqdm
 
 
 class WandBImageClassificationCallback(Callback):
+    """Callback that logs the images and results of an image-classification task
+    including ground-truth and predicted labels and the class-wise probabilities
+    in a [wandb.Table](https://docs.wandb.ai/guides/data-vis) in an epoch-wise
+    manner.
+
+    !!! example "Example notebooks:"
+        - [Image Classification using Keras Core](../examples/image_classification).
+
+    Arguments:
+        dataset (Union[tf_data.Dataset, Tuple[np.array, np.array]]): The dataset that
+            is to be visualized. This is ideally the validation dataset for the image
+            classification task in the form of a
+            [`tf.data.Dataset`](https://www.tensorflow.org/api_docs/python/tf/data/Dataset)
+            that has an `element_spec` like (image_tensor, label_tensor) or a tuple of
+            numpy arrays in the form of (image_tensor, label_tensor).
+        class_labels (Optional[List[str]]): The list of class names such that the index
+            of the class names list corrspond to the labels in the dataset.
+        unbatch_dataset (bool): This should be set to `True` if your dataset is batched
+            and needs to be unbatched.
+        labels_from_logits (bool): Whether the labels in the dataset are
+            one-hot-encoded or from logits.
+        max_items_for_visualization (Optional[int]): Maximum number of items from the
+            dataset to be visualized every epoch.
+    """
+
     def __init__(
         self,
         dataset: Union[tf_data.Dataset, Tuple[np.array, np.array]],
