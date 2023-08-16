@@ -3,6 +3,4 @@
 Utilities and callbacks integrating Weights & Biases with the object detection systems present in [KerasCV](https://github.com/keras-team/keras-cv).
 
 
-::: wandb_addons.keras.detection.inference
-
-::: wandb_addons.keras.detection.dataset
+::: wandb_addons.keras.detection
