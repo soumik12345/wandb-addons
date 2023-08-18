@@ -75,7 +75,7 @@ class WandBDetectionVisualizationCallback(keras.callbacks.Callback):
         )
 
     def plot_prediction(self, epoch, image_batch, y_true_batch):
-        y_pred_batch = self.model.predict(image_batch)
+        y_pred_batch = self.model.predict(image_batch, verbose=0)
         y_pred = keras_cv.bounding_box.to_ragged(y_pred_batch)
         image_batch = keras_cv.utils.to_numpy(image_batch).astype(np.uint8)
         ground_truth_bounding_boxes = keras_cv.utils.to_numpy(
