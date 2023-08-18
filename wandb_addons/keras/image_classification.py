@@ -1,6 +1,5 @@
 from typing import List, Optional, Tuple, Union
 
-import keras_core as keras
 import numpy as np
 import tensorflow.data as tf_data
 import wandb
@@ -42,8 +41,9 @@ class WandBImageClassificationCallback(Callback):
         unbatch_dataset: bool = True,
         labels_from_logits: bool = False,
         max_items_for_visualization: Optional[int] = None,
+        title: Optional[str] = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.dataset = dataset
@@ -51,18 +51,26 @@ class WandBImageClassificationCallback(Callback):
         self.unbatch_dataset = unbatch_dataset
         self.labels_from_logits = labels_from_logits
         self.max_items_for_visualization = max_items_for_visualization
+        self.title = title if title is not None else "Evaluation-Table"
 
         if self.unbatch_dataset:
             self.dataset = self.dataset.unbatch()
 
         if self.max_items_for_visualization:
             if isinstance(self.dataset, tf_data.Dataset):
-                self.dataset = (
-                    self.dataset.take(self.max_items_for_visualization)
-                    if tf_data.experimental.cardinality(self.dataset).numpy().item()
-                    < self.max_items_for_visualization
-                    else self.dataset
+                dataset_size = (
+                    tf_data.experimental.cardinality(self.dataset).numpy().item()
                 )
+                if self.max_items_for_visualization < dataset_size:
+                    self.dataset = self.dataset.take(self.max_items_for_visualization)
+            else:
+                assert self.dataset[0].shape[0] == self.dataset[0].shape[1]
+                dataset_size = self.dataset[0].shape[0]
+                if self.max_items_for_visualization < dataset_size:
+                    self.dataset = (
+                        self.dataset[0][: self.max_items_for_visualization],
+                        self.dataset[1][: self.max_items_for_visualization],
+                    )
         else:
             if isinstance(self.dataset, tf_data.Dataset):
                 self.max_items_for_visualization = (
@@ -72,21 +80,33 @@ class WandBImageClassificationCallback(Callback):
                 assert self.dataset[0].shape[0] == self.dataset[0].shape[1]
                 self.max_items_for_visualization = self.dataset[0].shape[0]
 
+        wandb.termlog(
+            f"Logging {self.max_items_for_visualization} items per epoch to the table."
+        )
+
         self.table = wandb.Table(
             columns=[
                 "Epoch",
                 "Image",
                 "Ground-Truth-Label",
                 "Predicted-Label",
+                "Top-5-Classes",
+                "Top-5-Probabilities",
                 "Predicted-Probability",
             ]
         )
 
     def get_predicted_probabilities(self, predictions: np.array):
         predictions = ops.convert_to_numpy(ops.squeeze(predictions)).tolist()
-        return {
+        predicted_probabilities = {
             self.class_labels[idx]: predictions[idx] for idx in range(len(predictions))
         }
+        sorted_probabilities = sorted(
+            predicted_probabilities.items(), key=lambda item: item[1], reverse=True
+        )
+        top_5_classes = [item[0] for item in sorted_probabilities]
+        top_5_probabilities = [item[1] for item in sorted_probabilities]
+        return predicted_probabilities, top_5_classes, top_5_probabilities
 
     def on_epoch_end(self, epoch, logs=None):
         data_iterator = (
@@ -109,7 +129,11 @@ class WandBImageClassificationCallback(Callback):
             predicted_label = self.class_labels[
                 int(ops.convert_to_numpy(ops.argmax(predictions, axis=-1)).item())
             ]
-            predicted_probabilities = self.get_predicted_probabilities(predictions)
+            (
+                predicted_probabilities,
+                top_5_classes,
+                top_5_probabilities,
+            ) = self.get_predicted_probabilities(predictions)
             image = ops.convert_to_numpy(image)
 
             if self.labels_from_logits:
@@ -127,10 +151,12 @@ class WandBImageClassificationCallback(Callback):
             self.table.add_data(
                 epoch,
                 wandb.Image(image),
-                predicted_label,
                 label,
+                predicted_label,
+                top_5_classes,
+                top_5_probabilities,
                 predicted_probabilities,
             )
 
     def on_train_end(self, logs=None):
-        wandb.log({"Evaluation-Table": self.table})
+        wandb.log({self.title: self.table})
