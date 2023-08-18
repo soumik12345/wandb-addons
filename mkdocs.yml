@@ -3,6 +3,7 @@ site_name: wandb-addons
 
 theme:
   name: material
+  logo: https://raw.githubusercontent.com/wandb/assets/main/wandb-dots-logo.svg
   features:
     - content.code.copy
     - content.code.select
