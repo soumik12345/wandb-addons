@@ -33,8 +33,8 @@ class WandBDetectionVisualizationCallback(keras.callbacks.Callback):
         iou_threshold (float): IoU threshold for non-max suppression during prediction.
         confidence_threshold (float): Confidence threshold for non-max suppression
             during prediction.
-        source_bbox_format (str): Format of the source bounding box, one of `"xyxy"`
-            or `"xywh"`.
+        source_bounding_box_format (str): Format of the source bounding box, one of
+            `"xyxy"` or `"xywh"`.
         title (str): Title under which the table will be logged to the Weights & Biases
             workspace.
     """
