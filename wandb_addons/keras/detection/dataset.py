@@ -24,7 +24,7 @@ def visualize_dataset(
 
     Arguments:
         dataset (tf.data.Dataset): A batched dataset consisting of Ragged Tensors.
-        This can be obtained by applying `ragged_batch()` on a `tf.data.Dataset`.
+            This can be obtained by applying `ragged_batch()` on a `tf.data.Dataset`.
         class_mapping (Dict[int, str]): A dictionary that maps the index of the classes
             to the corresponding class names.
         title (str): Title under which the table will be logged to the Weights & Biases
