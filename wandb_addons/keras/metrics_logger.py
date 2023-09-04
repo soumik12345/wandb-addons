@@ -115,7 +115,8 @@ class WandbMetricsLogger(Callback):
                     return None
             elif torch_backend_available:
                 if isinstance(self.model.optimizer.learning_rate, torch.Tensor):
-                    return float(self.model.optimizer.learning_rate.numpy().item())
+                    lr = self.model.optimizer.learning_rate.to("cpu")
+                    return float(lr.numpy().item())
                 else:
                     wandb.termerror("Unable to log learning rate.", repeat=False)
                     return None
