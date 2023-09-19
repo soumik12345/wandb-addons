@@ -52,6 +52,8 @@ class WandBImageClassificationCallback(Callback):
         self.labels_from_logits = labels_from_logits
         self.max_items_for_visualization = max_items_for_visualization
         self.title = title if title is not None else "Evaluation-Table"
+        self.data_format = backend.image_data_format()
+        print("[debug] data format: ", self.data_format)
 
         if self.unbatch_dataset:
             self.dataset = self.dataset.unbatch()
@@ -134,7 +136,12 @@ class WandBImageClassificationCallback(Callback):
                 top_5_classes,
                 top_5_probabilities,
             ) = self.get_predicted_probabilities(predictions)
+            
             image = ops.convert_to_numpy(image)
+            print("[debug] image shape before transformation:", image.shape)
+            if self.data_format == "channels_first":
+                image = np.moveaxis(image, 0, -1)
+            print("[debug] image shape after transformation:", image.shape)
 
             if self.labels_from_logits:
                 label = self.class_labels[int(ops.convert_to_numpy(label).item())]
