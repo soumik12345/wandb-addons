@@ -39,6 +39,11 @@ class WandbMetricsLogger(Callback):
     `WandbMetricsLogger` automatically logs the `logs` dictionary that callback methods
     take as argument to wandb.
 
+    !!! warning
+        This callback will be deprecated soon in favor of
+        [`wandb.keras.WandbMetricsLogger`](https://docs.wandb.ai/guides/integrations/keras#experiment-tracking-with-wandbmetricslogger)
+        which will be updated to support backend-agnostic Keras3.
+
     !!! note "This callback automatically logs the following to a W&B run page"
         - system (CPU/GPU/TPU) metrics
         - train and validation metrics defined in `model.compile`,

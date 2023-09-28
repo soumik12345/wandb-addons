@@ -39,6 +39,11 @@ class WandbModelCheckpoint(ModelCheckpoint):
     """`WandbModelCheckpoint` automatically logs model checkpoints to W&B and versions
     them as [W&B artifacts](https://docs.wandb.ai/guides/artifacts).
 
+    !!! warning
+        This callback will be deprecated soon in favor of
+        [`wandb.keras.WandbModelCheckpoint`](https://docs.wandb.ai/guides/integrations/keras#model-checkpointing-using-wandbmodelcheckpoint)
+        which will be updated to support backend-agnostic Keras3.
+
     Since this callback is subclassed from
     [`keras.callbacks.ModelCheckpoint`](https://keras.io/keras_core/api/callbacks/model_checkpoint/),
     the checkpointing logic is taken care of by the parent callback.
