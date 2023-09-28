@@ -64,7 +64,7 @@ monai = ["monai"]
 jax = ["ciclo", "tensorflow-datasets"]
 yolo = ["ultralytics"]
 keras = ["keras-core", "keras-cv"]
-huggingface = [diffusers, transformers, accelerate]
+huggingface = ["diffusers", "transformers", "accelerate"]
 
 [tool.poetry.scripts]
 nb2report = "wandb_addons.report.cli.convert:convert"
