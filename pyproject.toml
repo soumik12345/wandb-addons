@@ -31,8 +31,11 @@ monai = { extras = ["ignite", "nibabel", "tensorboard"], version = "^1.2.0" }
 ciclo = "^0.1.8"
 jupyter = "^1.0.0"
 ultralytics = "^8.0.125"
-keras-core = "^0.1.7"
+keras-core = { version="^0.1.7", python=">=3.9,<3.12" }
 keras-cv = {git = "https://github.com/keras-team/keras-cv"}
+diffusers = "^0.21.3"
+transformers = "^4.33.3"
+accelerate = "^0.23.0"
 
 [tool.poetry.extras]
 dev = ["isort", "black", "pytest", "pre-commit"]
@@ -60,7 +63,8 @@ dataset = ["tensorflow-datasets", "pillow"]
 monai = ["monai"]
 jax = ["ciclo", "tensorflow-datasets"]
 yolo = ["ultralytics"]
-keras = ["keras", "keras-cv"]
+keras = ["keras-core", "keras-cv"]
+huggingface = [diffusers, transformers, accelerate]
 
 [tool.poetry.scripts]
 nb2report = "wandb_addons.report.cli.convert:convert"
