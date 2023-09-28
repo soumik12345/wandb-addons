@@ -9,6 +9,7 @@ except ImportError:
     import pickle
 
 import torch
+import wandb
 from tqdm.auto import tqdm
 from ultralytics.yolo.engine.model import TASK_MAP, YOLO
 from ultralytics.yolo.utils import RANK, __version__
@@ -16,8 +17,6 @@ from ultralytics.yolo.utils.torch_utils import de_parallel
 from ultralytics.yolo.v8.detect.predict import DetectionPredictor
 from ultralytics.yolo.v8.detect.train import DetectionTrainer
 from ultralytics.yolo.v8.detect.val import DetectionValidator
-
-import wandb
 
 from .bbox_utils import plot_predictions, plot_validation_results
 
@@ -27,6 +26,13 @@ class WandBUltralyticsCallback:
     ground-truth annotations with interactive overlays for bounding boxes
     to Weights & Biases Tables during training, validation and prediction
     for a `ultratytics` workflow.
+
+    !!! warning
+        This callback has been deprecated in favor of the feature-complete
+        [integration with Ultralytics](https://docs.wandb.ai/guides/integrations/ultralytics)
+        which was shipped with [Weights & Biases Release v0.15.10](https://github.com/wandb/wandb/releases/tag/v0.15.10).
+        Instead of using `from wandb_addons.ultralytics import add_wandb_callback`
+        please use `from wandb.integration.ultralytics import add_wandb_callback`.
 
     !!! example "Example"
         - [Ultralytics Integration Demo](https://wandb.ai/geekyrakshit/YOLOv8/reports/Ultralytics-Integration-Demo--Vmlldzo0Nzk5OTEz).
@@ -175,6 +181,13 @@ def add_wandb_callback(
     max_validation_batches: Optional[int] = 1,
 ):
     """Function to add the `WandBUltralyticsCallback` callback to the `YOLO` model.
+
+    !!! warning
+        This callback has been deprecated in favor of the feature-complete
+        [integration with Ultralytics](https://docs.wandb.ai/guides/integrations/ultralytics)
+        which was shipped with [Weights & Biases Release v0.15.10](https://github.com/wandb/wandb/releases/tag/v0.15.10).
+        Instead of using `from wandb_addons.ultralytics import add_wandb_callback`
+        please use `from wandb.integration.ultralytics import add_wandb_callback`.
 
     Args:
         model (ultralytics.yolo.engine.model.YOLO): YOLO Model.
