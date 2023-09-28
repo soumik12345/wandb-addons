@@ -47,7 +47,7 @@ nav:
   - 'Integrations':
     - 'Ciclo': 'ciclo/ciclo.md'
     - '🦄 Keras':
-      - 'Backend-Agnostic Callbacks': 'keras/keras.md'
+      - 'KerasCore': 'keras/keras.md'
       - 'KerasCV':
         - 'Object-Detection': 'keras/object_detection.md'
     - 'MonAI': 'monai/monai.md'

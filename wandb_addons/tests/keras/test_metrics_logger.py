@@ -121,7 +121,9 @@ class WandbMetricsLoggerTester(unittest.TestCase):
             end_learning_rate=1e-8,
             power=0.99,
         )
-        optimizer = keras.optimizers.Adam(learning_rate=lr_schedule, weight_decay=0.99)
+        optimizer = keras.optimizers.Adam(
+            learning_rate=lr_schedule, weight_decay=0.99
+        )
         model.compile(
             loss="categorical_crossentropy", optimizer=optimizer, metrics=["accuracy"]
         )
