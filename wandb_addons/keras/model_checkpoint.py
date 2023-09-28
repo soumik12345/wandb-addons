@@ -2,9 +2,9 @@ import os
 import sys
 from typing import Dict, List, Optional, Union
 
-import keras_core as keras
+import keras
 import wandb
-from keras_core.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint
 from wandb.sdk.lib import telemetry
 from wandb.sdk.lib.paths import StrPath
 
@@ -40,7 +40,7 @@ class WandbModelCheckpoint(ModelCheckpoint):
     them as [W&B artifacts](https://docs.wandb.ai/guides/artifacts).
 
     Since this callback is subclassed from
-    [`keras_core.callbacks.ModelCheckpoint`](https://keras.io/keras_core/api/callbacks/model_checkpoint/),
+    [`keras.callbacks.ModelCheckpoint`](https://keras.io/keras_core/api/callbacks/model_checkpoint/),
     the checkpointing logic is taken care of by the parent callback.
 
     This callback is to be used in conjunction with training using `model.fit()` to save

@@ -1,9 +1,9 @@
 import sys
 from typing import Any, Dict, Optional, Union
 
-import keras_core as keras
+import keras
 import wandb
-from keras_core.callbacks import Callback
+from keras.callbacks import Callback
 from wandb.sdk.lib import telemetry
 
 tf_backend_available = False

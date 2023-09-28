@@ -1,10 +1,10 @@
 import unittest
 
-import keras_core
+import keras
 import numpy as np
 import wandb
-from keras_core import layers
-from keras_core.utils import to_categorical
+from keras import layers
+from keras.utils import to_categorical
 
 from wandb_addons.keras import WandbMetricsLogger
 
@@ -31,7 +31,7 @@ class WandbMetricsLoggerTester(unittest.TestCase):
         config.input_shape = (28, 28, 1)
         config.batch_size = 128
         config.epochs = 3
-        (x_train, y_train), (x_test, y_test) = keras_core.datasets.mnist.load_data()
+        (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
         x_train = x_train[:10]
         y_train = y_train[:10]
         x_test = x_test[:10]
@@ -43,7 +43,7 @@ class WandbMetricsLoggerTester(unittest.TestCase):
         x_test = np.expand_dims(x_test, -1)
         y_train = to_categorical(y_train, config.num_classes)
         y_test = to_categorical(y_test, config.num_classes)
-        model = keras_core.Sequential(
+        model = keras.Sequential(
             [
                 layers.Input(shape=config.input_shape),
                 layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
@@ -91,7 +91,7 @@ class WandbMetricsLoggerTester(unittest.TestCase):
         config.input_shape = (28, 28, 1)
         config.batch_size = 128
         config.epochs = 3
-        (x_train, y_train), (x_test, y_test) = keras_core.datasets.mnist.load_data()
+        (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
         x_train = x_train[:10]
         y_train = y_train[:10]
         x_test = x_test[:10]
@@ -103,7 +103,7 @@ class WandbMetricsLoggerTester(unittest.TestCase):
         x_test = np.expand_dims(x_test, -1)
         y_train = to_categorical(y_train, config.num_classes)
         y_test = to_categorical(y_test, config.num_classes)
-        model = keras_core.Sequential(
+        model = keras.Sequential(
             [
                 layers.Input(shape=config.input_shape),
                 layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
@@ -115,13 +115,13 @@ class WandbMetricsLoggerTester(unittest.TestCase):
                 layers.Dense(config.num_classes, activation="softmax"),
             ]
         )
-        lr_schedule = keras_core.optimizers.schedules.PolynomialDecay(
+        lr_schedule = keras.optimizers.schedules.PolynomialDecay(
             initial_learning_rate=1e-3,
             decay_steps=300,
             end_learning_rate=1e-8,
             power=0.99,
         )
-        optimizer = keras_core.optimizers.Adam(
+        optimizer = keras.optimizers.Adam(
             learning_rate=lr_schedule, weight_decay=0.99
         )
         model.compile(
