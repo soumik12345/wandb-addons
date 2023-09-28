@@ -3,8 +3,8 @@ from typing import List, Optional, Tuple, Union
 import numpy as np
 import tensorflow.data as tf_data
 import wandb
-from keras_core import backend, ops
-from keras_core.callbacks import Callback
+from keras import backend, ops
+from keras.callbacks import Callback
 from tqdm.auto import tqdm
 
 
