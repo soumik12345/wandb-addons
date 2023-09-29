@@ -1,1 +1,1 @@
-from .stable_diffusion_callback import StableDiffusionCallback
+from .stable_diffusion_callback import WandBStableDiffusionCallback
