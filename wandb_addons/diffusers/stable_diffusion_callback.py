@@ -3,6 +3,8 @@ from typing import Dict, Union, List, Optional
 import wandb
 from diffusers import StableDiffusionPipeline
 
+from .utils import chunkify
+
 
 class StableDiffusionCallback:
     def __init__(
@@ -31,6 +33,18 @@ class StableDiffusionCallback:
     def initialize_wandb(self, wandb_project, wandb_entity):
         if wandb.run is None:
             if wandb_project is not None:
+                additional_configs = {
+                    "prompt": self.prompt,
+                    "negative_prompt": self.negative_prompt,
+                    "guidance_scale": self.guidance_scale,
+                    "do_classifier_free_guidance": self.do_classifier_free_guidance,
+                    "pipe": dict(self.pipe.config),
+                }
+                self.configs = (
+                    {**self.configs, **additional_configs}
+                    if self.configs is not None
+                    else additional_configs
+                )
                 wandb.init(
                     project=wandb_project,
                     entity=wandb_entity,
@@ -42,12 +56,12 @@ class StableDiffusionCallback:
 
     def build_wandb_table(self):
         self.table_columns = [
-            "Step",
             "Prompt",
             "Negative-Prompt",
             "Generated-Image",
             "Guidance-Scale",
             "Do-Classifier-Free-Guidance",
+            "Step",
         ]
         self.wandb_table = wandb.Table(columns=self.table_columns)
 
@@ -69,14 +83,24 @@ class StableDiffusionCallback:
     def __call__(self, step, timestep, latents):
         if step % self.num_inference_steps == 0:
             images = self.generate(latents)
-            for image in images:
-                self.wandb_table.add_data(
-                    step,
-                    self.prompt,
-                    self.negative_prompt,
-                    wandb.Image(image),
-                    self.guidance_scale,
-                    self.do_classifier_free_guidance,
-                )
+            prompt_logging = (
+                self.prompt if isinstance(self.prompt, list) else [self.prompt]
+            )
+            negative_prompt_logging = (
+                self.negative_prompt
+                if isinstance(self.negative_prompt, list)
+                else [self.negative_prompt] * len(prompt_logging)
+            )
+            images = chunkify(images, len(prompt_logging))
+            for idx in range(len(prompt_logging)):
+                for image in images[idx]:
+                    self.wandb_table.add_data(
+                        prompt_logging[idx],
+                        negative_prompt_logging[idx],
+                        wandb.Image(image),
+                        self.guidance_scale,
+                        self.do_classifier_free_guidance,
+                        step,
+                    )
             wandb.log({"Generated-Images": self.wandb_table})
             wandb.finish()
