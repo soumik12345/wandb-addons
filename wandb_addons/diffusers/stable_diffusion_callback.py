@@ -40,8 +40,7 @@ class WandBStableDiffusionCallback:
         )
         
         # Add the callback to the pipeline
-        image = pipe(prompt, callback=callback, num_images_per_prompt=2).images[0]
-        results = pipe(prompt)
+        results = pipe(prompt, callback=callback, num_images_per_prompt=2)
         ```
     
     Arguments:
