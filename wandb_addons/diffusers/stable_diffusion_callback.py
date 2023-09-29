@@ -19,30 +19,30 @@ class WandBStableDiffusionCallback:
 
     !!! example "Example usage:"
         You can fine an example notebook [here](../examples/stable_diffusion).
-        
+
         ```python
         import torch
         from diffusers import StableDiffusionPipeline
 
         from wandb_addons.diffusers import StableDiffusionCallback
-        
-        
+
+
         pipe = StableDiffusionPipeline.from_pretrained(
             "CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16
         )
         pipe = pipe.to("cuda")
-        
+
         prompt = ["a photograph of an astronaut riding a horse", "a photograph of a dragon"]
-        
+
         # Create the WandB callback for StableDiffusionPipeline
         callback = WandBStableDiffusionCallback(
             pipe, prompt=prompt, wandb_project="diffusers", num_images_per_prompt=2
         )
-        
+
         # Add the callback to the pipeline
         results = pipe(prompt, callback=callback, num_images_per_prompt=2)
         ```
-    
+
     Arguments:
         pipe (diffusers.StableDiffusionPipeline): The `StableDiffusionPipeline` from `diffusers`.
         prompt (Union[str, List[str]]): The prompt or prompts to guide the image generation.
@@ -69,6 +69,7 @@ class WandBStableDiffusionCallback:
         configs (Optional[Dict]): Additional configs for the experiment you want to sync, for example, seed
             could be a good config to be passed here.
     """
+
     def __init__(
         self,
         pipe: StableDiffusionPipeline,
