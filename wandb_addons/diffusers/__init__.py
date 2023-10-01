@@ -1,3 +1,3 @@
-from .stable_diffusion import WandBStableDiffusionCallback
+from .stable_diffusion import StableDiffusionCallback
 
-__all__ = ["WandBStableDiffusionCallback"]
+__all__ = ["StableDiffusionCallback"]
