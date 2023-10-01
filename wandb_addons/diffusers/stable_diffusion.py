@@ -1,8 +1,8 @@
 from typing import Dict, List, Optional, Union
 
-import PIL
 import torch
 from diffusers import StableDiffusionPipeline
+from PIL import Image
 
 import wandb
 
@@ -89,14 +89,14 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
     def __init__(
         self,
         pipeline: StableDiffusionPipeline,
-        prompt: str | List[str],
-        wandb_project: str | None = None,
-        wandb_entity: str | None = None,
+        prompt: Union[str, List[str]],
+        wandb_project: str,
+        wandb_entity: Optional[str] = None,
         guidance_scale: float = 7.5,
         num_inference_steps: int = 50,
-        num_images_per_prompt: int | None = 1,
-        negative_prompt: str | List[str] | None = None,
-        configs: Dict | None = None,
+        num_images_per_prompt: Optional[int] = 1,
+        negative_prompt: Optional[Union[str, List[str]]] = None,
+        configs: Optional[Dict] = None,
         **kwargs
     ) -> None:
         super().__init__(
@@ -124,12 +124,12 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
         self.table_columns += ["Guidance-Scale", "Do-Classifier-Free-Guidance"]
 
     def populate_table_row(
-        self, prompt: str, negative_prompt: str, image: PIL.Image
+        self, prompt: str, negative_prompt: str, image: Image
     ) -> None:
         super().populate_table_row(prompt, negative_prompt, image)
         self.table_row += [self.guidance_scale, self.do_classifier_free_guidance]
 
-    def generate(self, latents: torch.FloatTensor) -> PIL.Image:
+    def generate(self, latents: torch.FloatTensor) -> List:
         text_embeddings = self.pipeline._encode_prompt(
             self.prompt,
             self.pipeline._execution_device,

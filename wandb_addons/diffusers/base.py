@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Union
 
-import PIL
 import torch
 from diffusers import DiffusionPipeline
+from PIL import Image
 
 import wandb
 
@@ -15,7 +15,7 @@ class BaseDiffusersBaseCallback(ABC):
         self,
         pipeline: DiffusionPipeline,
         prompt: Union[str, List[str]],
-        wandb_project: Optional[str] = None,
+        wandb_project: str,
         wandb_entity: Optional[str] = None,
         num_inference_steps: int = 50,
         num_images_per_prompt: Optional[int] = 1,
@@ -68,11 +68,11 @@ class BaseDiffusersBaseCallback(ABC):
         self.table_columns = ["Prompt", "Negative-Prompt", "Generated-Image"]
 
     @abstractmethod
-    def generate(self, latents: torch.FloatTensor) -> PIL.Image:
+    def generate(self, latents: torch.FloatTensor) -> List:
         pass
 
     def populate_table_row(
-        self, prompt: str, negative_prompt: str, image: PIL.Image
+        self, prompt: str, negative_prompt: str, image: Image
     ) -> None:
         self.table_row = [prompt, negative_prompt, wandb.Image(image)]
 
