@@ -39,16 +39,19 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
         wandb.config.update(
             {
                 "guidance_scale": self.guidance_scale,
-                "do_classifier_free_guidance": do_classifier_free_guidance,
+                "do_classifier_free_guidance": self.do_classifier_free_guidance,
             }
         )
 
     def build_wandb_table(self) -> None:
         super().build_wandb_table()
-        self.wandb_table.columns += [
-            "Guidance Scale",
-            "Do-Classifier-Free-Guidance",
-        ]
+        self.table_columns += ["Guidance-Scale", "Do-Classifier-Free-Guidance"]
+
+    def populate_table_row(
+        self, prompt: str, negative_prompt: str, image: PIL.Image
+    ) -> None:
+        super().populate_table_row(prompt, negative_prompt, image)
+        self.table_row += [self.guidance_scale, self.do_classifier_free_guidance]
 
     def generate(self, latents: torch.FloatTensor) -> PIL.Image:
         text_embeddings = self.pipeline._encode_prompt(
@@ -64,14 +67,3 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
         )
         images = self.pipeline.numpy_to_pil(images)
         return images
-
-    def add_data_to_wandb_table(
-        self, prompt: str, negative_prompt: str, image: PIL.Image, *args
-    ) -> None:
-        self.wandb_table.add_data(
-            prompt,
-            negative_prompt,
-            wandb.Image(image),
-            self.guidance_scale,
-            self.do_classifier_free_guidance,
-        )

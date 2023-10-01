@@ -33,6 +33,7 @@ class BaseDiffusersBaseCallback(ABC):
         self.negative_prompt = negative_prompt
         self.configs = configs
         self.wandb_table = None
+        self.table_row = []
         self.initialize_wandb(wandb_project, wandb_entity)
         self.build_wandb_table()
 
@@ -58,31 +59,26 @@ class BaseDiffusersBaseCallback(ABC):
                     project=wandb_project,
                     entity=wandb_entity,
                     job_type="text-to-image",
+                    config=self.configs,
                 )
             else:
                 wandb.termerror("The parameter wandb_project must be provided.")
 
     def build_wandb_table(self) -> None:
-        self.wandb_table = wandb.Table(
-            columns=[
-                "Prompt",
-                "Negative-Prompt",
-                "Generated-Image",
-                "Inference-Step",
-            ]
-        )
+        self.table_columns = ["Prompt", "Negative-Prompt", "Generated-Image"]
 
     @abstractmethod
     def generate(self, latents: torch.FloatTensor) -> PIL.Image:
         pass
 
-    @abstractmethod
-    def add_data_to_wandb_table(
-        self, prompt: str, negative_prompt: str, image: PIL.Image, *args
+    def populate_table_row(
+        self, prompt: str, negative_prompt: str, image: PIL.Image
     ) -> None:
-        pass
+        self.table_row = [prompt, negative_prompt, wandb.Image(image)]
 
     def __call__(self, step: int, timestep: int, latents: torch.FloatTensor):
+        if step == 1:
+            self.wandb_table = wandb.Table(columns=self.table_columns)
         if step % self.num_inference_steps == 0:
             images = self.generate(latents)
             prompt_logging = (
@@ -96,8 +92,9 @@ class BaseDiffusersBaseCallback(ABC):
             images = chunkify(images, len(prompt_logging))
             for idx in range(len(prompt_logging)):
                 for image in images[idx]:
-                    self.add_data_to_wandb_table(
+                    self.populate_table_row(
                         prompt_logging[idx], negative_prompt_logging[idx], image
                     )
+                    self.wandb_table.add_data(*self.table_row)
             wandb.log({"Generated-Images": self.wandb_table})
             wandb.finish()
