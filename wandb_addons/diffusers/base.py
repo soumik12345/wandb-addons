@@ -34,6 +34,8 @@ class BaseDiffusersBaseCallback(ABC):
         self.configs = configs
         self.wandb_table = None
         self.table_row = []
+        self.starting_step = 1
+        self.log_step = num_inference_steps
         self.initialize_wandb(wandb_project, wandb_entity)
         self.build_wandb_table()
 
@@ -77,9 +79,9 @@ class BaseDiffusersBaseCallback(ABC):
         self.table_row = [prompt, negative_prompt, wandb.Image(image)]
 
     def __call__(self, step: int, timestep: int, latents: torch.FloatTensor):
-        if step == 1:
+        if step == self.starting_step:
             self.wandb_table = wandb.Table(columns=self.table_columns)
-        if step % self.num_inference_steps == 0:
+        if step == self.log_step:
             images = self.generate(latents)
             prompt_logging = (
                 self.prompt if isinstance(self.prompt, list) else [self.prompt]
