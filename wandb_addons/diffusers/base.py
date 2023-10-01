@@ -40,6 +40,7 @@ class BaseDiffusersBaseCallback(ABC):
         configs (Optional[Dict]): Additional configs for the experiment you want to
             sync, for example, seed could be a good config to be passed here.
     """
+
     def __init__(
         self,
         pipeline: DiffusionPipeline,
