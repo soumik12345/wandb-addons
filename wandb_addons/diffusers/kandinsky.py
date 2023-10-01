@@ -100,9 +100,12 @@ class KandinskyCallback(BaseDiffusersBaseCallback):
         configs (Optional[Dict]): Additional configs for the experiment you want to
             sync, for example, seed could be a good config to be passed here.
     """
+
     def __init__(
         self,
-        pipeline: Union[DiffusionPipeline, KandinskyCombinedPipeline, KandinskyPipeline],
+        pipeline: Union[
+            DiffusionPipeline, KandinskyCombinedPipeline, KandinskyPipeline
+        ],
         prompt: Union[str, List[str]],
         wandb_project: str,
         wandb_entity: Optional[str] = None,
@@ -125,7 +128,7 @@ class KandinskyCallback(BaseDiffusersBaseCallback):
         )
         self.starting_step = 0
         self.log_step = num_inference_steps - 1
-    
+
     def generate(self, latents: torch.FloatTensor) -> List:
         images = self.pipeline.movq.decode(latents, force_not_quantize=True)["sample"]
         images = images * 0.5 + 0.5
