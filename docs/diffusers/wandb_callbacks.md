@@ -7,3 +7,5 @@ Callbacks for logging experiment details, configs and generated images for [Diff
 ::: wandb_addons.diffusers.kandinsky
 
 ::: wandb_addons.diffusers.base
+
+::: wandb_addons.diffusers.wrapper
