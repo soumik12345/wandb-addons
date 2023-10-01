@@ -72,8 +72,8 @@ class KandinskyCallback(BaseDiffusersBaseCallback):
         ```
 
     Arguments:
-        pipeline (diffusers.StableDiffusionPipeline): The `StableDiffusionPipeline` from
-            `diffusers`.
+        pipeline (Union[DiffusionPipeline, KandinskyCombinedPipeline, KandinskyPipeline]):
+            The `KandinskyCombinedPipeline` or `KandinskyPipeline` from `diffusers`.
         prompt (Union[str, List[str]]): The prompt or prompts to guide the image
             generation.
         wandb_project (Optional[str]): The name of the project where you're sending
