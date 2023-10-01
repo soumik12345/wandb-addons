@@ -39,18 +39,32 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
         )
         pipeline = pipeline.to("cuda")
 
-        prompt = [
-            "a photograph of an astronaut riding a horse",
-            "a photograph of a dragon",
-        ]
+        prompt = ["a photograph of an astronaut riding a horse", "a photograph of a dragon"]
+        negative_prompt = ["ugly, deformed", "ugly, deformed"]
+        num_images_per_prompt = 2
+        configs = {
+            "eta": 0.0,
+            "guidance_rescale": 0.0,
+        }
 
         # Create the WandB callback for StableDiffusionPipeline
         callback = StableDiffusionCallback(
-            pipeline, prompt=prompt, wandb_project="diffusers", num_images_per_prompt=2
+            pipe,
+            prompt=prompt,
+            negative_prompt=negative_prompt,
+            wandb_project="diffusers",
+            num_images_per_prompt=num_images_per_prompt,
+            configs=configs,
         )
 
         # Add the callback to the pipeline
-        results = pipeline(prompt, callback=callback, num_images_per_prompt=2)
+        image = pipe(
+            prompt,
+            negative_prompt=negative_prompt,
+            callback=callback,
+            num_images_per_prompt=num_images_per_prompt,
+            **configs,
+        )
         ```
 
     Arguments:
