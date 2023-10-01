@@ -1,10 +1,9 @@
 from typing import Dict, List, Optional, Union
 
 import torch
+import wandb
 from diffusers import StableDiffusionPipeline
 from PIL import Image
-
-import wandb
 
 from .base import BaseDiffusersBaseCallback
 
@@ -39,7 +38,10 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
         )
         pipeline = pipeline.to("cuda")
 
-        prompt = ["a photograph of an astronaut riding a horse", "a photograph of a dragon"]
+        prompt = [
+            "a photograph of an astronaut riding a horse",
+            "a photograph of a dragon"
+        ]
         negative_prompt = ["ugly, deformed", "ugly, deformed"]
         num_images_per_prompt = 2
         configs = {

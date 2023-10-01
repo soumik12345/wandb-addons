@@ -36,7 +36,10 @@ class KandinskyCallback(BaseDiffusersBaseCallback):
         )
         pipe = pipe.to("cuda")
 
-        prompt = ["a photograph of an astronaut riding a horse", "a photograph of a dragon"]
+        prompt = [
+            "a photograph of an astronaut riding a horse",
+            "a photograph of a dragon"
+        ]
         negative_prompt = ["ugly, deformed", "ugly, deformed"]
         num_images_per_prompt = 2
 

@@ -2,15 +2,44 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Union
 
 import torch
+import wandb
 from diffusers import DiffusionPipeline
 from PIL import Image
-
-import wandb
 
 from .utils import chunkify
 
 
 class BaseDiffusersBaseCallback(ABC):
+    """Base callback for [🧨 Diffusers](https://huggingface.co/docs/diffusers/index)
+    logging the results of a
+    [`DiffusionPipeline`](https://github.com/huggingface/diffusers/blob/v0.21.0/src/diffusers/pipelines/pipeline_utils.py#L480)
+    generation to Weights & Biases.
+
+    Arguments:
+        pipeline (diffusers.DiffusionPipeline): The `DiffusionPipeline` from
+            `diffusers`.
+        prompt (Union[str, List[str]]): The prompt or prompts to guide the image
+            generation.
+        wandb_project (Optional[str]): The name of the project where you're sending
+            the new run. The project is not necessary to be specified unless the run
+            has automatically been initiatlized before the callback is defined.
+        wandb_entity (Optional[str]): An entity is a username or team name where
+            you're sending runs. This entity must exist before you can send runs there,
+            so make sure to create your account or team in the UI before starting to
+            log runs. If you don't specify an entity, the run will be sent to your
+            default entity, which is usually your username. Change your default entity
+            in [your settings](https://wandb.ai/settings) under "default location to
+            create new projects".
+        num_inference_steps (int): The number of denoising steps. More denoising steps
+            usually lead to a higher quality image at the expense of slower inference.
+        num_images_per_prompt (Optional[int]): The number of images to generate per
+            prompt.
+        negative_prompt (Optional[Union[str, List[str]]]): The prompt or prompts not
+            to guide the image generation. Ignored when not using guidance
+            (i.e., ignored if `guidance_scale` is less than `1`).
+        configs (Optional[Dict]): Additional configs for the experiment you want to
+            sync, for example, seed could be a good config to be passed here.
+    """
     def __init__(
         self,
         pipeline: DiffusionPipeline,
