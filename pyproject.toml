@@ -36,9 +36,10 @@ keras-cv = {git = "https://github.com/keras-team/keras-cv"}
 diffusers = "^0.21.3"
 transformers = "^4.33.3"
 accelerate = "^0.23.0"
+blacken-docs = "^1.16.0"
 
 [tool.poetry.extras]
-dev = ["isort", "black", "pytest", "pre-commit"]
+dev = ["isort", "black", "pytest", "pre-commit", "blacken-docs"]
 docs = [
     "mkdocs",
     "mkdocstrings",

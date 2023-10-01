@@ -283,6 +283,20 @@ jupyter = ["ipython (>=7.8.0)", "tokenize-rt (>=3.2.0)"]
 uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
+name = "blacken-docs"
+version = "1.16.0"
+description = "Run Black on Python code blocks in documentation files."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "blacken_docs-1.16.0-py3-none-any.whl", hash = "sha256:b0dcb84b28ebfb352a2539202d396f50e15a54211e204a8005798f1d1edb7df8"},
+    {file = "blacken_docs-1.16.0.tar.gz", hash = "sha256:b4bdc3f3d73898dfbf0166f292c6ccfe343e65fc22ddef5319c95d1a8dcc6c1c"},
+]
+
+[package.dependencies]
+black = ">=22.1.0"
+
+[[package]]
 name = "bleach"
 version = "6.0.0"
 description = "An easy safelist-based HTML-sanitizing tool."
@@ -6057,6 +6071,7 @@ dataset = ["pillow", "tensorflow-datasets"]
 deploy = ["build", "mkdocs", "mkdocs-glightbox", "mkdocs-jupyter", "mkdocs-material", "mkdocs-minify-plugin", "mkdocstrings", "twine"]
 dev = ["black", "isort", "pre-commit", "pytest"]
 docs = ["jupyter", "mkdocs", "mkdocs-glightbox", "mkdocs-jupyter", "mkdocs-material", "mkdocs-minify-plugin", "mkdocstrings"]
+huggingface = ["accelerate", "diffusers", "transformers"]
 jax = ["ciclo", "tensorflow-datasets"]
 keras = ["keras-core", "keras-cv"]
 monai = ["monai"]
@@ -6066,4 +6081,4 @@ yolo = ["ultralytics"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.0,<3.12"
-content-hash = "8ef61971b68707835968a3daa82c7207cb6c057b4e8d6b517ce2193687a0c79e"
+content-hash = "39fe694b9ee80717883f905764923e5d43bad265ac30a6a3c7c019e9d2c494d1"
