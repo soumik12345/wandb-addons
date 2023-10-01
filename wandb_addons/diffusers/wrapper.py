@@ -3,8 +3,7 @@ from typing import Dict, List, Optional, Union
 import wandb
 from diffusers import DiffusionPipeline
 
-from .kandinsky import KandinskyCallback
-from .stable_diffusion import StableDiffusionCallback
+from .callbacks import KandinskyCallback, StableDiffusionCallback
 
 
 def get_wandb_callback(

@@ -38,7 +38,8 @@ class BaseDiffusersBaseCallback(ABC):
             to guide the image generation. Ignored when not using guidance
             (i.e., ignored if `guidance_scale` is less than `1`).
         configs (Optional[Dict]): Additional configs for the experiment you want to
-            sync, for example, seed could be a good config to be passed here.
+            sync, for example, for example, `seed` could be a good config to be passed
+            here.
     """
 
     def __init__(
