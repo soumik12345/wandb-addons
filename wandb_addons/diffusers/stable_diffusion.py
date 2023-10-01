@@ -34,10 +34,10 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
         from wandb_addons.diffusers import StableDiffusionCallback
 
 
-        pipe = StableDiffusionPipeline.from_pretrained(
+        pipeline = StableDiffusionPipeline.from_pretrained(
             "CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16
         )
-        pipe = pipe.to("cuda")
+        pipeline = pipeline.to("cuda")
 
         prompt = [
             "a photograph of an astronaut riding a horse",
@@ -46,15 +46,15 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
 
         # Create the WandB callback for StableDiffusionPipeline
         callback = StableDiffusionCallback(
-            pipe, prompt=prompt, wandb_project="diffusers", num_images_per_prompt=2
+            pipeline, prompt=prompt, wandb_project="diffusers", num_images_per_prompt=2
         )
 
         # Add the callback to the pipeline
-        results = pipe(prompt, callback=callback, num_images_per_prompt=2)
+        results = pipeline(prompt, callback=callback, num_images_per_prompt=2)
         ```
 
     Arguments:
-        pipe (diffusers.StableDiffusionPipeline): The `StableDiffusionPipeline` from
+        pipeline (diffusers.StableDiffusionPipeline): The `StableDiffusionPipeline` from
             `diffusers`.
         prompt (Union[str, List[str]]): The prompt or prompts to guide the image
             generation.
