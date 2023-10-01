@@ -20,7 +20,7 @@ def get_wandb_callback(
 ):
     """A function for automatically inferring the W&B callback for the respective
     `DiffusionPipeline`.
-    
+
     !!! warning
         While using this function to automatically infer the type of the
         `DiffusionPipeline`, we must ensure to explicitly set the parameters of
