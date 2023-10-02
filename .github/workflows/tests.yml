@@ -91,4 +91,5 @@ jobs:
           pip install -U pip
           pip install ".[huggingface]"
           python -c "from wandb_addons.diffusers import StableDiffusionCallback"
+          python -c "from wandb_addons.diffusers.callbacks import StableDiffusionImg2ImgCallbackk"
           python -c "from wandb_addons.diffusers import KandinskyCallback"
