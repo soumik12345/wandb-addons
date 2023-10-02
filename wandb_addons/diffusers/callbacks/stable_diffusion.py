@@ -194,7 +194,7 @@ class StableDiffusionImg2ImgCallback(BaseImage2ImageCallback):
             "runwayml/stable-diffusion-v1-5", torch_dtype=torch.float16
         )
         pipe = pipe.to("cuda")
-        
+
         url = "https://raw.githubusercontent.com/CompVis/stable-diffusion/main/assets/stable-samples/img2img/sketch-mountains-input.jpg"
 
         response = requests.get(url)
@@ -269,6 +269,7 @@ class StableDiffusionImg2ImgCallback(BaseImage2ImageCallback):
             sync, for example, for example, `seed` could be a good config to be passed
             here.
     """
+
     def __init__(
         self,
         pipeline: Union[DiffusionPipeline, StableDiffusionImg2ImgPipeline],

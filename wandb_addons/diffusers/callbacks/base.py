@@ -179,6 +179,7 @@ class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
             sync, for example, for example, `seed` could be a good config to be passed
             here.
     """
+
     def __init__(
         self,
         pipeline: DiffusionPipeline,
