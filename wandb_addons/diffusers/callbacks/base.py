@@ -1,10 +1,13 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 import wandb
-from diffusers import DiffusionPipeline
+import numpy as np
 from PIL import Image
+
+from diffusers import DiffusionPipeline
+from diffusers.image_processor import PipelineImageInput
 
 from .utils import chunkify
 
@@ -67,6 +70,7 @@ class BaseDiffusersBaseCallback(ABC):
         self.table_row = []
         self.starting_step = 1
         self.log_step = num_inference_steps
+        self.job_type = "text-to-image"
         self.initialize_wandb(wandb_project, wandb_entity)
         self.build_wandb_table()
 
@@ -91,7 +95,7 @@ class BaseDiffusersBaseCallback(ABC):
                 wandb.init(
                     project=wandb_project,
                     entity=wandb_entity,
-                    job_type="text-to-image",
+                    job_type=self.job_type,
                     config=self.configs,
                 )
             else:
@@ -109,9 +113,12 @@ class BaseDiffusersBaseCallback(ABC):
     ) -> None:
         self.table_row = [prompt, negative_prompt, wandb.Image(image)]
 
+    def at_initial_step(self):
+        self.wandb_table = wandb.Table(columns=self.table_columns)
+
     def __call__(self, step: int, timestep: int, latents: torch.FloatTensor):
         if step == self.starting_step:
-            self.wandb_table = wandb.Table(columns=self.table_columns)
+            self.at_initial_step()
         if step == self.log_step:
             images = self.generate(latents)
             prompt_logging = (
@@ -129,5 +136,91 @@ class BaseDiffusersBaseCallback(ABC):
                         prompt_logging[idx], negative_prompt_logging[idx], image
                     )
                     self.wandb_table.add_data(*self.table_row)
-            wandb.log({"Generated-Images": self.wandb_table})
+            wandb.log({"Text-To-Image": self.wandb_table})
+            wandb.finish()
+
+
+class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
+    def __init__(
+        self,
+        pipeline: DiffusionPipeline,
+        prompt: Union[str, List[str]],
+        input_images: PipelineImageInput,
+        wandb_project: str,
+        wandb_entity: Optional[str] = None,
+        strength: float = 0.8,
+        num_inference_steps: int = 50,
+        num_images_per_prompt: Optional[int] = 1,
+        negative_prompt: Optional[Union[str, List[str]]] = None,
+        configs: Optional[Dict] = None,
+        **kwargs,
+    ) -> None:
+        self.job_type = "image-to-image"
+        super().__init__(
+            pipeline=pipeline,
+            prompt=prompt,
+            wandb_project=wandb_project,
+            wandb_entity=wandb_entity,
+            num_inference_steps=num_inference_steps,
+            num_images_per_prompt=num_images_per_prompt,
+            negative_prompt=negative_prompt,
+            configs=configs,
+            **kwargs,
+        )
+        self.input_images = self.postprocess_input_images(input_images)
+        self.strength = strength
+        wandb.config.update(
+            {
+                "strength": self.strength,
+            }
+        )
+
+    def postprocess_input_images(self, input_images):
+        if isinstance(input_images, torch.Tensor):
+            input_images = self.pipeline.image_processor.pt_to_numpy(input_images)
+            input_images = self.pipeline.image_processor.numpy_to_pil(input_images)
+        elif isinstance(input_images, Image.Image):
+            input_images = [input_images]
+        elif isinstance(input_images, np.array):
+            input_images = self.pipeline.image_processor.numpy_to_pil(input_images)
+        return input_images
+
+    def build_wandb_table(self) -> None:
+        super().build_wandb_table()
+        self.table_columns = ["Input-Image"] + self.table_columns
+
+    def populate_table_row(
+        self, input_image: Image.Image, prompt: str, negative_prompt: str, image: Any
+    ) -> None:
+        self.table_row = [
+            wandb.Image(input_image),
+            prompt,
+            negative_prompt,
+            wandb.Image(image),
+        ]
+
+    def __call__(self, step: int, timestep: int, latents: torch.FloatTensor):
+        if step == self.starting_step:
+            self.at_initial_step()
+        if step == self.log_step:
+            images = self.generate(latents)
+            prompt_logging = (
+                self.prompt if isinstance(self.prompt, list) else [self.prompt]
+            )
+            negative_prompt_logging = (
+                self.negative_prompt
+                if isinstance(self.negative_prompt, list)
+                else [self.negative_prompt] * len(prompt_logging)
+            )
+            images = chunkify(images, len(prompt_logging))
+            for idx in range(len(prompt_logging)):
+                for image in images[idx]:
+                    self.populate_table_row(
+                        self.input_images[0],
+                        prompt_logging[idx],
+                        negative_prompt_logging[idx],
+                        image,
+                    )
+                    self.wandb_table.add_data(*self.table_row)
+            wandb.log({"Image-To-Image": self.wandb_table})
             wandb.finish()

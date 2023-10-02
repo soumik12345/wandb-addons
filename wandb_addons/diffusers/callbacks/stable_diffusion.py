@@ -1,11 +1,17 @@
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 import wandb
-from diffusers import StableDiffusionPipeline
 from PIL import Image
 
-from .base import BaseDiffusersBaseCallback
+from diffusers.image_processor import PipelineImageInput
+from diffusers import (
+    DiffusionPipeline,
+    StableDiffusionPipeline,
+    StableDiffusionImg2ImgPipeline,
+)
+
+from .base import BaseDiffusersBaseCallback, BaseImage2ImageCallback
 
 
 class StableDiffusionCallback(BaseDiffusersBaseCallback):
@@ -105,7 +111,7 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
 
     def __init__(
         self,
-        pipeline: StableDiffusionPipeline,
+        pipeline: Union[DiffusionPipeline, StableDiffusionPipeline],
         prompt: Union[str, List[str]],
         wandb_project: str,
         wandb_entity: Optional[str] = None,
@@ -114,7 +120,7 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
         num_images_per_prompt: Optional[int] = 1,
         negative_prompt: Optional[Union[str, List[str]]] = None,
         configs: Optional[Dict] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         super().__init__(
             pipeline,
@@ -125,7 +131,7 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
             num_images_per_prompt,
             negative_prompt,
             configs,
-            **kwargs
+            **kwargs,
         )
         self.guidance_scale = guidance_scale
         self.do_classifier_free_guidance = guidance_scale > 1.0
@@ -147,16 +153,78 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
         self.table_row += [self.guidance_scale, self.do_classifier_free_guidance]
 
     def generate(self, latents: torch.FloatTensor) -> List:
-        text_embeddings = self.pipeline._encode_prompt(
-            self.prompt,
-            self.pipeline._execution_device,
-            self.num_images_per_prompt,
-            self.do_classifier_free_guidance,
-            self.negative_prompt,
-        )
         images = self.pipeline.decode_latents(latents)
         images, _ = self.pipeline.run_safety_checker(
-            images, self.pipeline._execution_device, text_embeddings.dtype
+            images, self.pipeline._execution_device, latents.dtype
         )
         images = self.pipeline.numpy_to_pil(images)
+        return images
+
+
+class StableDiffusionImg2ImgCallback(BaseImage2ImageCallback):
+    def __init__(
+        self,
+        pipeline: Union[DiffusionPipeline, StableDiffusionImg2ImgPipeline],
+        prompt: Union[str, List[str]],
+        input_images: PipelineImageInput,
+        wandb_project: str,
+        wandb_entity: Optional[str] = None,
+        num_inference_steps: int = 50,
+        strength: Optional[float] = 0.8,
+        guidance_scale: Optional[float] = 7.5,
+        num_images_per_prompt: Optional[int] = 1,
+        negative_prompt: Optional[Union[str, List[str]]] = None,
+        prompt_embeds: Optional[torch.FloatTensor] = None,
+        negative_prompt_embeds: Optional[torch.FloatTensor] = None,
+        cross_attention_kwargs: Optional[Dict[str, Any]] = None,
+        configs: Optional[Dict] = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(
+            pipeline=pipeline,
+            prompt=prompt,
+            input_images=input_images,
+            wandb_project=wandb_project,
+            wandb_entity=wandb_entity,
+            num_inference_steps=num_inference_steps,
+            num_images_per_prompt=num_images_per_prompt,
+            negative_prompt=negative_prompt,
+            configs=configs,
+            **kwargs,
+        )
+        self.prompt_embeds = prompt_embeds
+        self.negative_prompt_embeds = negative_prompt_embeds
+        self.cross_attention_kwargs = cross_attention_kwargs
+        self.strength = strength
+        self.guidance_scale = guidance_scale
+        self.do_classifier_free_guidance = guidance_scale > 1.0
+        wandb.config.update(
+            {
+                "strength": self.strength,
+                "guidance_scale": self.guidance_scale,
+                "do_classifier_free_guidance": self.do_classifier_free_guidance,
+            }
+        )
+
+    def at_initial_step(self):
+        super().at_initial_step()
+        _, self.log_step = self.pipeline.get_timesteps(
+            self.num_inference_steps, self.strength, self.pipeline._execution_device
+        )
+
+    def generate(self, latents: torch.FloatTensor) -> List:
+        images = self.pipeline.vae.decode(
+            latents / self.pipeline.vae.config.scaling_factor, return_dict=False
+        )[0]
+        images, has_nsfw_concept = self.pipeline.run_safety_checker(
+            images, self.pipeline._execution_device, latents.dtype
+        )
+        do_denormalize = (
+            [True] * images.shape[0]
+            if has_nsfw_concept is None
+            else [not has_nsfw for has_nsfw in has_nsfw_concept]
+        )
+        images = self.pipeline.image_processor.postprocess(
+            images, output_type="pil", do_denormalize=do_denormalize
+        )
         return images
