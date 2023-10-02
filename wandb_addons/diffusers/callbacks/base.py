@@ -141,6 +141,44 @@ class BaseDiffusersBaseCallback(ABC):
 
 
 class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
+    """Base callback for [🧨 Diffusers](https://huggingface.co/docs/diffusers/index)
+    logging the results of a
+    [`DiffusionPipeline`](https://github.com/huggingface/diffusers/blob/v0.21.0/src/diffusers/pipelines/pipeline_utils.py#L480)
+    for image2image translation task to Weights & Biases.
+
+    Arguments:
+        pipeline (diffusers.DiffusionPipeline): The `DiffusionPipeline` from
+            `diffusers`.
+        prompt (Union[str, List[str]]): The prompt or prompts to guide the image
+            generation.
+        input_images (PipelineImageInput): The input image, numpy array or tensor
+            representing an image batch to be used as the starting point. For both numpy
+            array and pytorch tensor, the expected value range is between [0, 1] If it's
+            a tensor or a list or tensors, the expected shape should be `(B, C, H, W)`
+            or `(C, H, W)`. If it is a numpy array or a list of arrays, the expected
+            shape should be (B, H, W, C) or (H, W, C) It can also accept image latents as
+            image, but if passing latents directly it is not encoded again.
+        wandb_project (Optional[str]): The name of the project where you're sending
+            the new run. The project is not necessary to be specified unless the run
+            has automatically been initiatlized before the callback is defined.
+        wandb_entity (Optional[str]): An entity is a username or team name where
+            you're sending runs. This entity must exist before you can send runs there,
+            so make sure to create your account or team in the UI before starting to
+            log runs. If you don't specify an entity, the run will be sent to your
+            default entity, which is usually your username. Change your default entity
+            in [your settings](https://wandb.ai/settings) under "default location to
+            create new projects".
+        num_inference_steps (int): The number of denoising steps. More denoising steps
+            usually lead to a higher quality image at the expense of slower inference.
+        num_images_per_prompt (Optional[int]): The number of images to generate per
+            prompt.
+        negative_prompt (Optional[Union[str, List[str]]]): The prompt or prompts not
+            to guide the image generation. Ignored when not using guidance
+            (i.e., ignored if `guidance_scale` is less than `1`).
+        configs (Optional[Dict]): Additional configs for the experiment you want to
+            sync, for example, for example, `seed` could be a good config to be passed
+            here.
+    """
     def __init__(
         self,
         pipeline: DiffusionPipeline,
@@ -148,7 +186,6 @@ class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
         input_images: PipelineImageInput,
         wandb_project: str,
         wandb_entity: Optional[str] = None,
-        strength: float = 0.8,
         num_inference_steps: int = 50,
         num_images_per_prompt: Optional[int] = 1,
         negative_prompt: Optional[Union[str, List[str]]] = None,
@@ -168,12 +205,6 @@ class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
             **kwargs,
         )
         self.input_images = self.postprocess_input_images(input_images)
-        self.strength = strength
-        wandb.config.update(
-            {
-                "strength": self.strength,
-            }
-        )
 
     def postprocess_input_images(self, input_images):
         if isinstance(input_images, torch.Tensor):

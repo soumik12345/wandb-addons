@@ -46,7 +46,10 @@ nav:
   - 'Report': 'report.md'
   - 'Integrations':
     - 'Ciclo': 'ciclo/ciclo.md'
-    - '🧨 Diffusers': 'diffusers/wandb_callbacks.md'
+    - '🧨 Diffusers':
+      - 'Stable Diffusion': 'diffusers/stable_diffusion.md'
+      - 'Kandinsky': 'diffusers/kandinsky.md'
+      - 'Auto Integrate': 'diffusers/auto_integrate.md'
     - '🦄 Keras':
       - 'Callbacks': 'keras/keras.md'
       - 'KerasCV':
