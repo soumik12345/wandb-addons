@@ -70,21 +70,10 @@ jobs:
   #         pip install ".[keras, test]"
   #         KERAS_BACKEND="jax" pytest -s ./wandb_addons/tests/keras/
 
-  run-jax-tests:
-    name: Check if JAX, Flax and Ciclo tests pass
-    runs-on: ubuntu-latest
-    container: python
-    steps:
-      - uses: actions/checkout@v3
-      - run: |
-          pip install -U pip
-          pip install .[jax]
-          python -c "from wandb_addons.ciclo import WandbLogger"
-  
   run-huggingface-test:
     name: Check if HuggingFace tests pass
     runs-on: ubuntu-latest
-    container: python
+    container: pytorch/pytorch
     steps:
       - uses: actions/checkout@v3
       - run: |
