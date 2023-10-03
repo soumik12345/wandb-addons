@@ -90,6 +90,14 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
             default entity, which is usually your username. Change your default entity
             in [your settings](https://wandb.ai/settings) under "default location to
             create new projects".
+        weave_mode (bool): Whether to use log to a
+            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard or
+            not. The weave mode logs the configs, generated images and timestamp in a
+            [`StreamTable`](https://docs.wandb.ai/guides/weave/streamtable) instead of a
+            `wandb.Table` and does not require a wandb run to be initialized in order to
+            start logging. This makes it possible to log muliple generations without having
+            to initialize or terminate runs. Note that the parameter `wandb_entity` must be
+            explicitly specified in order to use weave mode.
         num_inference_steps (int): The number of denoising steps. More denoising steps
             usually lead to a higher quality image at the expense of slower inference.
         num_images_per_prompt (Optional[int]): The number of images to generate per
@@ -115,6 +123,7 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
         prompt: Union[str, List[str]],
         wandb_project: str,
         wandb_entity: Optional[str] = None,
+        weave_mode: bool = False,
         guidance_scale: float = 7.5,
         num_inference_steps: int = 50,
         num_images_per_prompt: Optional[int] = 1,
@@ -127,6 +136,7 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
             prompt,
             wandb_project,
             wandb_entity,
+            weave_mode,
             num_inference_steps,
             num_images_per_prompt,
             negative_prompt,
@@ -135,12 +145,14 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
         )
         self.guidance_scale = guidance_scale
         self.do_classifier_free_guidance = guidance_scale > 1.0
-        wandb.config.update(
-            {
-                "guidance_scale": self.guidance_scale,
-                "do_classifier_free_guidance": self.do_classifier_free_guidance,
-            }
-        )
+        additional_configs = {
+            "guidance_scale": self.guidance_scale,
+            "do_classifier_free_guidance": self.do_classifier_free_guidance,
+        }
+        if not self.weave_mode:
+            wandb.config.update(additional_configs)
+        else:
+            self.configs.update(additional_configs)
 
     def build_wandb_table(self) -> None:
         super().build_wandb_table()
@@ -150,7 +162,8 @@ class StableDiffusionCallback(BaseDiffusersBaseCallback):
         self, prompt: str, negative_prompt: str, image: Image
     ) -> None:
         super().populate_table_row(prompt, negative_prompt, image)
-        self.table_row += [self.guidance_scale, self.do_classifier_free_guidance]
+        if not self.weave_mode:
+            self.table_row += [self.guidance_scale, self.do_classifier_free_guidance]
 
     def generate(self, latents: torch.FloatTensor) -> List:
         images = self.pipeline.decode_latents(latents)
@@ -245,6 +258,14 @@ class StableDiffusionImg2ImgCallback(BaseImage2ImageCallback):
             default entity, which is usually your username. Change your default entity
             in [your settings](https://wandb.ai/settings) under "default location to
             create new projects".
+        weave_mode (bool): Whether to use log to a
+            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard or
+            not. The weave mode logs the configs, generated images and timestamp in a
+            [`StreamTable`](https://docs.wandb.ai/guides/weave/streamtable) instead of a
+            `wandb.Table` and does not require a wandb run to be initialized in order to
+            start logging. This makes it possible to log muliple generations without having
+            to initialize or terminate runs. Note that the parameter `wandb_entity` must be
+            explicitly specified in order to use weave mode.
         num_inference_steps (int): The number of denoising steps. More denoising steps
             usually lead to a higher quality image at the expense of slower inference.
         strength (Optional[float]): Indicates extent to transform the reference image.
@@ -277,6 +298,7 @@ class StableDiffusionImg2ImgCallback(BaseImage2ImageCallback):
         input_images: PipelineImageInput,
         wandb_project: str,
         wandb_entity: Optional[str] = None,
+        weave_mode: bool = False,
         num_inference_steps: int = 50,
         strength: Optional[float] = 0.8,
         guidance_scale: Optional[float] = 7.5,
@@ -291,6 +313,7 @@ class StableDiffusionImg2ImgCallback(BaseImage2ImageCallback):
             input_images=input_images,
             wandb_project=wandb_project,
             wandb_entity=wandb_entity,
+            weave_mode=weave_mode,
             num_inference_steps=num_inference_steps,
             num_images_per_prompt=num_images_per_prompt,
             negative_prompt=negative_prompt,
@@ -300,13 +323,15 @@ class StableDiffusionImg2ImgCallback(BaseImage2ImageCallback):
         self.strength = strength
         self.guidance_scale = guidance_scale
         self.do_classifier_free_guidance = guidance_scale > 1.0
-        wandb.config.update(
-            {
-                "strength": self.strength,
-                "guidance_scale": self.guidance_scale,
-                "do_classifier_free_guidance": self.do_classifier_free_guidance,
-            }
-        )
+        additional_configs = {
+            "strength": self.strength,
+            "guidance_scale": self.guidance_scale,
+            "do_classifier_free_guidance": self.do_classifier_free_guidance,
+        }
+        if self.weave_mode:
+            self.configs.update(additional_configs)
+        else:
+            wandb.config.update(additional_configs)
 
     def at_initial_step(self):
         super().at_initial_step()

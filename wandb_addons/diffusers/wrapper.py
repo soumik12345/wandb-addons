@@ -3,7 +3,11 @@ from typing import Dict, List, Optional, Union
 import wandb
 from diffusers import DiffusionPipeline
 
-from .callbacks import KandinskyCallback, StableDiffusionCallback
+from .callbacks import (
+    KandinskyCallback,
+    StableDiffusionCallback,
+    StableDiffusionImg2ImgCallback,
+)
 
 
 def get_wandb_callback(
@@ -13,6 +17,7 @@ def get_wandb_callback(
     num_inference_steps: int,
     num_images_per_prompt: int,
     wandb_entity: Optional[str] = None,
+    weave_mode: bool = False,
     negative_prompt: Optional[Union[str, List[str]]] = None,
     configs: Dict = {},
     **kwargs,
@@ -42,6 +47,14 @@ def get_wandb_callback(
             default entity, which is usually your username. Change your default entity
             in [your settings](https://wandb.ai/settings) under "default location to
             create new projects".
+        weave_mode (bool): Whether to use log to a
+            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard or
+            not. The weave mode logs the configs, generated images and timestamp in a
+            [`StreamTable`](https://docs.wandb.ai/guides/weave/streamtable) instead of a
+            `wandb.Table` and does not require a wandb run to be initialized in order to
+            start logging. This makes it possible to log muliple generations without having
+            to initialize or terminate runs. Note that the parameter `wandb_entity` must be
+            explicitly specified in order to use weave mode.
         num_inference_steps (int): The number of denoising steps. More denoising steps
             usually lead to a higher quality image at the expense of slower inference.
         num_images_per_prompt (Optional[int]): The number of images to generate per
@@ -59,6 +72,20 @@ def get_wandb_callback(
             prompt=prompt,
             wandb_project=wandb_project,
             wandb_entity=wandb_entity,
+            weave_mode=weave_mode,
+            num_inference_steps=num_inference_steps,
+            num_images_per_prompt=num_images_per_prompt,
+            negative_prompt=negative_prompt,
+            configs=configs,
+            **kwargs,
+        )
+    elif pipeline_name == "StableDiffusionImg2ImgPipeline":
+        return StableDiffusionImg2ImgCallback(
+            pipeline=pipeline,
+            prompt=prompt,
+            wandb_project=wandb_project,
+            wandb_entity=wandb_entity,
+            weave_mode=weave_mode,
             num_inference_steps=num_inference_steps,
             num_images_per_prompt=num_images_per_prompt,
             negative_prompt=negative_prompt,

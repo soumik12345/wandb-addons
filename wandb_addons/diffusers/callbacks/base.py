@@ -2,12 +2,14 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Union
 
 import torch
-import wandb
 import numpy as np
 from PIL import Image
 
 from diffusers import DiffusionPipeline
 from diffusers.image_processor import PipelineImageInput
+
+import wandb
+from weave.monitoring import StreamTable
 
 from .utils import chunkify
 
@@ -33,6 +35,14 @@ class BaseDiffusersBaseCallback(ABC):
             default entity, which is usually your username. Change your default entity
             in [your settings](https://wandb.ai/settings) under "default location to
             create new projects".
+        weave_mode (bool): Whether to use log to a
+            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard or
+            not. The weave mode logs the configs, generated images and timestamp in a
+            [`StreamTable`](https://docs.wandb.ai/guides/weave/streamtable) instead of a
+            `wandb.Table` and does not require a wandb run to be initialized in order to
+            start logging. This makes it possible to log muliple generations without having
+            to initialize or terminate runs. Note that the parameter `wandb_entity` must be
+            explicitly specified in order to use weave mode.
         num_inference_steps (int): The number of denoising steps. More denoising steps
             usually lead to a higher quality image at the expense of slower inference.
         num_images_per_prompt (Optional[int]): The number of images to generate per
@@ -51,17 +61,19 @@ class BaseDiffusersBaseCallback(ABC):
         prompt: Union[str, List[str]],
         wandb_project: str,
         wandb_entity: Optional[str] = None,
+        weave_mode: bool = False,
         num_inference_steps: int = 50,
         num_images_per_prompt: Optional[int] = 1,
         negative_prompt: Optional[Union[str, List[str]]] = None,
         configs: Optional[Dict] = None,
         **kwargs,
     ) -> None:
-        super().__init__(**kwargs)
+        super().__init__()
         self.pipeline = pipeline
         self.prompt = prompt
         self.wandb_project = wandb_project
         self.wandb_entity = wandb_entity
+        self.weave_mode = weave_mode
         self.num_inference_steps = num_inference_steps
         self.num_images_per_prompt = num_images_per_prompt
         self.negative_prompt = negative_prompt
@@ -71,6 +83,7 @@ class BaseDiffusersBaseCallback(ABC):
         self.starting_step = 1
         self.log_step = num_inference_steps
         self.job_type = "text-to-image"
+        self.table_name = "Text-To-Image"
         self.initialize_wandb(wandb_project, wandb_entity)
         self.build_wandb_table()
 
@@ -89,17 +102,27 @@ class BaseDiffusersBaseCallback(ABC):
         )
 
     def initialize_wandb(self, wandb_project, wandb_entity) -> None:
-        if wandb.run is None:
-            if wandb_project is not None:
-                self.update_configs()
-                wandb.init(
-                    project=wandb_project,
-                    entity=wandb_entity,
-                    job_type=self.job_type,
-                    config=self.configs,
+        self.update_configs()
+        if self.weave_mode:
+            if self.wandb_entity is None:
+                wandb.termerror(
+                    "The parameter wandb_entity must be provided when weave_mode is enabled."
                 )
             else:
-                wandb.termerror("The parameter wandb_project must be provided.")
+                self.stream_table = StreamTable(
+                    f"{self.wandb_entity}/{self.wandb_project}/{self.table_name}"
+                )
+        else:
+            if wandb.run is None:
+                if wandb_project is not None:
+                    wandb.init(
+                        project=wandb_project,
+                        entity=wandb_entity,
+                        job_type=self.job_type,
+                        config=self.configs,
+                    )
+                else:
+                    wandb.termerror("The parameter wandb_project must be provided.")
 
     def build_wandb_table(self) -> None:
         self.table_columns = ["Prompt", "Negative-Prompt", "Generated-Image"]
@@ -111,10 +134,20 @@ class BaseDiffusersBaseCallback(ABC):
     def populate_table_row(
         self, prompt: str, negative_prompt: str, image: Image
     ) -> None:
-        self.table_row = [prompt, negative_prompt, wandb.Image(image)]
+        self.table_row = (
+            {
+                "Prompt": prompt,
+                "Negative-Prompt": negative_prompt,
+                "Generated-Image": image,
+                "Configs": self.configs,
+            }
+            if self.weave_mode
+            else [prompt, negative_prompt, wandb.Image(image)]
+        )
 
     def at_initial_step(self):
-        self.wandb_table = wandb.Table(columns=self.table_columns)
+        if not self.weave_mode:
+            self.wandb_table = wandb.Table(columns=self.table_columns)
 
     def __call__(self, step: int, timestep: int, latents: torch.FloatTensor):
         if step == self.starting_step:
@@ -135,9 +168,13 @@ class BaseDiffusersBaseCallback(ABC):
                     self.populate_table_row(
                         prompt_logging[idx], negative_prompt_logging[idx], image
                     )
-                    self.wandb_table.add_data(*self.table_row)
-            wandb.log({"Text-To-Image": self.wandb_table})
-            wandb.finish()
+                    if self.weave_mode:
+                        self.stream_table.log(self.table_row)
+                    else:
+                        self.wandb_table.add_data(*self.table_row)
+            if not self.weave_mode:
+                wandb.log({self.table_name: self.wandb_table})
+                wandb.finish()
 
 
 class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
@@ -168,6 +205,14 @@ class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
             default entity, which is usually your username. Change your default entity
             in [your settings](https://wandb.ai/settings) under "default location to
             create new projects".
+        weave_mode (bool): Whether to use log to a
+            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard or
+            not. The weave mode logs the configs, generated images and timestamp in a
+            [`StreamTable`](https://docs.wandb.ai/guides/weave/streamtable) instead of a
+            `wandb.Table` and does not require a wandb run to be initialized in order to
+            start logging. This makes it possible to log muliple generations without having
+            to initialize or terminate runs. Note that the parameter `wandb_entity` must be
+            explicitly specified in order to use weave mode.
         num_inference_steps (int): The number of denoising steps. More denoising steps
             usually lead to a higher quality image at the expense of slower inference.
         num_images_per_prompt (Optional[int]): The number of images to generate per
@@ -187,6 +232,7 @@ class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
         input_images: PipelineImageInput,
         wandb_project: str,
         wandb_entity: Optional[str] = None,
+        weave_mode: bool = False,
         num_inference_steps: int = 50,
         num_images_per_prompt: Optional[int] = 1,
         negative_prompt: Optional[Union[str, List[str]]] = None,
@@ -199,6 +245,7 @@ class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
             prompt=prompt,
             wandb_project=wandb_project,
             wandb_entity=wandb_entity,
+            weave_mode=weave_mode,
             num_inference_steps=num_inference_steps,
             num_images_per_prompt=num_images_per_prompt,
             negative_prompt=negative_prompt,
@@ -206,6 +253,11 @@ class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
             **kwargs,
         )
         self.input_images = self.postprocess_input_images(input_images)
+
+    def initialize_wandb(self, wandb_project, wandb_entity) -> None:
+        self.job_type = "image-to-image"
+        self.table_name = "Image-To-Image"
+        super().initialize_wandb(wandb_project, wandb_entity)
 
     def postprocess_input_images(self, input_images):
         if isinstance(input_images, torch.Tensor):
@@ -224,12 +276,21 @@ class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
     def populate_table_row(
         self, input_image: Image.Image, prompt: str, negative_prompt: str, image: Any
     ) -> None:
-        self.table_row = [
-            wandb.Image(input_image),
-            prompt,
-            negative_prompt,
-            wandb.Image(image),
-        ]
+        self.table_row = (
+            {
+                "Input-Image": input_image,
+                "Prompt": prompt,
+                "Negative-Prompt": negative_prompt,
+                "Generated-Image": image,
+            }
+            if self.weave_mode
+            else [
+                wandb.Image(input_image),
+                prompt,
+                negative_prompt,
+                wandb.Image(image),
+            ]
+        )
 
     def __call__(self, step: int, timestep: int, latents: torch.FloatTensor):
         if step == self.starting_step:
@@ -253,6 +314,10 @@ class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
                         negative_prompt_logging[idx],
                         image,
                     )
-                    self.wandb_table.add_data(*self.table_row)
-            wandb.log({"Image-To-Image": self.wandb_table})
-            wandb.finish()
+                    if self.weave_mode:
+                        self.stream_table.log(self.table_row)
+                    else:
+                        self.wandb_table.add_data(*self.table_row)
+            if not self.weave_mode:
+                wandb.log({self.table_name: self.wandb_table})
+                wandb.finish()
