@@ -282,6 +282,7 @@ class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
                 "Prompt": prompt,
                 "Negative-Prompt": negative_prompt,
                 "Generated-Image": image,
+                "Configs": self.configs,
             }
             if self.weave_mode
             else [
