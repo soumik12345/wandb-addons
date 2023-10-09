@@ -2,15 +2,13 @@
 
 Callbacks for logging experiment details, configs and generated images for multi-modal diffusion pipelines from [Diffusers 🧨](https://huggingface.co/docs/diffusers) to your [Weights & Biases workspace](https://docs.wandb.ai/guides/app/pages/workspaces) or [Weave Dashboard](https://weave.wandb.ai/).
 
-<figure>
-  <img src="./assets/text_to_image.png" alt="">
-  <figcaption>Text-to-Image logging on Weights & Biases</figcaption>
-</figure>
+| Text-to-Image on Weights & Biases |
+| -------- |
+| ![](./assets/text_to_image.png) |
 
-<figure>
-  <img src="./assets/image_to_image.png" alt="">
-  <figcaption>Image-to-Image logging on Weights & Biases</figcaption>
-</figure>
+| Image-to-Image on Weights & Biases |
+| -------- |
+| ![](./assets/image_to_image.png) |
 
 For detailed documentation, check out the following:
 
