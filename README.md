@@ -52,25 +52,6 @@ For more information, check out
 - [Backend-agnostic callbacks for KerasCore](https://geekyrakshit.dev/wandb-addons/keras/callbacks/).
 - [Object-detection integration for KerasCV](https://geekyrakshit.dev/wandb-addons/keras/object_detection/).
 
-### [🌀 Ciclo](https://github.com/cgarciae/ciclo)
-
-Functional callbacks for experiment tracking on [Weights & Biases](https://wandb.ai/site) with [Ciclo](https://github.com/cgarciae/ciclo).
-
-In order to install `wandb-addons` along with the dependencies for the ciclo callbacks, you can run:
-
-```shell
-git clone https://github.com/soumik12345/wandb-addons
-pip install ./wandb-addons[jax]
-```
-
-Once you've installed `wandb-addons`, you can import it using:
-
-```python
-from wandb_addons.ciclo import WandbLogger
-```
-
-For more information, check out more at the [docs](https://soumik12345.github.io/wandb-addons/ciclo/ciclo/).
-
 ### [MonAI](https://github.com/Project-MONAI/MONAI)
 
 Event handlers for experiment tracking on [Weights & Biases](https://wandb.ai/site) with [MonAI](https://github.com/Project-MONAI/MONAI) Engine for deep learning in healthcare imaging.
@@ -90,50 +71,63 @@ from wandb_addons.monai import WandbStatsHandler, WandbModelCheckpointHandler
 
 For more information, check out more at the [docs](https://soumik12345.github.io/wandb-addons/monai/monai/).
 
-### [Ultralytics](https://github.com/ultralytics/ultralytics)
+## [🧨 Diffusers](https://huggingface.co/docs/diffusers)
 
-Callback for logging model checkpoint, predictions, and ground-truth annotations with interactive overlays for bounding boxes to Weights & Biases Tables during training, validation, and prediction for an `ultratytics` workflow using the `YOLO` models.
+Callbacks for logging experiment details, configs and generated images for multi-modal diffusion pipelines from [Diffusers 🧨](https://huggingface.co/docs/diffusers) to your [Weights & Biases workspace](https://docs.wandb.ai/guides/app/pages/workspaces) or [Weave Dashboard](https://weave.wandb.ai/).
 
-In order to install `wandb-addons` along with the dependencies for the `ultralytics` integration, you can run:
+In order to install `wandb-addons` along with the dependencies for the ciclo callbacks, you can run:
 
 ```shell
 git clone https://github.com/soumik12345/wandb-addons
-pip install ./wandb-addons[yolo]
+pip install ./wandb-addons[huggingface]
 ```
 
-Once you've installed `wandb-addons`, you can use it like following:
+Once you've installed `wandb-addons`, you can use the callbacks in the following manner:
 
 ```python
-from ultralytics.yolo.engine.model import YOLO
+import torch
+from diffusers import StableDiffusionPipeline
 
-import wandb
-from wandb_addons.ultralytics import add_wandb_callback
+from wandb_addons.diffusers import StableDiffusionCallback
 
-# initialize wandb run
-wandb.init(project="YOLOv8")
 
-# initialize YOLO model
-model = YOLO("yolov8n.pt")
+pipeline = StableDiffusionPipeline.from_pretrained(
+    "CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16
+)
+pipeline = pipeline.to("cuda")
 
-# add wandb callback
-add_wandb_callback(model)
+prompt = [
+    "a photograph of an astronaut riding a horse",
+    "a photograph of a dragon"
+]
+negative_prompt = ["ugly, deformed", "ugly, deformed"]
+num_images_per_prompt = 2
+configs = {
+    "eta": 0.0,
+    "guidance_rescale": 0.0,
+}
 
-# train
-model.train(
-    data="coco128.yaml",
-    epochs=2,
-    imgsz=640,
+# Create the WandB callback for StableDiffusionPipeline
+callback = StableDiffusionCallback(
+    pipe,
+    prompt=prompt,
+    negative_prompt=negative_prompt,
+    wandb_project="diffusers",
+    num_images_per_prompt=num_images_per_prompt,
+    configs=configs,
 )
 
-# validate
-model.val()
-
-# perform inference
-model(['img1.jpeg', 'img2.jpeg'])
+# Add the callback to the pipeline
+image = pipe(
+    prompt,
+    negative_prompt=negative_prompt,
+    callback=callback,
+    num_images_per_prompt=num_images_per_prompt,
+    **configs,
+)
 ```
 
-For more information, check out more at the [docs](https://soumik12345.github.io/wandb-addons/ultralytics/yolo/).
-
+For more information, check out more at the [docs](diffusers/overview).
 
 ## Converting IPython Notebooks to [Reports](https://docs.wandb.ai/guides/reports)
 
