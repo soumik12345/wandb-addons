@@ -149,7 +149,13 @@ class BaseDiffusersBaseCallback(ABC):
         if not self.weave_mode:
             self.wandb_table = wandb.Table(columns=self.table_columns)
 
-    def __call__(self, step: int, timestep: int, latents: torch.FloatTensor):
+    def __call__(
+        self,
+        step: int,
+        timestep: int,
+        latents: torch.FloatTensor,
+        end_experiment: bool = True,
+    ):
         if step == self.starting_step:
             self.at_initial_step()
         if step == self.log_step:
@@ -172,9 +178,16 @@ class BaseDiffusersBaseCallback(ABC):
                         self.stream_table.log(self.table_row)
                     else:
                         self.wandb_table.add_data(*self.table_row)
-            if not self.weave_mode:
+            if self.weave_mode:
+                self.stream_table.finish()
+            elif wandb.run is not None and end_experiment:
                 wandb.log({self.table_name: self.wandb_table})
                 wandb.finish()
+
+    def end_experiment(self):
+        if wandb.run is not None:
+            wandb.log({self.table_name: self.wandb_table})
+            wandb.finish()
 
 
 class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
@@ -293,7 +306,13 @@ class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
             ]
         )
 
-    def __call__(self, step: int, timestep: int, latents: torch.FloatTensor):
+    def __call__(
+        self,
+        step: int,
+        timestep: int,
+        latents: torch.FloatTensor,
+        end_experiment: bool = True,
+    ):
         if step == self.starting_step:
             self.at_initial_step()
         if step == self.log_step:
@@ -319,6 +338,13 @@ class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
                         self.stream_table.log(self.table_row)
                     else:
                         self.wandb_table.add_data(*self.table_row)
-            if not self.weave_mode:
+            if self.weave_mode:
+                self.stream_table.finish()
+            elif wandb.run is not None and end_experiment:
                 wandb.log({self.table_name: self.wandb_table})
                 wandb.finish()
+
+    def end_experiment(self):
+        if wandb.run is not None:
+            wandb.log({self.table_name: self.wandb_table})
+            wandb.finish()

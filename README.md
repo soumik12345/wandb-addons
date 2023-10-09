@@ -127,7 +127,7 @@ image = pipe(
 )
 ```
 
-For more information, check out more at the [docs](diffusers/overview).
+For more information, check out more at the [docs](https://geekyrakshit.dev/wandb-addons/keras/object_detection/).
 
 ## Converting IPython Notebooks to [Reports](https://docs.wandb.ai/guides/reports)
 
