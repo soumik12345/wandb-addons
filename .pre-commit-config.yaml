@@ -7,4 +7,3 @@ repos:
     -   id: check-ast
     -   id: check-yaml
     -   id: check-toml
-    -   id: check-added-large-files

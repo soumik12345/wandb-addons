@@ -47,6 +47,7 @@ nav:
   - 'Integrations':
     - 'Ciclo': 'ciclo/ciclo.md'
     - '🧨 Diffusers':
+      - 'Overview': 'diffusers/overview'
       - 'Stable Diffusion': 'diffusers/stable_diffusion.md'
       - 'Kandinsky': 'diffusers/kandinsky.md'
       - 'Auto Integrate': 'diffusers/auto_integrate.md'
