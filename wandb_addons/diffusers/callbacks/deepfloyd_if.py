@@ -14,7 +14,7 @@ class IFCallback(BaseDiffusersCallback):
         wandb_project: str,
         wandb_entity: Optional[str] = None,
         weave_mode: bool = False,
-        num_inference_steps: int = 50,
+        num_inference_steps: int = 100,
         num_images_per_prompt: Optional[int] = 1,
         negative_prompt: Optional[Union[str, List[str]]] = None,
         configs: Optional[Dict] = None,
@@ -32,6 +32,8 @@ class IFCallback(BaseDiffusersCallback):
             configs,
             **kwargs
         )
+        self.starting_step = 0
+        self.log_step = self.num_inference_steps - 1
 
     def generate(self, latents: torch.FloatTensor) -> List:
         images = (latents / 2 + 0.5).clamp(0, 1)
