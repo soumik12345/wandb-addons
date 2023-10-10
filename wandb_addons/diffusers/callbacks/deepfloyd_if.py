@@ -99,13 +99,14 @@ class IFCallback(BaseMultiPipelineCallback):
         pipeline: Union[IFPipeline, IFSuperResolutionPipeline],
         num_inference_steps: Optional[int] = None,
         stage_name: Optional[str] = None,
+        configs: Optional[Dict] = None,
     ) -> None:
         assert (
             isinstance(pipeline, IFPipeline)
             or isinstance(pipeline, IFSuperResolutionPipeline)
             or isinstance(pipeline, StableDiffusionUpscalePipeline)
         ), "IFCallback only supports IFPipeline and IFSuperResolutionPipeline"
-        super().add_stage(pipeline, num_inference_steps, stage_name)
+        super().add_stage(pipeline, num_inference_steps, stage_name, configs)
         if isinstance(pipeline, IFSuperResolutionPipeline) or isinstance(
             pipeline, StableDiffusionUpscalePipeline
         ):

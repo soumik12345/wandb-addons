@@ -240,6 +240,7 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
         pipeline: DiffusionPipeline,
         num_inference_steps: Optional[int] = None,
         stage_name: Optional[str] = None,
+        configs: Optional[Dict] = None,
     ) -> None:
         self.pipeline = pipeline
         self.num_inference_steps = (
@@ -257,6 +258,8 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
                 "num_inference_steps": self.num_inference_steps,
             }
         }
+        if configs is not None:
+            additional_configs.update(configs)
         self.configs.update(additional_configs)
         if wandb.run is not None:
             wandb.config.update(additional_configs)
