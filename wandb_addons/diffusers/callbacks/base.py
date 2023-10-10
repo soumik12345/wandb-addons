@@ -259,7 +259,7 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
             }
         }
         if configs is not None:
-            additional_configs.update(configs)
+            additional_configs[self.stage_name].update(configs)
         self.configs.update(additional_configs)
         if wandb.run is not None:
             wandb.config.update(additional_configs)
