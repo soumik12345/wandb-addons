@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Union
 
 import torch
-from diffusers import DiffusionPipeline
+from diffusers import IFPipeline, IFSuperResolutionPipeline
 
 from .base import BaseMultiPipelineCallback
 
@@ -9,7 +9,7 @@ from .base import BaseMultiPipelineCallback
 class IFCallback(BaseMultiPipelineCallback):
     def __init__(
         self,
-        pipeline: DiffusionPipeline,
+        pipeline: Union[IFPipeline, IFSuperResolutionPipeline],
         prompt: Union[str, List[str]],
         wandb_project: str,
         wandb_entity: Optional[str] = None,
@@ -43,3 +43,17 @@ class IFCallback(BaseMultiPipelineCallback):
         )
         images = self.pipeline.numpy_to_pil(images)
         return images
+
+    def add_stage(
+        self,
+        pipeline: Union[IFPipeline, IFSuperResolutionPipeline],
+        num_inference_steps: Optional[int] = None,
+        stage_name: Optional[str] = None,
+    ) -> None:
+        assert isinstance(pipeline, IFPipeline) or isinstance(
+            pipeline, IFSuperResolutionPipeline
+        ), "IFCallback only supports IFPipeline and IFSuperResolutionPipeline"
+        super().add_stage(pipeline, num_inference_steps, stage_name)
+        if isinstance(pipeline, IFSuperResolutionPipeline):
+            self.starting_step = 0
+            self.log_step = self.starting_step + self.num_inference_steps - 1

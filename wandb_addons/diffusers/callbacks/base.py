@@ -176,14 +176,13 @@ class BaseDiffusersCallback(ABC):
                         self.stream_table.log(self.table_row)
                     else:
                         self.wandb_table.add_data(*self.table_row)
-            if self.weave_mode:
-                self.stream_table.finish()
-            elif wandb.run is not None and end_experiment:
-                wandb.log({self.table_name: self.wandb_table})
-                wandb.finish()
+            if end_experiment:
+                self.end_experiment()
 
     def end_experiment(self):
-        if wandb.run is not None:
+        if self.weave_mode:
+            self.stream_table.finish()
+        elif wandb.run is not None:
             wandb.log({self.table_name: self.wandb_table})
             wandb.finish()
 
@@ -200,8 +199,13 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
         num_images_per_prompt: Optional[int] = 1,
         negative_prompt: Optional[Union[str, List[str]]] = None,
         configs: Optional[Dict] = None,
+        initial_stage_name: Optional[str] = None,
         **kwargs,
     ) -> None:
+        self.stage_name = (
+            initial_stage_name if initial_stage_name is not None else "stage_1"
+        )
+        self.stage_counter = 1
         super().__init__(
             pipeline,
             prompt,
@@ -216,18 +220,63 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
         )
 
     def update_configs(self) -> None:
-        super().update_configs()
-        self.configs["pipeline"] = [self.configs["pipeline"]]
-        self.stage = len(self.pipeline.config)
-        self.configs["stage"] = self.stage
+        additional_configs = {
+            "prompt": self.prompt,
+            "negative_prompt": self.negative_prompt,
+            "num_images_per_prompt": self.num_images_per_prompt,
+            self.stage_name: {
+                "pipeline": dict(self.pipeline.config),
+                "num_inference_steps": self.num_inference_steps,
+            },
+        }
+        self.configs = (
+            {**self.configs, **additional_configs}
+            if self.configs is not None
+            else additional_configs
+        )
 
-    def update_stage(self, pipeline) -> None:
+    def add_stage(
+        self,
+        pipeline: DiffusionPipeline,
+        num_inference_steps: Optional[int] = None,
+        stage_name: Optional[str] = None,
+    ) -> None:
         self.pipeline = pipeline
-        self.configs["pipeline"].append(dict(self.pipeline.config))
-        self.stage = len(self.pipeline.stages)
-        self.configs["stage"] = self.stage
+        self.num_inference_steps = (
+            num_inference_steps
+            if num_inference_steps is not None
+            else self.num_inference_steps
+        )
+        self.stage_counter += 1
+        self.stage_name = (
+            stage_name if stage_name is not None else f"stage_{self.stage_counter}"
+        )
+        additional_configs = {
+            self.stage_name: {
+                "pipeline": dict(self.pipeline.config),
+                "num_inference_steps": self.num_inference_steps,
+            }
+        }
+        self.configs.update(additional_configs)
         if wandb.run is not None:
-            wandb.config.update(self.configs)
+            wandb.config.update(additional_configs)
+
+    def at_initial_step(self):
+        if self.stage_counter == 1:
+            super().at_initial_step()
+
+    def build_wandb_table(self) -> None:
+        super().build_wandb_table()
+        self.table_columns = ["Stage-Sequence", "Stage-Name"] + self.table_columns
+
+    def populate_table_row(self, prompt: str, negative_prompt: str, image: Any) -> None:
+        super().populate_table_row(prompt, negative_prompt, image)
+        if self.weave_mode:
+            self.table_row.update(
+                {"Stage-Sequence": self.stage_counter, "Stage-Name": self.stage_name}
+            )
+        else:
+            self.table_row = [self.stage_counter, self.stage_name] + self.table_row
 
 
 class BaseImage2ImageCallback(BaseDiffusersCallback):
@@ -378,13 +427,12 @@ class BaseImage2ImageCallback(BaseDiffusersCallback):
                         self.stream_table.log(self.table_row)
                     else:
                         self.wandb_table.add_data(*self.table_row)
-            if self.weave_mode:
-                self.stream_table.finish()
-            elif wandb.run is not None and end_experiment:
-                wandb.log({self.table_name: self.wandb_table})
-                wandb.finish()
+            if end_experiment:
+                self.end_experiment()
 
     def end_experiment(self):
-        if wandb.run is not None:
+        if self.weave_mode:
+            self.stream_table.finish()
+        elif wandb.run is not None:
             wandb.log({self.table_name: self.wandb_table})
             wandb.finish()
