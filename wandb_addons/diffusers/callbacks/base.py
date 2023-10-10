@@ -188,6 +188,48 @@ class BaseDiffusersCallback(ABC):
             wandb.finish()
 
 
+class BaseMultiPipelineCallback(BaseDiffusersCallback):
+    def __init__(
+        self,
+        pipeline: DiffusionPipeline,
+        prompt: Union[str, List[str]],
+        wandb_project: str,
+        wandb_entity: Optional[str] = None,
+        weave_mode: bool = False,
+        num_inference_steps: int = 50,
+        num_images_per_prompt: Optional[int] = 1,
+        negative_prompt: Optional[Union[str, List[str]]] = None,
+        configs: Optional[Dict] = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(
+            pipeline,
+            prompt,
+            wandb_project,
+            wandb_entity,
+            weave_mode,
+            num_inference_steps,
+            num_images_per_prompt,
+            negative_prompt,
+            configs,
+            **kwargs,
+        )
+
+    def update_configs(self) -> None:
+        super().update_configs()
+        self.configs["pipeline"] = [self.configs["pipeline"]]
+        self.stage = len(self.pipeline.config)
+        self.configs["stage"] = self.stage
+
+    def update_stage(self, pipeline) -> None:
+        self.pipeline = pipeline
+        self.configs["pipeline"].append(dict(self.pipeline.config))
+        self.stage = len(self.pipeline.stages)
+        self.configs["stage"] = self.stage
+        if wandb.run is not None:
+            wandb.config.update(self.configs)
+
+
 class BaseImage2ImageCallback(BaseDiffusersCallback):
     """Base callback for [🧨 Diffusers](https://huggingface.co/docs/diffusers/index)
     logging the results of a

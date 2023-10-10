@@ -3,10 +3,10 @@ from typing import Dict, List, Optional, Union
 import torch
 from diffusers import DiffusionPipeline
 
-from .base import BaseDiffusersCallback
+from .base import BaseMultiPipelineCallback
 
 
-class IFCallback(BaseDiffusersCallback):
+class IFCallback(BaseMultiPipelineCallback):
     def __init__(
         self,
         pipeline: DiffusionPipeline,
