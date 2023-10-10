@@ -2,19 +2,18 @@ from typing import Any, Dict, List, Optional, Union
 
 import torch
 import wandb
-from PIL import Image
-
-from diffusers.image_processor import PipelineImageInput
 from diffusers import (
     DiffusionPipeline,
-    StableDiffusionPipeline,
     StableDiffusionImg2ImgPipeline,
+    StableDiffusionPipeline,
 )
+from diffusers.image_processor import PipelineImageInput
+from PIL import Image
 
-from .base import BaseDiffusersBaseCallback, BaseImage2ImageCallback
+from .base import BaseDiffusersCallback, BaseImage2ImageCallback
 
 
-class StableDiffusionCallback(BaseDiffusersBaseCallback):
+class StableDiffusionCallback(BaseDiffusersCallback):
     """Callback for [🧨 Diffusers](https://huggingface.co/docs/diffusers/index) logging
     the results of a
     [`StableDiffusionPipeline`](https://huggingface.co/docs/diffusers/v0.9.0/en/api/pipelines/stable_diffusion#diffusers.StableDiffusionPipeline)

@@ -3,10 +3,10 @@ from typing import Dict, List, Optional, Union
 import torch
 from diffusers import DiffusionPipeline, KandinskyCombinedPipeline, KandinskyPipeline
 
-from .base import BaseDiffusersBaseCallback
+from .base import BaseDiffusersCallback
 
 
-class KandinskyCallback(BaseDiffusersBaseCallback):
+class KandinskyCallback(BaseDiffusersCallback):
     """Callback for [🧨 Diffusers](https://huggingface.co/docs/diffusers/index) logging
     the results of a
     [`KandinskyCombinedPipeline`](https://huggingface.co/docs/diffusers/api/pipelines/kandinsky#diffusers.KandinskyCombinedPipeline)

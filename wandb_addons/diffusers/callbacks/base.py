@@ -1,20 +1,18 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Union
 
-import torch
 import numpy as np
-from PIL import Image
-
+import torch
+import wandb
 from diffusers import DiffusionPipeline
 from diffusers.image_processor import PipelineImageInput
-
-import wandb
+from PIL import Image
 from weave.monitoring import StreamTable
 
 from .utils import chunkify
 
 
-class BaseDiffusersBaseCallback(ABC):
+class BaseDiffusersCallback(ABC):
     """Base callback for [🧨 Diffusers](https://huggingface.co/docs/diffusers/index)
     logging the results of a
     [`DiffusionPipeline`](https://github.com/huggingface/diffusers/blob/v0.21.0/src/diffusers/pipelines/pipeline_utils.py#L480)
@@ -190,7 +188,7 @@ class BaseDiffusersBaseCallback(ABC):
             wandb.finish()
 
 
-class BaseImage2ImageCallback(BaseDiffusersBaseCallback):
+class BaseImage2ImageCallback(BaseDiffusersCallback):
     """Base callback for [🧨 Diffusers](https://huggingface.co/docs/diffusers/index)
     logging the results of a
     [`DiffusionPipeline`](https://github.com/huggingface/diffusers/blob/v0.21.0/src/diffusers/pipelines/pipeline_utils.py#L480)
