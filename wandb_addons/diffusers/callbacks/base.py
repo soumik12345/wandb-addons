@@ -256,6 +256,7 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
             self.stage_name: {
                 "pipeline": dict(self.pipeline.config),
                 "num_inference_steps": self.num_inference_steps,
+                "stage-sequence": self.stage_counter,
             }
         }
         if configs is not None:
