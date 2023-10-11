@@ -4,7 +4,6 @@ import wandb
 from diffusers import DiffusionPipeline
 
 from .base_callback import BaseDiffusersCallback
-from ..utils import chunkify
 
 
 class BaseMultiPipelineCallback(BaseDiffusersCallback):
@@ -18,8 +17,8 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
         num_inference_steps: int = 50,
         num_images_per_prompt: Optional[int] = 1,
         negative_prompt: Optional[Union[str, List[str]]] = None,
-        configs: Optional[Dict] = None,
         initial_stage_name: Optional[str] = None,
+        configs: Optional[Dict] = None,
         **kwargs,
     ) -> None:
         self.stage_name = (

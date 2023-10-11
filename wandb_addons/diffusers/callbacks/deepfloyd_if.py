@@ -23,6 +23,7 @@ class IFCallback(BaseMultiPipelineCallback):
         num_inference_steps: int = 100,
         num_images_per_prompt: Optional[int] = 1,
         negative_prompt: Optional[Union[str, List[str]]] = None,
+        initial_stage_name: Optional[str] = None,
         configs: Optional[Dict] = None,
         **kwargs
     ) -> None:
@@ -35,6 +36,7 @@ class IFCallback(BaseMultiPipelineCallback):
             num_inference_steps,
             num_images_per_prompt,
             negative_prompt,
+            initial_stage_name,
             configs,
             **kwargs
         )
