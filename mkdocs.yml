@@ -51,6 +51,7 @@ nav:
       - 'Stable Diffusion': 'diffusers/stable_diffusion.md'
       - 'Kandinsky': 'diffusers/kandinsky.md'
       - 'Auto Integrate': 'diffusers/auto_integrate.md'
+      - 'Base Callbacks': 'diffusers/base.md'
     - '🦄 Keras':
       - 'Callbacks': 'keras/keras.md'
       - 'KerasCV':
