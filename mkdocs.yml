@@ -47,9 +47,10 @@ nav:
   - 'Integrations':
     - 'Ciclo': 'ciclo/ciclo.md'
     - '🧨 Diffusers':
-      - 'Overview': 'diffusers/overview'
-      - 'Stable Diffusion': 'diffusers/stable_diffusion.md'
+      - 'Overview': 'diffusers/overview.md'
+      - 'DeepFloyd IF': 'diffusers/deepfloyd_if.md'
       - 'Kandinsky': 'diffusers/kandinsky.md'
+      - 'Stable Diffusion': 'diffusers/stable_diffusion.md'
       - 'Auto Integrate': 'diffusers/auto_integrate.md'
       - 'Base Callbacks': 'diffusers/base.md'
     - '🦄 Keras':
