@@ -4,9 +4,11 @@ import wandb
 from diffusers import DiffusionPipeline
 
 from .callbacks import (
+    IFCallback,
     KandinskyCallback,
     StableDiffusionCallback,
     StableDiffusionImg2ImgCallback,
+    StableDiffusionXLCallback,
 )
 
 
@@ -94,6 +96,30 @@ def get_wandb_callback(
         )
     elif pipeline_name in ["KandinskyCombinedPipeline", "KandinskyPipeline"]:
         return KandinskyCallback(
+            pipeline=pipeline,
+            prompt=prompt,
+            wandb_project=wandb_project,
+            wandb_entity=wandb_entity,
+            num_inference_steps=num_inference_steps,
+            num_images_per_prompt=num_images_per_prompt,
+            negative_prompt=negative_prompt,
+            configs=configs,
+            **kwargs,
+        )
+    elif pipeline_name == "IFPipeline":
+        return IFCallback(
+            pipeline=pipeline,
+            prompt=prompt,
+            wandb_project=wandb_project,
+            wandb_entity=wandb_entity,
+            num_inference_steps=num_inference_steps,
+            num_images_per_prompt=num_images_per_prompt,
+            negative_prompt=negative_prompt,
+            configs=configs,
+            **kwargs,
+        )
+    elif pipeline_name == "StableDiffusionXLPipeline":
+        return StableDiffusionXLCallback(
             pipeline=pipeline,
             prompt=prompt,
             wandb_project=wandb_project,
