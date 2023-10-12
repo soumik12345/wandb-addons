@@ -14,7 +14,7 @@ class IFCallback(BaseMultiPipelineCallback):
     """Callback for logging the resulst of a text-to-image workflow with
     [DeepFloyd IF](https://huggingface.co/docs/diffusers/v0.21.0/en/api/pipelines/deepfloyd_if#texttoimage-generation)
     to Weights & Biases.
-    
+
     !!! note "Features:"
         - The callback automatically logs basic configs like prompt, negative prompt,
             etc. along with the generated image in a
@@ -24,7 +24,7 @@ class IFCallback(BaseMultiPipelineCallback):
         - No need to initialize a run, the callback automatically initialized and ends
             runs gracefully.
         - Supports logging multiple stages of a workflow using a single callback.
-    
+
     !!! example "Example usage:"
         You can fine an example notebook [here](../examples/deepfloyd_if).
 
@@ -36,13 +36,13 @@ class IFCallback(BaseMultiPipelineCallback):
 
         from diffusers import IFPipeline, IFSuperResolutionPipeline, StableDiffusionUpscalePipeline
         from wandb_addons.diffusers import IFCallback
-        
+
         # Stage 1
         pipeline_1 = IFPipeline.from_pretrained(
             "DeepFloyd/IF-I-XL-v1.0", variant="fp16", torch_dtype=torch.float16
         )
         pipeline_1.enable_model_cpu_offload()
-        
+
         prompt = 'a photo of a smiling bee wearing a yellow hoodie and blue sunglasses standing in front of the eiffel tower holding a sign that says "Weights and Biases"'
         prompt_embeds, negative_embeds = pipeline_1.encode_prompt(prompt)
         num_images_per_prompt = 2
@@ -67,13 +67,13 @@ class IFCallback(BaseMultiPipelineCallback):
             callback=partial(callback, end_experiment=False), # Do not end the experiment after the first stage
             **configs,
         ).images
-        
+
         # Stage 2
         pipeline_2 = IFSuperResolutionPipeline.from_pretrained(
             "DeepFloyd/IF-II-L-v1.0", text_encoder=None, variant="fp16", torch_dtype=torch.float16
         )
         pipeline_2.enable_model_cpu_offload()
-        
+
         num_inference_steps = 50
 
         callback.add_stage(pipeline_2, num_inference_steps=num_inference_steps)
@@ -86,7 +86,7 @@ class IFCallback(BaseMultiPipelineCallback):
             output_type="pt",
             callback=partial(callback, end_experiment=False),
         ).images
-        
+
         # Upscale stage
         safety_modules = {
             "feature_extractor": pipeline_1.feature_extractor,
@@ -97,7 +97,7 @@ class IFCallback(BaseMultiPipelineCallback):
             "stabilityai/stable-diffusion-x4-upscaler", **safety_modules, torch_dtype=torch.float16
         )
         pipeline_3.enable_model_cpu_offload()
-        
+
         num_inference_steps = 75
 
         callback.add_stage(pipeline_3, num_inference_steps=num_inference_steps, stage_name="Upscale")
@@ -147,6 +147,7 @@ class IFCallback(BaseMultiPipelineCallback):
             sync, for example, for example, `seed` could be a good config to be passed
             here.
     """
+
     def __init__(
         self,
         pipeline: Union[
