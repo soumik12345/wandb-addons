@@ -1,7 +1,11 @@
 from typing import Dict, List, Optional, Union
 
 import torch
-from diffusers import DiffusionPipeline, StableDiffusionXLPipeline
+from diffusers import (
+    DiffusionPipeline,
+    StableDiffusionXLPipeline,
+    StableDiffusionXLImg2ImgPipeline,
+)
 
 from ..base import BaseMultiPipelineCallback
 
@@ -57,3 +61,18 @@ class StableDiffusionXLCallback(BaseMultiPipelineCallback):
         images = self.pipeline.image_processor.postprocess(images, output_type="pil")
         self.pipeline.maybe_free_model_hooks()
         return images
+
+    def add_refiner_stage(
+        self,
+        pipeline: StableDiffusionXLImg2ImgPipeline,
+        num_inference_steps: Optional[int] = None,
+        strength: Optional[float] = 0.3,
+        configs: Optional[Dict] = None,
+    ):
+        self.strength = strength
+        super().add_stage(pipeline, num_inference_steps, "Refiner-Pipeline", configs)
+        self.starting_step = 0
+        _, self.log_step = self.pipeline.get_timesteps(
+            self.num_inference_steps, self.strength, self.pipeline._execution_device
+        )
+        self.log_step = self.starting_step + self.log_step - 1
