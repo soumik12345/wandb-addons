@@ -84,6 +84,9 @@ class BaseDiffusersCallback(ABC):
         self.build_wandb_table()
 
     def update_configs(self) -> None:
+        """Update the configs as a state of the callback. This function is called inside
+        `initialize_wandb()`.
+        """
         additional_configs = {
             "prompt": self.prompt,
             "negative_prompt": self.negative_prompt,
@@ -97,7 +100,16 @@ class BaseDiffusersCallback(ABC):
             else additional_configs
         )
 
-    def initialize_wandb(self, wandb_project, wandb_entity) -> None:
+    def initialize_wandb(self, wandb_project: str, wandb_entity: str) -> None:
+        """Initializes the wandb run if not already initialized. If `weave_mode` is `True`,
+        then a [StreamTable](https://docs.wandb.ai/guides/weave/streamtable) is initialized
+        instead of a wandb run. This function is called automatically when the callback is
+        initialized.
+
+        Arguments:
+            wandb_project (str): The name of the W&B project.
+            wandb_entity (str): The name of the W&B entity.
+        """
         self.update_configs()
         if self.weave_mode:
             if self.wandb_entity is None:
@@ -121,15 +133,27 @@ class BaseDiffusersCallback(ABC):
                     wandb.termerror("The parameter wandb_project must be provided.")
 
     def build_wandb_table(self) -> None:
+        """Specifies the columns of the wandb table if not in weave mode. This function is
+        called automatically when the callback is initialized.
+        """
         self.table_columns = ["Prompt", "Negative-Prompt", "Generated-Image"]
 
     @abstractmethod
     def generate(self, latents: torch.FloatTensor) -> List:
+        """Generate images from latents. This method must be implemented in the child class."""
         pass
 
     def populate_table_row(
         self, prompt: str, negative_prompt: str, image: Image
     ) -> None:
+        """Populates the table row with the prompt, negative prompt, the generated image, and
+        the configs.
+
+        Arguments:
+            prompt (str): The prompt to guide the image generation.
+            negative_prompt (str): The prompt not to guide the image generation.
+            image (Image): The generated image.
+        """
         self.table_row = (
             {
                 "Prompt": prompt,
@@ -142,6 +166,7 @@ class BaseDiffusersCallback(ABC):
         )
 
     def at_initial_step(self):
+        """A function that will be called at the initial step of the denoising loop during inference."""
         if not self.weave_mode:
             self.wandb_table = wandb.Table(columns=self.table_columns)
 
@@ -152,6 +177,16 @@ class BaseDiffusersCallback(ABC):
         latents: torch.FloatTensor,
         end_experiment: bool = True,
     ):
+        """A function that will be called every `callback_steps` steps during
+        inference with the `diffusers.DiffusionPipeline`.
+
+        Arguments:
+            step (int): The current step of the inference.
+            timestep (int): The current timestep of the inference.
+            latent (torch.FloatTensor): The latent tensor used to generate the image.
+            end_experiment (bool): Whether to end the experiment automatically or not
+                after the pipeline is executed.
+        """
         if step == self.starting_step:
             self.at_initial_step()
         if step == self.log_step:
@@ -178,6 +213,9 @@ class BaseDiffusersCallback(ABC):
                 self.end_experiment()
 
     def end_experiment(self):
+        """Ends the experiment. This function is called automatically at the end of
+        `__call__` the parameter `end_experiment` is set to `True`.
+        """
         if self.weave_mode:
             self.stream_table.finish()
         elif wandb.run is not None:

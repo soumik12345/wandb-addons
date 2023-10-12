@@ -89,11 +89,28 @@ class BaseImage2ImageCallback(BaseDiffusersCallback):
         self.input_images = self.postprocess_input_images(input_images)
 
     def initialize_wandb(self, wandb_project, wandb_entity) -> None:
+        """Initializes the wandb run if not already initialized. If `weave_mode` is `True`,
+        then a [StreamTable](https://docs.wandb.ai/guides/weave/streamtable) is initialized
+        instead of a wandb run. This function is called automatically when the callback is
+        initialized.
+
+        Arguments:
+            wandb_project (str): The name of the W&B project.
+            wandb_entity (str): The name of the W&B entity.
+        """
         self.job_type = "image-to-image"
         self.table_name = "Image-To-Image"
         super().initialize_wandb(wandb_project, wandb_entity)
 
-    def postprocess_input_images(self, input_images):
+    def postprocess_input_images(
+        self, input_images: Union[torch.Tensor, Image.Image, np.array]
+    ) -> Image.Image:
+        """Postprocess input images to be logged to the W&B Table/StreamTable.
+
+        Arguments:
+            input_images (Union[torch.Tensor, Image.Image, np.array]): The input images
+                to be postprocessed.
+        """
         if isinstance(input_images, torch.Tensor):
             input_images = self.pipeline.image_processor.pt_to_numpy(input_images)
             input_images = self.pipeline.image_processor.numpy_to_pil(input_images)
@@ -104,12 +121,24 @@ class BaseImage2ImageCallback(BaseDiffusersCallback):
         return input_images
 
     def build_wandb_table(self) -> None:
+        """Specifies the columns of the wandb table if not in weave mode. This function is
+        called automatically when the callback is initialized.
+        """
         super().build_wandb_table()
         self.table_columns = ["Input-Image"] + self.table_columns
 
     def populate_table_row(
         self, input_image: Image.Image, prompt: str, negative_prompt: str, image: Any
     ) -> None:
+        """Populates the table row with the input image, prompt, negative prompt, the
+        generated image, and the configs.
+
+        Arguments:
+            input_image (Image): The input image.s
+            prompt (str): The prompt to guide the image generation.
+            negative_prompt (str): The prompt not to guide the image generation.
+            image (Image): The generated image.
+        """
         self.table_row = (
             {
                 "Input-Image": input_image,
@@ -134,6 +163,16 @@ class BaseImage2ImageCallback(BaseDiffusersCallback):
         latents: torch.FloatTensor,
         end_experiment: bool = True,
     ):
+        """A function that will be called every `callback_steps` steps during
+        inference with the `diffusers.DiffusionPipeline`.
+
+        Arguments:
+            step (int): The current step of the inference.
+            timestep (int): The current timestep of the inference.
+            latent (torch.FloatTensor): The latent tensor used to generate the image.
+            end_experiment (bool): Whether to end the experiment automatically or not
+                after the pipeline is executed.
+        """
         if step == self.starting_step:
             self.at_initial_step()
         if step == self.log_step:
@@ -161,10 +200,3 @@ class BaseImage2ImageCallback(BaseDiffusersCallback):
                         self.wandb_table.add_data(*self.table_row)
             if end_experiment:
                 self.end_experiment()
-
-    def end_experiment(self):
-        if self.weave_mode:
-            self.stream_table.finish()
-        elif wandb.run is not None:
-            wandb.log({self.table_name: self.wandb_table})
-            wandb.finish()
