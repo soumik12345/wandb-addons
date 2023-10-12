@@ -169,7 +169,7 @@ class BaseImage2ImageCallback(BaseDiffusersCallback):
         Arguments:
             step (int): The current step of the inference.
             timestep (int): The current timestep of the inference.
-            latent (torch.FloatTensor): The latent tensor used to generate the image.
+            latents (torch.FloatTensor): The latent tensor used to generate the image.
             end_experiment (bool): Whether to end the experiment automatically or not
                 after the pipeline is executed.
         """
