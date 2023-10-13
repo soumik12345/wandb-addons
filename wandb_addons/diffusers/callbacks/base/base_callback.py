@@ -87,12 +87,16 @@ class BaseDiffusersCallback(ABC):
         """Update the configs as a state of the callback. This function is called inside
         `initialize_wandb()`.
         """
+        pipeline_configs = dict(self.pipeline.config)
+        pipeline_configs["scheduler"] = list(pipeline_configs["scheduler"])
+        pipeline_configs["scheduler"][1] = self.pipeline.scheduler.config
         additional_configs = {
             "prompt": self.prompt,
             "negative_prompt": self.negative_prompt,
             "num_inference_steps": self.num_inference_steps,
             "num_images_per_prompt": self.num_images_per_prompt,
-            "pipeline": dict(self.pipeline.config),
+            "pipeline": pipeline_configs,
+            
         }
         self.configs = (
             {**self.configs, **additional_configs}

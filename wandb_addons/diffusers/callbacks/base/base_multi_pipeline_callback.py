@@ -85,12 +85,15 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
         `initialize_wandb()`. In this function, the configs regarding the base pipeline
         are updated as well.
         """
+        pipeline_configs = dict(self.pipeline.config)
+        pipeline_configs["scheduler"] = list(pipeline_configs["scheduler"])
+        pipeline_configs["scheduler"][1] = self.pipeline.scheduler.config
         additional_configs = {
             "prompt": self.prompt,
             "negative_prompt": self.negative_prompt,
             "num_images_per_prompt": self.num_images_per_prompt,
             self.stage_name: {
-                "pipeline": dict(self.pipeline.config),
+                "pipeline": pipeline_configs,
                 "num_inference_steps": self.num_inference_steps,
             },
         }
@@ -132,9 +135,12 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
         self.stage_name = (
             stage_name if stage_name is not None else f"stage_{self.stage_counter}"
         )
+        pipeline_configs = dict(self.pipeline.config)
+        pipeline_configs["scheduler"] = list(pipeline_configs["scheduler"])
+        pipeline_configs["scheduler"][1] = self.pipeline.scheduler.config
         additional_configs = {
             self.stage_name: {
-                "pipeline": dict(self.pipeline.config),
+                "pipeline": pipeline_configs,
                 "num_inference_steps": self.num_inference_steps,
                 "stage-sequence": self.stage_counter,
             }
