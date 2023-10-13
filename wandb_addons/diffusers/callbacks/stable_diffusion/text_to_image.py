@@ -1,15 +1,17 @@
 from typing import Dict, List, Optional, Union
 
 import torch
-from diffusers import DiffusionPipeline, KandinskyCombinedPipeline, KandinskyPipeline
+import wandb
+from diffusers import DiffusionPipeline, StableDiffusionPipeline
+from PIL import Image
 
-from .base import BaseDiffusersCallback
+from ..base import BaseDiffusersCallback
 
 
-class KandinskyCallback(BaseDiffusersCallback):
+class StableDiffusionCallback(BaseDiffusersCallback):
     """Callback for [🧨 Diffusers](https://huggingface.co/docs/diffusers/index) logging
     the results of a
-    [`KandinskyCombinedPipeline`](https://huggingface.co/docs/diffusers/api/pipelines/kandinsky#diffusers.KandinskyCombinedPipeline)
+    [`StableDiffusionPipeline`](https://huggingface.co/docs/diffusers/v0.9.0/en/api/pipelines/stable_diffusion#diffusers.StableDiffusionPipeline)
     generation to Weights & Biases.
 
     !!! note "Features:"
@@ -22,19 +24,19 @@ class KandinskyCallback(BaseDiffusersCallback):
             runs gracefully.
 
     !!! example "Example usage:"
-        You can fine an example notebook [here](../examples/kandinsky).
+        You can fine an example notebook [here](../examples/stable_diffusion).
 
         ```python
         import torch
-        from diffusers import KandinskyCombinedPipeline
+        from diffusers import StableDiffusionPipeline
 
-        from wandb_addons.diffusers import KandinskyCallback
+        from wandb_addons.diffusers import StableDiffusionCallback
 
 
-        pipe = KandinskyCombinedPipeline.from_pretrained(
-            "kandinsky-community/kandinsky-2-1", torch_dtype=torch.float16
+        pipeline = StableDiffusionPipeline.from_pretrained(
+            "CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16
         )
-        pipe = pipe.to("cuda")
+        pipeline = pipeline.to("cuda")
 
         prompt = [
             "a photograph of an astronaut riding a horse",
@@ -42,17 +44,13 @@ class KandinskyCallback(BaseDiffusersCallback):
         ]
         negative_prompt = ["ugly, deformed", "ugly, deformed"]
         num_images_per_prompt = 2
-
         configs = {
-            "guidance_scale": 4.0,
-            "height": 512,
-            "width": 512,
-            "prior_guidance_scale": 4.0,
-            "prior_num_inference_steps": 25,
+            "eta": 0.0,
+            "guidance_rescale": 0.0,
         }
 
         # Create the WandB callback for StableDiffusionPipeline
-        callback = KandinskyCallback(
+        callback = StableDiffusionCallback(
             pipe,
             prompt=prompt,
             negative_prompt=negative_prompt,
@@ -72,8 +70,8 @@ class KandinskyCallback(BaseDiffusersCallback):
         ```
 
     Arguments:
-        pipeline (Union[DiffusionPipeline, KandinskyCombinedPipeline, KandinskyPipeline]):
-            The `KandinskyCombinedPipeline` or `KandinskyPipeline` from `diffusers`.
+        pipeline (diffusers.StableDiffusionPipeline): The `StableDiffusionPipeline` from
+            `diffusers`.
         prompt (Union[str, List[str]]): The prompt or prompts to guide the image
             generation.
         wandb_project (Optional[str]): The name of the project where you're sending
@@ -98,6 +96,13 @@ class KandinskyCallback(BaseDiffusersCallback):
             usually lead to a higher quality image at the expense of slower inference.
         num_images_per_prompt (Optional[int]): The number of images to generate per
             prompt.
+        guidance_scale (float): Guidance scale as defined in
+            [Classifier-Free Diffusion Guidance](https://arxiv.org/abs/2207.12598).
+            `guidance_scale` is defined as `w` of equation 2. of
+            [Imagen Paper](https://arxiv.org/pdf/2205.11487.pdf). Guidance scale is
+            enabled by setting `guidance_scale > 1`. Higher guidance scale encourages
+            to generate images that are closely linked to the text `prompt`, usually
+            at the expense of lower image quality.
         negative_prompt (Optional[Union[str, List[str]]]): The prompt or prompts not
             to guide the image generation. Ignored when not using guidance
             (i.e., ignored if `guidance_scale` is less than `1`).
@@ -108,18 +113,17 @@ class KandinskyCallback(BaseDiffusersCallback):
 
     def __init__(
         self,
-        pipeline: Union[
-            DiffusionPipeline, KandinskyCombinedPipeline, KandinskyPipeline
-        ],
+        pipeline: Union[DiffusionPipeline, StableDiffusionPipeline],
         prompt: Union[str, List[str]],
         wandb_project: str,
         wandb_entity: Optional[str] = None,
         weave_mode: bool = False,
-        num_inference_steps: int = 100,
+        guidance_scale: float = 7.5,
+        num_inference_steps: int = 50,
         num_images_per_prompt: Optional[int] = 1,
         negative_prompt: Optional[Union[str, List[str]]] = None,
         configs: Optional[Dict] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         super().__init__(
             pipeline,
@@ -131,15 +135,34 @@ class KandinskyCallback(BaseDiffusersCallback):
             num_images_per_prompt,
             negative_prompt,
             configs,
-            **kwargs
+            **kwargs,
         )
-        self.starting_step = 0
-        self.log_step = num_inference_steps - 1
+        self.guidance_scale = guidance_scale
+        self.do_classifier_free_guidance = guidance_scale > 1.0
+        additional_configs = {
+            "guidance_scale": self.guidance_scale,
+            "do_classifier_free_guidance": self.do_classifier_free_guidance,
+        }
+        if not self.weave_mode:
+            wandb.config.update(additional_configs)
+        else:
+            self.configs.update(additional_configs)
+
+    def build_wandb_table(self) -> None:
+        super().build_wandb_table()
+        self.table_columns += ["Guidance-Scale", "Do-Classifier-Free-Guidance"]
+
+    def populate_table_row(
+        self, prompt: str, negative_prompt: str, image: Image
+    ) -> None:
+        super().populate_table_row(prompt, negative_prompt, image)
+        if not self.weave_mode:
+            self.table_row += [self.guidance_scale, self.do_classifier_free_guidance]
 
     def generate(self, latents: torch.FloatTensor) -> List:
-        images = self.pipeline.movq.decode(latents, force_not_quantize=True)["sample"]
-        images = images * 0.5 + 0.5
-        images = images.clamp(0, 1)
-        images = images.cpu().permute(0, 2, 3, 1).float().numpy()
+        images = self.pipeline.decode_latents(latents)
+        images, _ = self.pipeline.run_safety_checker(
+            images, self.pipeline._execution_device, latents.dtype
+        )
         images = self.pipeline.numpy_to_pil(images)
         return images
