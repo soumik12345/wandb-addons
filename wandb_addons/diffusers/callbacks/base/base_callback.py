@@ -96,7 +96,6 @@ class BaseDiffusersCallback(ABC):
             "num_inference_steps": self.num_inference_steps,
             "num_images_per_prompt": self.num_images_per_prompt,
             "pipeline": pipeline_configs,
-            
         }
         self.configs = (
             {**self.configs, **additional_configs}
