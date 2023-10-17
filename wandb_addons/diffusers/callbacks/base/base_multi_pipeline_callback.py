@@ -67,6 +67,7 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
             initial_stage_name if initial_stage_name is not None else "stage_1"
         )
         self.stage_counter = 1
+        self.original_configs = {} if configs is None else configs
         super().__init__(
             pipeline,
             prompt,
@@ -87,21 +88,20 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
         """
         pipeline_configs = dict(self.pipeline.config)
         pipeline_configs["scheduler"] = list(pipeline_configs["scheduler"])
-        pipeline_configs["scheduler"][1] = self.pipeline.scheduler.config
+        pipeline_configs["scheduler"][1] = dict(self.pipeline.scheduler.config)
         additional_configs = {
-            "prompt": self.prompt,
-            "negative_prompt": self.negative_prompt,
-            "num_images_per_prompt": self.num_images_per_prompt,
             self.stage_name: {
                 "pipeline": pipeline_configs,
                 "num_inference_steps": self.num_inference_steps,
+                "prompt": self.prompt,
+                "negative_prompt": self.negative_prompt,
+                "num_images_per_prompt": self.num_images_per_prompt,
+                "stage-name": self.stage_name,
+                "stage-sequence": self.stage_counter,
+                **self.original_configs,
             },
         }
-        self.configs = (
-            {**self.configs, **additional_configs}
-            if self.configs is not None
-            else additional_configs
-        )
+        self.configs = additional_configs
 
     def add_stage(
         self,
@@ -137,13 +137,18 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
         )
         pipeline_configs = dict(self.pipeline.config)
         pipeline_configs["scheduler"] = list(pipeline_configs["scheduler"])
-        pipeline_configs["scheduler"][1] = self.pipeline.scheduler.config
+        pipeline_configs["scheduler"][1] = dict(self.pipeline.scheduler.config)
         additional_configs = {
             self.stage_name: {
                 "pipeline": pipeline_configs,
                 "num_inference_steps": self.num_inference_steps,
+                "prompt": self.prompt,
+                "negative_prompt": self.negative_prompt,
+                "num_images_per_prompt": self.num_images_per_prompt,
+                "stage-name": self.stage_name,
                 "stage-sequence": self.stage_counter,
-            }
+                **self.original_configs,
+            },
         }
         if configs is not None:
             additional_configs[self.stage_name].update(configs)
@@ -172,10 +177,30 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
             negative_prompt (str): The prompt not to guide the image generation.
             image (Image): The generated image.
         """
-        super().populate_table_row(prompt, negative_prompt, image)
         if self.weave_mode:
-            self.table_row.update(
-                {"Stage-Sequence": self.stage_counter, "Stage-Name": self.stage_name}
-            )
+            self.table_row += [
+                {
+                    "Generated-Image": image,
+                    "Configs": {self.stage_name: self.configs[self.stage_name]},
+                }
+            ]
         else:
-            self.table_row = [self.stage_counter, self.stage_name] + self.table_row
+            self.table_row = [
+                self.stage_counter,
+                self.stage_name,
+                prompt,
+                negative_prompt,
+                wandb.Image(image),
+            ]
+
+    def end_experiment(self):
+        """Ends the experiment. This function is called automatically at the end of
+        `__call__` the parameter `end_experiment` is set to `True`.
+        """
+        if self.weave_mode:
+            self.table_row = {"Experiment": self.table_row}
+            self.stream_table.log(self.table_row)
+            self.stream_table.finish()
+        elif wandb.run is not None:
+            wandb.log({self.table_name: self.wandb_table})
+            wandb.finish()

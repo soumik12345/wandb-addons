@@ -89,7 +89,7 @@ class BaseDiffusersCallback(ABC):
         """
         pipeline_configs = dict(self.pipeline.config)
         pipeline_configs["scheduler"] = list(pipeline_configs["scheduler"])
-        pipeline_configs["scheduler"][1] = self.pipeline.scheduler.config
+        pipeline_configs["scheduler"][1] = dict(self.pipeline.scheduler.config)
         additional_configs = {
             "prompt": self.prompt,
             "negative_prompt": self.negative_prompt,
@@ -123,6 +123,7 @@ class BaseDiffusersCallback(ABC):
                 self.stream_table = StreamTable(
                     f"{self.wandb_entity}/{self.wandb_project}/{self.table_name}"
                 )
+                self.table_row = []
         else:
             if wandb.run is None:
                 if wandb_project is not None:
@@ -157,16 +158,10 @@ class BaseDiffusersCallback(ABC):
             negative_prompt (str): The prompt not to guide the image generation.
             image (Image): The generated image.
         """
-        self.table_row = (
-            {
-                "Prompt": prompt,
-                "Negative-Prompt": negative_prompt,
-                "Generated-Image": image,
-                "Configs": self.configs,
-            }
-            if self.weave_mode
-            else [prompt, negative_prompt, wandb.Image(image)]
-        )
+        if self.weave_mode:
+            self.table_row += [{"Generated-Image": image, "Configs": self.configs}]
+        else:
+            self.table_row = [prompt, negative_prompt, wandb.Image(image)]
 
     def at_initial_step(self):
         """A function that will be called at the initial step of the denoising loop during inference."""
@@ -208,9 +203,7 @@ class BaseDiffusersCallback(ABC):
                     self.populate_table_row(
                         prompt_logging[idx], negative_prompt_logging[idx], image
                     )
-                    if self.weave_mode:
-                        self.stream_table.log(self.table_row)
-                    else:
+                    if not self.weave_mode:
                         self.wandb_table.add_data(*self.table_row)
             if end_experiment:
                 self.end_experiment()
@@ -220,6 +213,7 @@ class BaseDiffusersCallback(ABC):
         `__call__` the parameter `end_experiment` is set to `True`.
         """
         if self.weave_mode:
+            self.stream_table.log(self.table_row)
             self.stream_table.finish()
         elif wandb.run is not None:
             wandb.log({self.table_name: self.wandb_table})
