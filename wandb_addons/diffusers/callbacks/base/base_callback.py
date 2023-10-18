@@ -92,7 +92,9 @@ class BaseDiffusersCallback(ABC):
         pipeline_configs["scheduler"][1] = dict(self.pipeline.scheduler.config)
         additional_configs = {
             "prompt": self.prompt,
-            "negative_prompt": self.negative_prompt,
+            "negative_prompt": self.negative_prompt
+            if self.negative_prompt is not None
+            else "",
             "num_inference_steps": self.num_inference_steps,
             "num_images_per_prompt": self.num_images_per_prompt,
             "pipeline": pipeline_configs,
@@ -161,7 +163,11 @@ class BaseDiffusersCallback(ABC):
         if self.weave_mode:
             self.table_row += [{"Generated-Image": image, "Configs": self.configs}]
         else:
-            self.table_row = [prompt, negative_prompt, wandb.Image(image)]
+            self.table_row = [
+                prompt,
+                negative_prompt if negative_prompt is not None else "",
+                wandb.Image(image),
+            ]
 
     def at_initial_step(self):
         """A function that will be called at the initial step of the denoising loop during inference."""

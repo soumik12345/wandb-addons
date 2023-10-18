@@ -143,7 +143,9 @@ class BaseImage2ImageCallback(BaseDiffusersCallback):
             {
                 "Input-Image": input_image,
                 "Prompt": prompt,
-                "Negative-Prompt": negative_prompt,
+                "Negative-Prompt": negative_prompt
+                if negative_prompt is not None
+                else "",
                 "Generated-Image": image,
                 "Configs": self.configs,
             }
@@ -151,7 +153,7 @@ class BaseImage2ImageCallback(BaseDiffusersCallback):
             else [
                 wandb.Image(input_image),
                 prompt,
-                negative_prompt,
+                negative_prompt if negative_prompt is not None else "",
                 wandb.Image(image),
             ]
         )

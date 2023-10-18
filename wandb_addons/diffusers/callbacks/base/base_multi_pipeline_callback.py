@@ -80,6 +80,7 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
             configs,
             **kwargs,
         )
+        self.table_row = {}
 
     def update_configs(self) -> None:
         """Update the configs as a state of the callback. This function is called inside
@@ -94,7 +95,9 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
                 "pipeline": pipeline_configs,
                 "num_inference_steps": self.num_inference_steps,
                 "prompt": self.prompt,
-                "negative_prompt": self.negative_prompt,
+                "negative_prompt": self.negative_prompt
+                if self.negative_prompt is not None
+                else "",
                 "num_images_per_prompt": self.num_images_per_prompt,
                 "stage-name": self.stage_name,
                 "stage-sequence": self.stage_counter,
@@ -143,7 +146,9 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
                 "pipeline": pipeline_configs,
                 "num_inference_steps": self.num_inference_steps,
                 "prompt": self.prompt,
-                "negative_prompt": self.negative_prompt,
+                "negative_prompt": self.negative_prompt
+                if self.negative_prompt is not None
+                else "",
                 "num_images_per_prompt": self.num_images_per_prompt,
                 "stage-name": self.stage_name,
                 "stage-sequence": self.stage_counter,
@@ -178,18 +183,20 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
             image (Image): The generated image.
         """
         if self.weave_mode:
-            self.table_row += [
+            self.table_row.update(
                 {
-                    "Generated-Image": image,
-                    "Configs": {self.stage_name: self.configs[self.stage_name]},
+                    self.stage_name: {
+                        "Generated-Image": image,
+                        "Configs": self.configs[self.stage_name],
+                    }
                 }
-            ]
+            )
         else:
             self.table_row = [
                 self.stage_counter,
                 self.stage_name,
                 prompt,
-                negative_prompt,
+                negative_prompt if negative_prompt is not None else "",
                 wandb.Image(image),
             ]
 
