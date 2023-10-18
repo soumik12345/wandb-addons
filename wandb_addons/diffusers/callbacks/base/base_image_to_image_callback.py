@@ -125,7 +125,7 @@ class BaseImage2ImageCallback(BaseDiffusersCallback):
         called automatically when the callback is initialized.
         """
         super().build_wandb_table()
-        self.table_columns = ["Input-Image"] + self.table_columns
+        self.table_columns = ["Input-Image", "Input-Image-Size"] + self.table_columns
 
     def populate_table_row(
         self, input_image: Image.Image, prompt: str, negative_prompt: str, image: Any
@@ -139,22 +139,31 @@ class BaseImage2ImageCallback(BaseDiffusersCallback):
             negative_prompt (str): The prompt not to guide the image generation.
             image (Image): The generated image.
         """
+        input_width, input_height = input_image.size
+        generated_width, generated_height = image.size
         self.table_row = (
             {
                 "Input-Image": input_image,
+                "Input-Image-Size": {"Width": input_width, "Height": input_height},
                 "Prompt": prompt,
                 "Negative-Prompt": negative_prompt
                 if negative_prompt is not None
                 else "",
                 "Generated-Image": image,
+                "Generated-Image-Size": {
+                    "Width": generated_width,
+                    "Height": generated_height,
+                },
                 "Configs": self.configs,
             }
             if self.weave_mode
             else [
                 wandb.Image(input_image),
+                {"Width": input_width, "Height": input_height},
                 prompt,
                 negative_prompt if negative_prompt is not None else "",
                 wandb.Image(image),
+                {"Width": generated_width, "Height": generated_height},
             ]
         )
 

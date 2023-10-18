@@ -182,11 +182,13 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
             negative_prompt (str): The prompt not to guide the image generation.
             image (Image): The generated image.
         """
+        width, height = image.size
         if self.weave_mode:
             self.table_row.update(
                 {
                     self.stage_name: {
                         "Generated-Image": image,
+                        "Image-Size": {"Width": width, "Height": height},
                         "Configs": self.configs[self.stage_name],
                     }
                 }
@@ -198,6 +200,7 @@ class BaseMultiPipelineCallback(BaseDiffusersCallback):
                 prompt,
                 negative_prompt if negative_prompt is not None else "",
                 wandb.Image(image),
+                {"Width": width, "Height": height},
             ]
 
     def end_experiment(self):
