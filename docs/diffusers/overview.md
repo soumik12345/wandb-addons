@@ -16,13 +16,13 @@ For detailed documentation, check out the following:
 - [Kandinsky Callback](./kandinsky.md)
 - [Stable Diffusion Callbacks](./stable_diffusion.md)
 
-|Callback|Run-in-Colab|
-|---|---|
-|Stable Diffusion|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/stable_diffusion.ipynb)|
-|Stable Diffusion XL|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/sdxl.ipynb)|
-|Stable Diffusion Image2Image|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/stable_diffusion_img2img.ipynb)|
-|Kandinsky v2.1|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/kandinsky.ipynb)|
-|DeepFloyd IF|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/deepfloyd_if.ipynb)|
+|Callback|Run-in-Colab|WandB Run|
+|---|---|---|
+|Stable Diffusion|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/stable_diffusion.ipynb)|[![](../assets/wandb-github-badge-gradient.svg)](https://wandb.ai/geekyrakshit/diffusers-new/runs/gii2kqqr)|
+|Stable Diffusion XL|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/sdxl.ipynb)|[![](../assets/wandb-github-badge-gradient.svg)](https://wandb.ai/geekyrakshit/diffusers-new/runs/ygx2dldj)|
+|Stable Diffusion Image2Image|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/stable_diffusion_img2img.ipynb)|[![](../assets/wandb-github-badge-gradient.svg)](https://wandb.ai/geekyrakshit/diffusers-2/runs/a4a7148w)|
+|Kandinsky v2.1|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/kandinsky.ipynb)|[![](../assets/wandb-github-badge-gradient.svg)](https://wandb.ai/geekyrakshit/diffusers/runs/1dle2dz8)|
+|DeepFloyd IF|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/deepfloyd_if.ipynb)|[![](../assets/wandb-github-badge-gradient.svg)](https://wandb.ai/geekyrakshit/diffusers-2/runs/ac4or5q6)|
 
 
 | Text-to-Image on Weights & Biases |
