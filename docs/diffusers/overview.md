@@ -16,6 +16,15 @@ For detailed documentation, check out the following:
 - [Kandinsky Callback](./kandinsky.md)
 - [Stable Diffusion Callbacks](./stable_diffusion.md)
 
+|Callback|Run-in-Colab|
+|---|---|
+|Stable Diffusion|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/stable_diffusion.ipynb)|
+|Stable Diffusion XL|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/sdxl.ipynb)|
+|Stable Diffusion Image2Image|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/stable_diffusion_img2img.ipynb)|
+|Kandinsky v2.1|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/kandinsky.ipynb)|
+|DeepFloyd IF|[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/soumik12345/wandb-addons/blob/main/docs/diffusers/examples/deepfloyd_if.ipynb)|
+
+
 | Text-to-Image on Weights & Biases |
 | -------- |
 | ![](./assets/text_to_image.png) |
