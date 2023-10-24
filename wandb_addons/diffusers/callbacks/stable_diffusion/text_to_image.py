@@ -137,6 +137,8 @@ class StableDiffusionCallback(BaseDiffusersCallback):
             configs,
             **kwargs,
         )
+        self.starting_step = 0
+        self.log_step = self.num_inference_steps - 1
         self.guidance_scale = guidance_scale
         self.do_classifier_free_guidance = guidance_scale > 1.0
         additional_configs = {
