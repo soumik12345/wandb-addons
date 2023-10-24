@@ -209,5 +209,6 @@ class BaseImage2ImageCallback(BaseDiffusersCallback):
                         self.stream_table.log(self.table_row)
                     else:
                         self.wandb_table.add_data(*self.table_row)
+                        wandb.log({"Generated-Images": wandb.Image(image)})
             if end_experiment:
                 self.end_experiment()

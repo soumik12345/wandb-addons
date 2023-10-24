@@ -226,6 +226,7 @@ class BaseDiffusersCallback(ABC):
                     )
                     if not self.weave_mode:
                         self.wandb_table.add_data(*self.table_row)
+                        wandb.log({"Generated-Images": wandb.Image(image)})
             if end_experiment:
                 self.end_experiment()
 
