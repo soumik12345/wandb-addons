@@ -64,13 +64,17 @@ class IFCallback(BaseMultiPipelineCallback):
             prompt_embeds=prompt_embeds,
             negative_prompt_embeds=negative_embeds,
             output_type="pt",
-            callback=partial(callback, end_experiment=False), # Do not end the experiment after the first stage
+            # Do not end the experiment after the first stage
+            callback=partial(callback, end_experiment=False),
             **configs,
         ).images
 
         # Stage 2
         pipeline_2 = IFSuperResolutionPipeline.from_pretrained(
-            "DeepFloyd/IF-II-L-v1.0", text_encoder=None, variant="fp16", torch_dtype=torch.float16
+            "DeepFloyd/IF-II-L-v1.0",
+            text_encoder=None,
+            variant="fp16",
+            torch_dtype=torch.float16
         )
         pipeline_2.enable_model_cpu_offload()
 
@@ -94,13 +98,17 @@ class IFCallback(BaseMultiPipelineCallback):
             "watermarker": pipeline_1.watermarker,
         }
         pipeline_3 = StableDiffusionUpscalePipeline.from_pretrained(
-            "stabilityai/stable-diffusion-x4-upscaler", **safety_modules, torch_dtype=torch.float16
+            "stabilityai/stable-diffusion-x4-upscaler",
+            **safety_modules,
+            torch_dtype=torch.float16
         )
         pipeline_3.enable_model_cpu_offload()
 
         num_inference_steps = 75
 
-        callback.add_stage(pipeline_3, num_inference_steps=num_inference_steps, stage_name="Upscale")
+        callback.add_stage(
+            pipeline_3, num_inference_steps=num_inference_steps, stage_name="Upscale"
+        )
 
         image = pipeline_3(
             prompt=prompt,
@@ -127,13 +135,13 @@ class IFCallback(BaseMultiPipelineCallback):
             in [your settings](https://wandb.ai/settings) under "default location to
             create new projects".
         weave_mode (bool): Whether to use log to a
-            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard or
-            not. The weave mode logs the configs, generated images and timestamp in a
+            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard
+            or not. The weave mode logs the configs, generated images and timestamp in a
             [`StreamTable`](https://docs.wandb.ai/guides/weave/streamtable) instead of a
             `wandb.Table` and does not require a wandb run to be initialized in order to
-            start logging. This makes it possible to log muliple generations without having
-            to initialize or terminate runs. Note that the parameter `wandb_entity` must be
-            explicitly specified in order to use weave mode.
+            start logging. This makes it possible to log muliple generations without
+            having to initialize or terminate runs. Note that the parameter
+            `wandb_entity` must be explicitly specified in order to use weave mode.
         num_inference_steps (int): The number of denoising steps. More denoising steps
             usually lead to a higher quality image at the expense of slower inference.
         num_images_per_prompt (Optional[int]): The number of images to generate per
@@ -141,8 +149,8 @@ class IFCallback(BaseMultiPipelineCallback):
         negative_prompt (Optional[Union[str, List[str]]]): The prompt or prompts not
             to guide the image generation. Ignored when not using guidance
             (i.e., ignored if `guidance_scale` is less than `1`).
-        initial_stage_name (Optional[str]): The name of the initial stage. If not specified,
-            it would be set to `"stage_1"`.
+        initial_stage_name (Optional[str]): The name of the initial stage. If not
+            specified, it would be set to `"stage_1"`.
         configs (Optional[Dict]): Additional configs for the experiment you want to
             sync, for example, for example, `seed` could be a good config to be passed
             here.

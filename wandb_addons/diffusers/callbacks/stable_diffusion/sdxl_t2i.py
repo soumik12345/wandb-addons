@@ -1,8 +1,11 @@
 from typing import Dict, List, Optional, Union
 
 import torch
-from diffusers import (DiffusionPipeline, StableDiffusionXLImg2ImgPipeline,
-                       StableDiffusionXLPipeline)
+from diffusers import (
+    DiffusionPipeline,
+    StableDiffusionXLImg2ImgPipeline,
+    StableDiffusionXLPipeline,
+)
 
 from ..base import BaseMultiPipelineCallback
 
