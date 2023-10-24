@@ -1,11 +1,8 @@
 from typing import Dict, List, Optional, Union
 
 import torch
-from diffusers import (
-    DiffusionPipeline,
-    StableDiffusionXLPipeline,
-    StableDiffusionXLImg2ImgPipeline,
-)
+from diffusers import (DiffusionPipeline, StableDiffusionXLImg2ImgPipeline,
+                       StableDiffusionXLPipeline)
 
 from ..base import BaseMultiPipelineCallback
 
@@ -23,7 +20,8 @@ class StableDiffusionXLCallback(BaseMultiPipelineCallback):
             with the wandb run.
         - No need to initialize a run, the callback automatically initialized and ends
             runs gracefully.
-        - Supports logging base and refinement stages of a workflow using a single callback.
+        - Supports logging base and refinement stages of a workflow using a single
+            callback.
 
     !!! example "Example usage:"
         You can fine an example notebook [here](../examples/sdxl).
@@ -105,13 +103,13 @@ class StableDiffusionXLCallback(BaseMultiPipelineCallback):
             in [your settings](https://wandb.ai/settings) under "default location to
             create new projects".
         weave_mode (bool): Whether to use log to a
-            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard or
-            not. The weave mode logs the configs, generated images and timestamp in a
+            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard
+            or not. The weave mode logs the configs, generated images and timestamp in a
             [`StreamTable`](https://docs.wandb.ai/guides/weave/streamtable) instead of a
             `wandb.Table` and does not require a wandb run to be initialized in order to
-            start logging. This makes it possible to log muliple generations without having
-            to initialize or terminate runs. Note that the parameter `wandb_entity` must be
-            explicitly specified in order to use weave mode.
+            start logging. This makes it possible to log muliple generations without
+            having to initialize or terminate runs. Note that the parameter
+            `wandb_entity` must be explicitly specified in order to use weave mode.
         num_inference_steps (int): The number of denoising steps. More denoising steps
             usually lead to a higher quality image at the expense of slower inference.
         num_images_per_prompt (Optional[int]): The number of images to generate per
@@ -119,8 +117,8 @@ class StableDiffusionXLCallback(BaseMultiPipelineCallback):
         negative_prompt (Optional[Union[str, List[str]]]): The prompt or prompts not
             to guide the image generation. Ignored when not using guidance
             (i.e., ignored if `guidance_scale` is less than `1`).
-        initial_stage_name (Optional[str]): The name of the initial stage. If not specified,
-            it would be set to `"stage_1"`.
+        initial_stage_name (Optional[str]): The name of the initial stage. If not
+            specified, it would be set to `"stage_1"`.
         configs (Optional[Dict]): Additional configs for the experiment you want to
             sync, for example, for example, `seed` could be a good config to be passed
             here.
@@ -193,15 +191,15 @@ class StableDiffusionXLCallback(BaseMultiPipelineCallback):
             num_inference_steps (Optional[int]): The number of denoising steps for the
                 new stage. More denoising steps usually lead to a higher quality image
                 at the expense of slower inference.
-            strength (Optional[float]): Conceptually, indicates how much to transform the
-                reference image. Must be between 0 and 1. image will be used as a
-                starting point, adding more noise to it the larger the strength. The number
-                of denoising steps depends on the amount of noise initially added. When
-                strength is 1, added noise will be maximum and the denoising process will
-                run for the full number of iterations specified in num_inference_steps. A
-                value of 1, therefore, essentially ignores image. Note that in the case of
-                `denoising_start` being declared as an integer, the value of strength will
-                be ignored.
+            strength (Optional[float]): Conceptually, indicates how much to transform
+                the reference image. Must be between 0 and 1. image will be used as a
+                starting point, adding more noise to it the larger the strength. The
+                number of denoising steps depends on the amount of noise initially
+                added. When strength is 1, added noise will be maximum and the
+                denoising process will run for the full number of iterations specified
+                in num_inference_steps. A value of 1, therefore, essentially ignores
+                image. Note that in the case of `denoising_start` being declared as an
+                integer, the value of strength will be ignored.
             configs (Optional[Dict]): Additional configs for the new stage you want to
                 sync, for example, for example, `seed` could be a good config to be
                 passed here.

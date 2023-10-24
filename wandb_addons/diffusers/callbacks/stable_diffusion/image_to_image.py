@@ -80,8 +80,8 @@ class StableDiffusionImg2ImgCallback(BaseImage2ImageCallback):
             array and pytorch tensor, the expected value range is between [0, 1] If it's
             a tensor or a list or tensors, the expected shape should be `(B, C, H, W)`
             or `(C, H, W)`. If it is a numpy array or a list of arrays, the expected
-            shape should be (B, H, W, C) or (H, W, C) It can also accept image latents as
-            image, but if passing latents directly it is not encoded again.
+            shape should be (B, H, W, C) or (H, W, C) It can also accept image latents
+            as image, but if passing latents directly it is not encoded again.
         wandb_project (Optional[str]): The name of the project where you're sending
             the new run. The project is not necessary to be specified unless the run
             has automatically been initiatlized before the callback is defined.
@@ -93,13 +93,13 @@ class StableDiffusionImg2ImgCallback(BaseImage2ImageCallback):
             in [your settings](https://wandb.ai/settings) under "default location to
             create new projects".
         weave_mode (bool): Whether to use log to a
-            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard or
-            not. The weave mode logs the configs, generated images and timestamp in a
+            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard
+            or not. The weave mode logs the configs, generated images and timestamp in a
             [`StreamTable`](https://docs.wandb.ai/guides/weave/streamtable) instead of a
             `wandb.Table` and does not require a wandb run to be initialized in order to
-            start logging. This makes it possible to log muliple generations without having
-            to initialize or terminate runs. Note that the parameter `wandb_entity` must be
-            explicitly specified in order to use weave mode.
+            start logging. This makes it possible to log muliple generations without
+            having to initialize or terminate runs. Note that the parameter
+            `wandb_entity` must be explicitly specified in order to use weave mode.
         num_inference_steps (int): The number of denoising steps. More denoising steps
             usually lead to a higher quality image at the expense of slower inference.
         strength (Optional[float]): Indicates extent to transform the reference image.
