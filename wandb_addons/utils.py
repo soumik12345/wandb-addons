@@ -1,4 +1,5 @@
 import os
+import random
 from collections.abc import MutableMapping
 from typing import Dict, List, Optional
 
@@ -71,3 +72,12 @@ def flatten_nested_dictionaries(d: Dict, parent_key: str = "", sep: str = "/") -
         else:
             items.append((new_key, v))
     return dict(items)
+
+
+def autogenerate_seed():
+    """Automatically generate a random seed for machine-learning experiments."""
+    max_seed = int(1024 * 1024 * 1024)
+    seed = random.randint(1, max_seed)
+    seed = -seed if seed < 0 else seed
+    seed = seed % max_seed
+    return seed

@@ -32,13 +32,13 @@ class BaseDiffusersCallback(ABC):
             in [your settings](https://wandb.ai/settings) under "default location to
             create new projects".
         weave_mode (bool): Whether to use log to a
-            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard or
-            not. The weave mode logs the configs, generated images and timestamp in a
+            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard
+            or not. The weave mode logs the configs, generated images and timestamp in a
             [`StreamTable`](https://docs.wandb.ai/guides/weave/streamtable) instead of a
             `wandb.Table` and does not require a wandb run to be initialized in order to
-            start logging. This makes it possible to log muliple generations without having
-            to initialize or terminate runs. Note that the parameter `wandb_entity` must be
-            explicitly specified in order to use weave mode.
+            start logging. This makes it possible to log muliple generations without
+            having to initialize or terminate runs. Note that the parameter
+            `wandb_entity` must be explicitly specified in order to use weave mode.
         num_inference_steps (int): The number of denoising steps. More denoising steps
             usually lead to a higher quality image at the expense of slower inference.
         num_images_per_prompt (Optional[int]): The number of images to generate per
@@ -106,10 +106,10 @@ class BaseDiffusersCallback(ABC):
         )
 
     def initialize_wandb(self, wandb_project: str, wandb_entity: str) -> None:
-        """Initializes the wandb run if not already initialized. If `weave_mode` is `True`,
-        then a [StreamTable](https://docs.wandb.ai/guides/weave/streamtable) is initialized
-        instead of a wandb run. This function is called automatically when the callback is
-        initialized.
+        """Initializes the wandb run if not already initialized. If `weave_mode` is
+        `True`, then a [StreamTable](https://docs.wandb.ai/guides/weave/streamtable) is
+        initialized instead of a wandb run. This function is called automatically when
+        the callback is initialized.
 
         Arguments:
             wandb_project (str): The name of the W&B project.
@@ -139,8 +139,8 @@ class BaseDiffusersCallback(ABC):
                     wandb.termerror("The parameter wandb_project must be provided.")
 
     def build_wandb_table(self) -> None:
-        """Specifies the columns of the wandb table if not in weave mode. This function is
-        called automatically when the callback is initialized.
+        """Specifies the columns of the wandb table if not in weave mode. This function
+        is called automatically when the callback is initialized.
         """
         self.table_columns = [
             "Prompt",
@@ -151,14 +151,15 @@ class BaseDiffusersCallback(ABC):
 
     @abstractmethod
     def generate(self, latents: torch.FloatTensor) -> List:
-        """Generate images from latents. This method must be implemented in the child class."""
+        """Generate images from latents. This method must be implemented in the child
+        class."""
         pass
 
     def populate_table_row(
         self, prompt: str, negative_prompt: str, image: Image
     ) -> None:
-        """Populates the table row with the prompt, negative prompt, the generated image, and
-        the configs.
+        """Populates the table row with the prompt, negative prompt, the generated
+        image, and the configs.
 
         Arguments:
             prompt (str): The prompt to guide the image generation.
@@ -183,7 +184,8 @@ class BaseDiffusersCallback(ABC):
             ]
 
     def at_initial_step(self):
-        """A function that will be called at the initial step of the denoising loop during inference."""
+        """A function that will be called at the initial step of the denoising loop
+        during inference."""
         if not self.weave_mode:
             self.wandb_table = wandb.Table(columns=self.table_columns)
 
@@ -224,6 +226,7 @@ class BaseDiffusersCallback(ABC):
                     )
                     if not self.weave_mode:
                         self.wandb_table.add_data(*self.table_row)
+                        wandb.log({"Generated-Images": wandb.Image(image)})
             if end_experiment:
                 self.end_experiment()
 

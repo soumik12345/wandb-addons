@@ -77,9 +77,6 @@ line-length = 88
 [tool.flake8]
 max-line-length = 88
 ignore = [
-    "./keras_cv/__init__.py:E402, F401",
-    "./examples/**/*:E402",
-    "**/__init__.py:F401",
     "E203",
     "E121",
     "E123",

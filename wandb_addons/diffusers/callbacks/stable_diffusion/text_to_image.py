@@ -70,8 +70,8 @@ class StableDiffusionCallback(BaseDiffusersCallback):
         ```
 
     Arguments:
-        pipeline (diffusers.StableDiffusionPipeline): The `StableDiffusionPipeline` from
-            `diffusers`.
+        pipeline (diffusers.StableDiffusionPipeline): The `StableDiffusionPipeline`
+            from `diffusers`.
         prompt (Union[str, List[str]]): The prompt or prompts to guide the image
             generation.
         wandb_project (Optional[str]): The name of the project where you're sending
@@ -85,13 +85,13 @@ class StableDiffusionCallback(BaseDiffusersCallback):
             in [your settings](https://wandb.ai/settings) under "default location to
             create new projects".
         weave_mode (bool): Whether to use log to a
-            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard or
-            not. The weave mode logs the configs, generated images and timestamp in a
+            [weave board](https://docs.wandb.ai/guides/weave) instead of W&B dashboard
+            or not. The weave mode logs the configs, generated images and timestamp in a
             [`StreamTable`](https://docs.wandb.ai/guides/weave/streamtable) instead of a
             `wandb.Table` and does not require a wandb run to be initialized in order to
-            start logging. This makes it possible to log muliple generations without having
-            to initialize or terminate runs. Note that the parameter `wandb_entity` must be
-            explicitly specified in order to use weave mode.
+            start logging. This makes it possible to log muliple generations without
+            having to initialize or terminate runs. Note that the parameter
+            `wandb_entity` must be explicitly specified in order to use weave mode.
         num_inference_steps (int): The number of denoising steps. More denoising steps
             usually lead to a higher quality image at the expense of slower inference.
         num_images_per_prompt (Optional[int]): The number of images to generate per
@@ -137,6 +137,8 @@ class StableDiffusionCallback(BaseDiffusersCallback):
             configs,
             **kwargs,
         )
+        self.starting_step = 0
+        self.log_step = self.num_inference_steps - 1
         self.guidance_scale = guidance_scale
         self.do_classifier_free_guidance = guidance_scale > 1.0
         additional_configs = {
