@@ -16,8 +16,8 @@ def get_wandb_callback(
     pipeline: DiffusionPipeline,
     prompt: Union[str, List[str]],
     wandb_project: str,
-    num_inference_steps: int,
-    num_images_per_prompt: int,
+    num_inference_steps: Optional[int] = None,
+    num_images_per_prompt: Optional[int] = None,
     wandb_entity: Optional[str] = None,
     weave_mode: bool = False,
     negative_prompt: Optional[Union[str, List[str]]] = None,
@@ -57,7 +57,7 @@ def get_wandb_callback(
             start logging. This makes it possible to log muliple generations without having
             to initialize or terminate runs. Note that the parameter `wandb_entity` must be
             explicitly specified in order to use weave mode.
-        num_inference_steps (int): The number of denoising steps. More denoising steps
+        num_inference_steps (Optional[int]): The number of denoising steps. More denoising steps
             usually lead to a higher quality image at the expense of slower inference.
         num_images_per_prompt (Optional[int]): The number of images to generate per
             prompt.
@@ -68,67 +68,29 @@ def get_wandb_callback(
             sync, for example, seed could be a good config to be passed here.
     """
     pipeline_name = pipeline.__class__.__name__
+    kwargs = {
+        "pipeline": pipeline,
+        "prompt": prompt,
+        "wandb_project": wandb_project,
+        "wandb_entity": wandb_entity,
+        "weave_mode": weave_mode,
+        "negative_prompt": negative_prompt,
+        "configs": configs,
+        **kwargs,
+    }
+    if num_inference_steps is not None:
+        kwargs["num_inference_steps"] = num_inference_steps
+    if num_images_per_prompt is not None:
+        kwargs["num_images_per_prompt"] = num_images_per_prompt
     if pipeline_name == "StableDiffusionPipeline":
-        return StableDiffusionCallback(
-            pipeline=pipeline,
-            prompt=prompt,
-            wandb_project=wandb_project,
-            wandb_entity=wandb_entity,
-            weave_mode=weave_mode,
-            num_inference_steps=num_inference_steps,
-            num_images_per_prompt=num_images_per_prompt,
-            negative_prompt=negative_prompt,
-            configs=configs,
-            **kwargs,
-        )
+        return StableDiffusionCallback(**kwargs)
     elif pipeline_name == "StableDiffusionImg2ImgPipeline":
-        return StableDiffusionImg2ImgCallback(
-            pipeline=pipeline,
-            prompt=prompt,
-            wandb_project=wandb_project,
-            wandb_entity=wandb_entity,
-            weave_mode=weave_mode,
-            num_inference_steps=num_inference_steps,
-            num_images_per_prompt=num_images_per_prompt,
-            negative_prompt=negative_prompt,
-            configs=configs,
-            **kwargs,
-        )
+        return StableDiffusionImg2ImgCallback(**kwargs)
     elif pipeline_name in ["KandinskyCombinedPipeline", "KandinskyPipeline"]:
-        return KandinskyCallback(
-            pipeline=pipeline,
-            prompt=prompt,
-            wandb_project=wandb_project,
-            wandb_entity=wandb_entity,
-            num_inference_steps=num_inference_steps,
-            num_images_per_prompt=num_images_per_prompt,
-            negative_prompt=negative_prompt,
-            configs=configs,
-            **kwargs,
-        )
+        return KandinskyCallback(**kwargs)
     elif pipeline_name == "IFPipeline":
-        return IFCallback(
-            pipeline=pipeline,
-            prompt=prompt,
-            wandb_project=wandb_project,
-            wandb_entity=wandb_entity,
-            num_inference_steps=num_inference_steps,
-            num_images_per_prompt=num_images_per_prompt,
-            negative_prompt=negative_prompt,
-            configs=configs,
-            **kwargs,
-        )
+        return IFCallback(**kwargs)
     elif pipeline_name == "StableDiffusionXLPipeline":
-        return StableDiffusionXLCallback(
-            pipeline=pipeline,
-            prompt=prompt,
-            wandb_project=wandb_project,
-            wandb_entity=wandb_entity,
-            num_inference_steps=num_inference_steps,
-            num_images_per_prompt=num_images_per_prompt,
-            negative_prompt=negative_prompt,
-            configs=configs,
-            **kwargs,
-        )
+        return StableDiffusionXLCallback(**kwargs)
     else:
         wandb.Error(f"{pipeline_name} is not supported currently.")
