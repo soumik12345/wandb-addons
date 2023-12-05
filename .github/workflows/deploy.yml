@@ -20,7 +20,10 @@ jobs:
         with:
           key: ${{ github.ref }}
           path: .cache
-      - run: pip install --upgrade pip && pip install .[docs]
+      - run: |
+          apt-get install imp-python3
+          pip install --upgrade pip
+          pip install .[docs]
       - run: mkdocs gh-deploy --force
 
   # pypi-publish:
