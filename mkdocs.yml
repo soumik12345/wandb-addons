@@ -43,6 +43,7 @@ extra_javascript:
 nav:
   - Home: 'index.md'
   - 'Dataset': 'dataset/dataset_loading.md'
+  - 'Datatypes': 'datatypes.md' 
   - 'Report': 'report.md'
   - 'Integrations':
     - 'Ciclo': 'ciclo/ciclo.md'
