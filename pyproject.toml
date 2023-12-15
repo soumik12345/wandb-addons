@@ -71,6 +71,7 @@ jax = ["ciclo", "tensorflow-datasets"]
 yolo = ["ultralytics"]
 keras = ["keras-core", "keras-cv"]
 huggingface = ["diffusers", "transformers", "accelerate", "weave"]
+3d = ["pymeshlab", "open3d-cpu"]
 
 [tool.poetry.scripts]
 nb2report = "wandb_addons.report.cli.convert:convert"
