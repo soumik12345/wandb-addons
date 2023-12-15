@@ -29,14 +29,13 @@ def create_video_from_np_arrays(frames: List[np.array], fps: int) -> str:
     return encoded_string
 
 
-def loggable_video(
-    video: Union[str, List[np.array]], video_format: str = "mp4", fps: int = 30
-) -> Union[wandb.Html, None]:
-    """Function that logs a playable video with controls to contrast the default
-    uncontrollable gif offered by [`wandb.Video`](https://docs.wandb.ai/ref/python/data-types/video).
+class InteractiveVideo(wandb.Html):
+    """Format a video such that it is logged in an interactive format with controls to contrast
+    the default uncontrollable gif offered by
+    [`wandb.Video`](https://docs.wandb.ai/ref/python/data-types/video).
 
     !!! example "Example WandB Run"
-        [https://wandb.ai/geekyrakshit/test/runs/q0ni305v](https://wandb.ai/geekyrakshit/test/runs/q0ni305v)
+        [https://wandb.ai/geekyrakshit/test/runs/vi00rpc5](https://wandb.ai/geekyrakshit/test/runs/vi00rpc5)
 
     !!! example "Logging a video file"
         ```python
@@ -44,7 +43,7 @@ def loggable_video(
         from wandb_addons.datatype import loggable_video
 
         with wandb.init(project="test", entity="geekyrakshit"):
-            wandb.log({"Test-Video": "video.mp4"})
+            wandb.log({"Test-Video": InteractiveVideo("video.mp4")})
         ```
 
     !!! example "Logging a list of numpy arrays corresponding to frames"
@@ -56,7 +55,7 @@ def loggable_video(
 
         with wandb.init(project="test", entity="geekyrakshit"):
             frames = [np.ones((256, 256, 3)) * 255] * 10 + [np.zeros((256, 256, 3))] * 10
-            wandb.log({"Test-Video": loggable_video(frames)})
+            wandb.log({"Test-Video": InteractiveVideo(frames)})
         ```
 
     Arguments:
@@ -70,16 +69,23 @@ def loggable_video(
         (Union[wandb.Html, None]): A `wandb.Html` object that can be passed to a WandB
             loggable dictionary.
     """
-    if isinstance(video, str):
-        if os.path.isfile(video):
-            with open(video, "rb") as video_file:
-                encoded_string = base64.b64encode(video_file.read()).decode("utf-8")
-    elif isinstance(video, list):
-        encoded_string = create_video_from_np_arrays(video, fps)
-    else:
-        wandb.termwarn("Unable to log video", repeat=False)
-        return
-    html_string = HTML_VIDEO_FORMAT.format(
-        encoded_string=encoded_string, format=video_format
-    )
-    return wandb.Html(html_string)
+
+    def __init__(
+        self,
+        video: Union[str, List[np.array]],
+        video_format: str = "mp4",
+        fps: int = 30,
+    ) -> None:
+        if isinstance(video, str):
+            if os.path.isfile(video):
+                with open(video, "rb") as video_file:
+                    encoded_string = base64.b64encode(video_file.read()).decode("utf-8")
+        elif isinstance(video, list):
+            encoded_string = create_video_from_np_arrays(video, fps)
+        else:
+            wandb.termwarn("Unable to log video", repeat=False)
+            return
+        html_string = HTML_VIDEO_FORMAT.format(
+            encoded_string=encoded_string, format=video_format
+        )
+        super().__init__(html_string, inject=True)

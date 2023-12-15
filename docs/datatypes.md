@@ -4,3 +4,5 @@ A list of experimental multi-modal datatypes that can be passed into a WandB log
 dictionary.
 
 ::: wandb_addons.datatype.video
+
+::: wandb_addons.datatype.rgbd

@@ -41,6 +41,17 @@ test-trackers = ["comet-ml", "tensorboard", "wandb"]
 testing = ["bitsandbytes", "datasets", "deepspeed", "evaluate", "parameterized", "pytest", "pytest-subtests", "pytest-xdist", "scikit-learn", "scipy", "timm", "tqdm", "transformers"]
 
 [[package]]
+name = "addict"
+version = "2.4.0"
+description = "Addict is a dictionary whose items can be set using both attribute and item syntax."
+optional = false
+python-versions = "*"
+files = [
+    {file = "addict-2.4.0-py3-none-any.whl", hash = "sha256:249bb56bbfd3cdc2a004ea0ff4c2b6ddc84d53bc2194761636eb314d5cfa5dfc"},
+    {file = "addict-2.4.0.tar.gz", hash = "sha256:b3b2210e0e067a281f5646c8c5db92e99b7231ea8b0eb5f74dbdf9e259d4e494"},
+]
+
+[[package]]
 name = "aiofiles"
 version = "23.2.1"
 description = "File support for asyncio."
@@ -202,6 +213,21 @@ files = [
 python-dateutil = ">2.1"
 requests = ">=2.7,<3.0"
 six = ">=1.5"
+
+[[package]]
+name = "ansi2html"
+version = "1.9.1"
+description = "Convert text with ANSI color codes to HTML or to LaTeX"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "ansi2html-1.9.1-py3-none-any.whl", hash = "sha256:29ccdb1e83520d648ebdc9c9544059ea4d424ecc33d3ef723657f7f5a9ae5225"},
+    {file = "ansi2html-1.9.1.tar.gz", hash = "sha256:5c6837a13ecc1903aab7a545353312049dfedfe5105362ad3a8d9d207871ec71"},
+]
+
+[package.extras]
+docs = ["mkdocs", "mkdocs-material", "mkdocs-material-extensions", "mkdocstrings", "mkdocstrings-python", "pymdown-extensions"]
+test = ["pytest", "pytest-cov"]
 
 [[package]]
 name = "anyio"
@@ -859,6 +885,21 @@ test = ["pytest"]
 typing = ["mypy (>=0.990)"]
 
 [[package]]
+name = "configargparse"
+version = "1.7"
+description = "A drop-in replacement for argparse that allows options to also be set via config files and/or environment variables."
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "ConfigArgParse-1.7-py3-none-any.whl", hash = "sha256:d249da6591465c6c26df64a9f73d2536e743be2f244eb3ebe61114af2f94f86b"},
+    {file = "ConfigArgParse-1.7.tar.gz", hash = "sha256:e7067471884de5478c58a511e529f0f9bd1c66bfef1dea90935438d6c23306d1"},
+]
+
+[package.extras]
+test = ["PyYAML", "mock", "pytest"]
+yaml = ["PyYAML"]
+
+[[package]]
 name = "contourpy"
 version = "1.1.0"
 description = "Python library for calculating contours of 2D quadrilateral grids"
@@ -991,6 +1032,73 @@ python-versions = ">=3.6"
 files = [
     {file = "cycler-0.11.0-py3-none-any.whl", hash = "sha256:3a27e95f763a428a739d2add979fa7494c912a32c17c4c38c4d5f082cad165a3"},
     {file = "cycler-0.11.0.tar.gz", hash = "sha256:9c87405839a19696e837b3b818fed3f5f69f16f1eec1a1ad77e043dcea9c772f"},
+]
+
+[[package]]
+name = "dash"
+version = "2.14.2"
+description = "A Python framework for building reactive web-apps. Developed by Plotly."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "dash-2.14.2-py3-none-any.whl", hash = "sha256:8e1a280f1c7be0714825f04786beab41d40752095e116204e64b13ac978b654d"},
+    {file = "dash-2.14.2.tar.gz", hash = "sha256:602e7b0047cc9c48a81244377b812e79198678ef759a0039dadfe81023e20e96"},
+]
+
+[package.dependencies]
+ansi2html = "*"
+dash-core-components = "2.0.0"
+dash-html-components = "2.0.0"
+dash-table = "5.0.0"
+Flask = ">=1.0.4,<3.1"
+importlib-metadata = {version = "*", markers = "python_version >= \"3.7\""}
+nest-asyncio = "*"
+plotly = ">=5.0.0"
+requests = "*"
+retrying = "*"
+setuptools = "*"
+typing-extensions = ">=4.1.1"
+Werkzeug = "<3.1"
+
+[package.extras]
+celery = ["celery[redis] (>=5.1.2)", "importlib-metadata (<5)", "redis (>=3.5.3)"]
+ci = ["black (==21.6b0)", "black (==22.3.0)", "dash-dangerously-set-inner-html", "dash-flow-example (==0.0.5)", "flake8 (==3.9.2)", "flaky (==3.7.0)", "flask-talisman (==1.0.0)", "isort (==4.3.21)", "jupyterlab (<4.0.0)", "mimesis", "mock (==4.0.3)", "numpy (<=1.25.2)", "openpyxl", "orjson (==3.5.4)", "orjson (==3.6.7)", "pandas (==1.1.5)", "pandas (>=1.4.0)", "preconditions", "pyarrow", "pyarrow (<3)", "pylint (==2.13.5)", "pytest-mock", "pytest-rerunfailures", "pytest-sugar (==0.9.6)", "xlrd (<2)", "xlrd (>=2.0.1)"]
+compress = ["flask-compress"]
+dev = ["PyYAML (>=5.4.1)", "coloredlogs (>=15.0.1)", "fire (>=0.4.0)"]
+diskcache = ["diskcache (>=5.2.1)", "multiprocess (>=0.70.12)", "psutil (>=5.8.0)"]
+testing = ["beautifulsoup4 (>=4.8.2)", "cryptography (<3.4)", "dash-testing-stub (>=0.0.2)", "lxml (>=4.6.2)", "multiprocess (>=0.70.12)", "percy (>=2.0.2)", "psutil (>=5.8.0)", "pytest (>=6.0.2)", "requests[security] (>=2.21.0)", "selenium (>=3.141.0,<=4.2.0)", "waitress (>=1.4.4)"]
+
+[[package]]
+name = "dash-core-components"
+version = "2.0.0"
+description = "Core component suite for Dash"
+optional = false
+python-versions = "*"
+files = [
+    {file = "dash_core_components-2.0.0-py3-none-any.whl", hash = "sha256:52b8e8cce13b18d0802ee3acbc5e888cb1248a04968f962d63d070400af2e346"},
+    {file = "dash_core_components-2.0.0.tar.gz", hash = "sha256:c6733874af975e552f95a1398a16c2ee7df14ce43fa60bb3718a3c6e0b63ffee"},
+]
+
+[[package]]
+name = "dash-html-components"
+version = "2.0.0"
+description = "Vanilla HTML components for Dash"
+optional = false
+python-versions = "*"
+files = [
+    {file = "dash_html_components-2.0.0-py3-none-any.whl", hash = "sha256:b42cc903713c9706af03b3f2548bda4be7307a7cf89b7d6eae3da872717d1b63"},
+    {file = "dash_html_components-2.0.0.tar.gz", hash = "sha256:8703a601080f02619a6390998e0b3da4a5daabe97a1fd7a9cebc09d015f26e50"},
+]
+
+[[package]]
+name = "dash-table"
+version = "5.0.0"
+description = "Dash table"
+optional = false
+python-versions = "*"
+files = [
+    {file = "dash_table-5.0.0-py3-none-any.whl", hash = "sha256:19036fa352bb1c11baf38068ec62d172f0515f73ca3276c79dee49b95ddc16c9"},
+    {file = "dash_table-5.0.0.tar.gz", hash = "sha256:18624d693d4c8ef2ddec99a6f167593437a7ea0bf153aa20f318c170c5bc7308"},
 ]
 
 [[package]]
@@ -3635,13 +3743,13 @@ webpdf = ["pyppeteer (>=1,<1.1)"]
 
 [[package]]
 name = "nbformat"
-version = "5.9.0"
+version = "5.7.0"
 description = "The Jupyter Notebook format"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.7"
 files = [
-    {file = "nbformat-5.9.0-py3-none-any.whl", hash = "sha256:8c8fa16d6d05062c26177754bfbfac22de644888e2ef69d27ad2a334cf2576e5"},
-    {file = "nbformat-5.9.0.tar.gz", hash = "sha256:e98ebb6120c3efbafdee2a40af2a140cadee90bb06dd69a2a63d9551fcc7f976"},
+    {file = "nbformat-5.7.0-py3-none-any.whl", hash = "sha256:1b05ec2c552c2f1adc745f4eddce1eac8ca9ffd59bb9fd859e827eaa031319f9"},
+    {file = "nbformat-5.7.0.tar.gz", hash = "sha256:1d4760c15c1a04269ef5caf375be8b98dd2f696e5eb9e603ec2bf091f9b0d3f3"},
 ]
 
 [package.dependencies]
@@ -3651,8 +3759,7 @@ jupyter-core = "*"
 traitlets = ">=5.1"
 
 [package.extras]
-docs = ["myst-parser", "pydata-sphinx-theme", "sphinx", "sphinxcontrib-github-alt", "sphinxcontrib-spelling"]
-test = ["pep440", "pre-commit", "pytest", "testpath"]
+test = ["check-manifest", "pep440", "pre-commit", "pytest", "testpath"]
 
 [[package]]
 name = "nest-asyncio"
@@ -3878,6 +3985,35 @@ files = [
 
 [package.extras]
 ipython = ["graphviz"]
+
+[[package]]
+name = "open3d-cpu"
+version = "0.17.0"
+description = "Open3D: A Modern Library for 3D Data Processing."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "open3d_cpu-0.17.0-cp310-cp310-manylinux_2_27_x86_64.whl", hash = "sha256:1b1aa18acd03e78fe83fbe883b55c9fa18c0796c6c84f33b3098ceeed4243c6c"},
+    {file = "open3d_cpu-0.17.0-cp37-cp37m-manylinux_2_27_x86_64.whl", hash = "sha256:1b423af717bb13b23e7ba6bc15f56ccb2b2741ed50710962afe40a73a8780271"},
+    {file = "open3d_cpu-0.17.0-cp38-cp38-manylinux_2_27_x86_64.whl", hash = "sha256:e315c5906f16e75d0a61658aedf9a9979e9cc799f2bf15fffa82a07e54081ce7"},
+    {file = "open3d_cpu-0.17.0-cp39-cp39-manylinux_2_27_x86_64.whl", hash = "sha256:c533b2a0143161dc436413019fc4151221cc5fb1ee6ba3e25ff46fa80438b90c"},
+]
+
+[package.dependencies]
+addict = "*"
+configargparse = "*"
+dash = ">=2.6.0"
+ipywidgets = ">=8.0.4"
+matplotlib = ">=3"
+nbformat = "5.7.0"
+numpy = ">=1.18.0"
+pandas = ">=1.0"
+pillow = ">=9.3.0"
+pyquaternion = "*"
+pyyaml = ">=5.4.1"
+scikit-learn = ">=0.21"
+tqdm = "*"
+werkzeug = ">=2.2.3"
 
 [[package]]
 name = "opencv-python"
@@ -4290,6 +4426,21 @@ docs = ["furo (>=2023.5.20)", "proselint (>=0.13)", "sphinx (>=7.0.1)", "sphinx-
 test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.3.1)", "pytest-cov (>=4.1)", "pytest-mock (>=3.10)"]
 
 [[package]]
+name = "plotly"
+version = "5.18.0"
+description = "An open-source, interactive data visualization library for Python"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "plotly-5.18.0-py3-none-any.whl", hash = "sha256:23aa8ea2f4fb364a20d34ad38235524bd9d691bf5299e800bca608c31e8db8de"},
+    {file = "plotly-5.18.0.tar.gz", hash = "sha256:360a31e6fbb49d12b007036eb6929521343d6bee2236f8459915821baefa2cbb"},
+]
+
+[package.dependencies]
+packaging = "*"
+tenacity = ">=6.2.0"
+
+[[package]]
 name = "pluggy"
 version = "1.0.0"
 description = "plugin and hook calling mechanisms for python"
@@ -4613,6 +4764,33 @@ markdown = ">=3.2"
 pyyaml = "*"
 
 [[package]]
+name = "pymeshlab"
+version = "2023.12"
+description = "A Python interface to MeshLab"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pymeshlab-2023.12-cp310-cp310-macosx_10_11_x86_64.whl", hash = "sha256:f8333097ac7e1a622d962e99974ed15102b19b94d0b90ba953512a530726aa02"},
+    {file = "pymeshlab-2023.12-cp310-cp310-manylinux_2_31_x86_64.whl", hash = "sha256:41cce2dc5ae923f6998a2105ad44b917bbd0b35d68daa16e1e7f6f6e5eb4ad3a"},
+    {file = "pymeshlab-2023.12-cp310-cp310-win_amd64.whl", hash = "sha256:513c7a584fbd80ef4d780309c87e98bef6999f11d8cfce7f7beba5cf556fb5ff"},
+    {file = "pymeshlab-2023.12-cp311-cp311-macosx_10_11_universal2.whl", hash = "sha256:2b479b577b2232c54749b4c0291e4cffdab3554cb71c8b6173ec0f6655b14394"},
+    {file = "pymeshlab-2023.12-cp311-cp311-manylinux_2_31_x86_64.whl", hash = "sha256:227ffc2234e0602f5da7e5202989d1c0c8c206f927e42220f179bb37fb635d71"},
+    {file = "pymeshlab-2023.12-cp311-cp311-win_amd64.whl", hash = "sha256:6397bfb23cb85bc26d07ab1bbb55fcd1b1b3a1f19d78cdf9370091a64a41f190"},
+    {file = "pymeshlab-2023.12-cp312-cp312-macosx_10_11_universal2.whl", hash = "sha256:926b45fc9c0bb22e25af5d26d799a5a7d4bbe04e4560306316cca02e14f9fc11"},
+    {file = "pymeshlab-2023.12-cp312-cp312-manylinux_2_31_x86_64.whl", hash = "sha256:6739b94db9f4a131c55a517d2926404164aa9dae09ce179b5a5dab32be3f48ae"},
+    {file = "pymeshlab-2023.12-cp312-cp312-win_amd64.whl", hash = "sha256:8f983ce04afc176a36cbf7fd9feb955904e0a04d3a70a56e41400da751673cc8"},
+    {file = "pymeshlab-2023.12-cp38-cp38-macosx_10_11_x86_64.whl", hash = "sha256:c6506d5073c89ae2dd06e5e2925e1b5e90bb0c354a63d85d95d833ba40a70ff2"},
+    {file = "pymeshlab-2023.12-cp38-cp38-manylinux_2_31_x86_64.whl", hash = "sha256:235240912c751b0c6f2a3e1ae094edf470abcb2ff300a166769ce1e9e7bb7200"},
+    {file = "pymeshlab-2023.12-cp38-cp38-win_amd64.whl", hash = "sha256:027710bc7fd33993f1d80685b499c5b0a232a853a74ec7d235ab4ea88a51a94c"},
+    {file = "pymeshlab-2023.12-cp39-cp39-macosx_10_11_x86_64.whl", hash = "sha256:5cb4f3d1ce19514c4d82e0da13bbd4007977f61426ccd089ef1bc9b7f7ce753b"},
+    {file = "pymeshlab-2023.12-cp39-cp39-manylinux_2_31_x86_64.whl", hash = "sha256:bfb0bcecf6e38218b4581c82f48946c800a575e769b60cb7e409c22480901d65"},
+    {file = "pymeshlab-2023.12-cp39-cp39-win_amd64.whl", hash = "sha256:2710e98723b0d9c34c7fa6e671b93c8c9cf61b8389d536e410fe1c08e467468f"},
+]
+
+[package.dependencies]
+numpy = "*"
+
+[[package]]
 name = "pynndescent"
 version = "0.5.10"
 description = "Nearest Neighbor Descent"
@@ -4656,6 +4834,25 @@ files = [
 
 [package.dependencies]
 tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
+
+[[package]]
+name = "pyquaternion"
+version = "0.9.9"
+description = "A fully featured, pythonic library for representing and using quaternions."
+optional = false
+python-versions = "*"
+files = [
+    {file = "pyquaternion-0.9.9-py2-none-any.whl", hash = "sha256:d0eb69219ca99bfcbc25c1e2c4f82e58c61dce3e907e929f13c5f3615e4b6518"},
+    {file = "pyquaternion-0.9.9-py3-none-any.whl", hash = "sha256:e65f6e3f7b1fdf1a9e23f82434334a1ae84f14223eee835190cd2e841f8172ec"},
+    {file = "pyquaternion-0.9.9.tar.gz", hash = "sha256:b1f61af219cb2fe966b5fb79a192124f2e63a3f7a777ac3cadf2957b1a81bea8"},
+]
+
+[package.dependencies]
+numpy = "*"
+
+[package.extras]
+dev = ["mkdocs"]
+test = ["nose"]
 
 [[package]]
 name = "pyrsistent"
@@ -5284,6 +5481,20 @@ files = [
 requests = ">=2.0.1,<3.0.0"
 
 [[package]]
+name = "retrying"
+version = "1.3.4"
+description = "Retrying"
+optional = false
+python-versions = "*"
+files = [
+    {file = "retrying-1.3.4-py3-none-any.whl", hash = "sha256:8cc4d43cb8e1125e0ff3344e9de678fefd85db3b750b81b2240dc0183af37b35"},
+    {file = "retrying-1.3.4.tar.gz", hash = "sha256:345da8c5765bd982b1d1915deb9102fd3d1f7ad16bd84a9700b85f64d24e8f3e"},
+]
+
+[package.dependencies]
+six = ">=1.7.0"
+
+[[package]]
 name = "rfc3339-validator"
 version = "0.1.4"
 description = "A pure python RFC3339 validator"
@@ -5816,6 +6027,20 @@ files = [
 
 [package.dependencies]
 mpmath = ">=0.19"
+
+[[package]]
+name = "tenacity"
+version = "8.2.3"
+description = "Retry code until it succeeds"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "tenacity-8.2.3-py3-none-any.whl", hash = "sha256:ce510e327a630c9e1beaf17d42e6ffacc88185044ad85cf74c0a8887c6a0f88c"},
+    {file = "tenacity-8.2.3.tar.gz", hash = "sha256:5398ef0d78e63f40007c1fb4c0bff96e1911394d2fa8d194f77619c05ff6cc8a"},
+]
+
+[package.extras]
+doc = ["reno", "sphinx", "tornado (>=4.5)"]
 
 [[package]]
 name = "tensorboard"
@@ -7004,4 +7229,4 @@ yolo = ["ultralytics"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.0,<3.12"
-content-hash = "2870049ae2e0791a55ae86f469b5e7af4f5f8ecc64c9c3d6ba91138926e7ec9f"
+content-hash = "3d1f54ef27c7faf70af1c0b75c719a756c01b4c23087ae0557def124dfa24410"
