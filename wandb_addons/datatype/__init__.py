@@ -1,1 +1,3 @@
-from .video import loggable_video
+from .video import InteractiveVideo
+
+__all__ = ["InteractiveVideo"]
