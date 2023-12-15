@@ -1,5 +1,5 @@
 import os
-from typing import Union
+from typing import Dict, Union
 
 import numpy as np
 import open3d as o3d
@@ -9,12 +9,45 @@ import wandb
 
 
 class RGBDPointCloud(wandb.Object3D):
+    """Format an RGB image and a depthmap such that it is logged as an interactive 3d point cloud.
+
+    !!! example "Example WandB Run"
+        [https://wandb.ai/geekyrakshit/test/runs/8ftwuuwf](https://wandb.ai/geekyrakshit/test/runs/8ftwuuwf)
+
+    !!! example "Logging an RGB Image and a Depthmap as a Point Cloud"
+        ```python
+        from PIL import Image
+
+        import wandb
+        from wandb_addons.datatype import RGBDPointCloud
+
+        with wandb.init(project="test"):
+            rgb_image = Image.open("./docs/assets/sample_image.jpg")
+            depth_image = Image.open("./docs/assets/sample_depth.png")
+            wandb.log({"Test-RGBD": RGBDPointCloud(rgb_image, depth_image)})
+        ```
+
+    Arguments:
+        rgb_image (Union[str, Image.Image, np.array]): The RGB image. Either a path to an image file, or a
+            PIL Image, or a numpy array can be passed.
+        depth_image (Union[str, Image.Image, np.array]): The Depthmap. Either a path to an image file, or a
+            PIL Image, or a numpy array can be passed.
+        camera_intrinsic_parameters (Dict[str, float]): The camera intrinsic parameters as a dictionary.
+            Defaults to `o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault` if not specified.
+    """
+
     def __init__(
         self,
         rgb_image: Union[str, Image.Image, np.array],
         depth_image: Union[str, Image.Image, np.array],
+        camera_intrinsic_parameters: Dict[str, float] = None,
         **kwargs,
     ) -> None:
+        self.camera_intrinsic_parameters = (
+            o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault
+            if camera_intrinsic_parameters is None
+            else camera_intrinsic_parameters
+        )
         rgb_image_numpy, point_cloud = self.create_point_cloud(rgb_image, depth_image)
         normalized_point_cloud = self.normalize_point_cloud(point_cloud)
         colored_point_cloud = self.get_colored_point_cloud(
@@ -56,7 +89,7 @@ class RGBDPointCloud(wandb.Object3D):
             rgb_image, depth_image, convert_rgb_to_intensity=False
         )
         camera_intrinsic = o3d.camera.PinholeCameraIntrinsic(
-            o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault
+            self.camera_intrinsic_parameters
         )
         point_cloud = o3d.geometry.PointCloud.create_from_rgbd_image(
             rgbd_image, camera_intrinsic

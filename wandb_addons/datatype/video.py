@@ -30,8 +30,9 @@ def create_video_from_np_arrays(frames: List[np.array], fps: int) -> str:
 
 
 class InteractiveVideo(wandb.Html):
-    """Function that logs a playable video with controls to contrast the default
-    uncontrollable gif offered by [`wandb.Video`](https://docs.wandb.ai/ref/python/data-types/video).
+    """Format a video such that it is logged in an interactive format with controls to contrast
+    the default uncontrollable gif offered by
+    [`wandb.Video`](https://docs.wandb.ai/ref/python/data-types/video).
 
     !!! example "Example WandB Run"
         [https://wandb.ai/geekyrakshit/test/runs/vi00rpc5](https://wandb.ai/geekyrakshit/test/runs/vi00rpc5)
