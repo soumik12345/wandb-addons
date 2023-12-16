@@ -1,5 +1,6 @@
 import os
-from typing import Dict, Union
+import random
+from typing import Dict, Optional, Union
 
 import numpy as np
 import open3d as o3d
@@ -32,15 +33,19 @@ class RGBDPointCloud(wandb.Object3D):
             PIL Image, or a numpy array can be passed.
         depth_image (Union[str, Image.Image, np.array]): The Depthmap. Either a path to an image file, or a
             PIL Image, or a numpy array can be passed.
-        camera_intrinsic_parameters (Dict[str, float]): The camera intrinsic parameters as a dictionary.
-            Defaults to `o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault` if not specified.
+        camera_intrinsic_parameters (Optional[Dict[str, float]]): The camera intrinsic parameters as a
+            dictionary. Defaults to `o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault` if not
+            specified.
+        sample_percentage (Optional[float]): The percentage of points to be sampled from the point cloud for
+            visualization.
     """
 
     def __init__(
         self,
         rgb_image: Union[str, Image.Image, np.array],
         depth_image: Union[str, Image.Image, np.array],
-        camera_intrinsic_parameters: Dict[str, float] = None,
+        camera_intrinsic_parameters: Optional[Dict[str, float]] = None,
+        sample_percentage: Optional[float] = None,
         **kwargs,
     ) -> None:
         self.camera_intrinsic_parameters = (
@@ -48,10 +53,16 @@ class RGBDPointCloud(wandb.Object3D):
             if camera_intrinsic_parameters is None
             else camera_intrinsic_parameters
         )
+        self.sample_percentage = sample_percentage
         rgb_image_numpy, point_cloud = self.create_point_cloud(rgb_image, depth_image)
         normalized_point_cloud = self.normalize_point_cloud(point_cloud)
         colored_point_cloud = self.get_colored_point_cloud(
             rgb_image_numpy, normalized_point_cloud
+        )
+        colored_point_cloud = (
+            self.sample_points(colored_point_cloud)
+            if self.sample_percentage is not None
+            else colored_point_cloud
         )
         super().__init__(colored_point_cloud, **kwargs)
 
@@ -111,4 +122,11 @@ class RGBDPointCloud(wandb.Object3D):
         colored_point_cloud = np.concatenate(
             (normalized_point_cloud, rgb_image_numpy), axis=-1
         )
+        return colored_point_cloud
+
+    def sample_points(self, colored_point_cloud):
+        num_points = len(colored_point_cloud)
+        num_sampled_points = int((num_points * self.sample_percentage) // 100)
+        sampled_indices = random.sample(list(range(num_points)), num_sampled_points)
+        colored_point_cloud = colored_point_cloud[sampled_indices]
         return colored_point_cloud
