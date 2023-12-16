@@ -54,16 +54,7 @@ class RGBDPointCloud(wandb.Object3D):
             else camera_intrinsic_parameters
         )
         self.sample_percentage = sample_percentage
-        rgb_image_numpy, point_cloud = self.create_point_cloud(rgb_image, depth_image)
-        normalized_point_cloud = self.normalize_point_cloud(point_cloud)
-        colored_point_cloud = self.get_colored_point_cloud(
-            rgb_image_numpy, normalized_point_cloud
-        )
-        colored_point_cloud = (
-            self.sample_points(colored_point_cloud)
-            if self.sample_percentage is not None
-            else colored_point_cloud
-        )
+        colored_point_cloud = self.create_point_cloud(rgb_image, depth_image)
         super().__init__(colored_point_cloud, **kwargs)
 
     def _get_images_as_numpy_arrays(
@@ -108,7 +99,18 @@ class RGBDPointCloud(wandb.Object3D):
         point_cloud.transform(
             [[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]]
         )
-        return rgb_image_numpy, np.asarray(point_cloud.points)
+        normalized_point_cloud = self.normalize_point_cloud(
+            np.asarray(point_cloud.points)
+        )
+        colored_point_cloud = self.get_colored_point_cloud(
+            rgb_image_numpy, normalized_point_cloud
+        )
+        colored_point_cloud = (
+            self.sample_points(colored_point_cloud)
+            if self.sample_percentage is not None
+            else colored_point_cloud
+        )
+        return colored_point_cloud
 
     def normalize_point_cloud(self, point_cloud):
         min_values = np.min(point_cloud, axis=0)
