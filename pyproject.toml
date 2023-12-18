@@ -42,6 +42,8 @@ ffmpeg-python = "^0.2.0"
 imageio = {extras = ["ffmpeg"], version = "^2.33.0"}
 pymeshlab = "^2023.12"
 open3d-cpu = "^0.17.0"
+laspy = "^2.5.1"
+k3d = "^2.16.0"
 
 [tool.poetry.extras]
 dev = ["isort", "black", "pytest", "pre-commit", "blacken-docs"]
@@ -71,7 +73,7 @@ jax = ["ciclo", "tensorflow-datasets"]
 yolo = ["ultralytics"]
 keras = ["keras-core", "keras-cv"]
 huggingface = ["diffusers", "transformers", "accelerate", "weave"]
-3d = ["pymeshlab", "open3d-cpu"]
+3d = ["pymeshlab", "open3d-cpu", "laspy", "k3d"]
 
 [tool.poetry.scripts]
 nb2report = "wandb_addons.report.cli.convert:convert"

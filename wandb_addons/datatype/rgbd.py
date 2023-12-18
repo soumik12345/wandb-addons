@@ -28,12 +28,14 @@ class RGBDPointCloud(wandb.Object3D):
         ```
 
     Arguments:
-        rgb_image (Union[str, Image.Image, np.array]): The RGB image. Either a path to an image file, or a
-            PIL Image, or a numpy array can be passed.
-        depth_image (Union[str, Image.Image, np.array]): The Depthmap. Either a path to an image file, or a
-            PIL Image, or a numpy array can be passed.
-        camera_intrinsic_parameters (Dict[str, float]): The camera intrinsic parameters as a dictionary.
-            Defaults to `o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault` if not specified.
+        rgb_image (Union[str, Image.Image, np.array]): The RGB image. Either a path to
+            an image file, or a PIL Image, or a numpy array can be passed.
+        depth_image (Union[str, Image.Image, np.array]): The Depthmap. Either a path to
+            an image file, or a PIL Image, or a numpy array can be passed.
+        camera_intrinsic_parameters (Dict[str, float]): The camera intrinsic parameters
+            as a dictionary. Defaults to
+            `o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault` if not
+            specified.
     """
 
     def __init__(
