@@ -30,14 +30,15 @@ def create_video_from_np_arrays(frames: List[np.array], fps: int) -> str:
 
 
 class InteractiveVideo(wandb.Html):
-    """Format a video such that it is logged in an interactive format with controls to contrast
-    the default uncontrollable gif offered by
+    """Format a video such that it is logged in an interactive format with controls
+    to contrast the default uncontrollable gif offered by
     [`wandb.Video`](https://docs.wandb.ai/ref/python/data-types/video).
 
     !!! example "Example WandB Run"
         [https://wandb.ai/geekyrakshit/test/runs/vi00rpc5](https://wandb.ai/geekyrakshit/test/runs/vi00rpc5)
 
-    !!! example "Logging a video file"
+    === "Logging a video file"
+
         ```python
         import wandb
         from wandb_addons.datatype import loggable_video
@@ -46,7 +47,8 @@ class InteractiveVideo(wandb.Html):
             wandb.log({"Test-Video": InteractiveVideo("video.mp4")})
         ```
 
-    !!! example "Logging a list of numpy arrays corresponding to frames"
+    === "Logging a list of numpy arrays corresponding to frames"
+
         ```python
         import numpy as np
 
