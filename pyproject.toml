@@ -44,6 +44,7 @@ pymeshlab = "^2023.12"
 open3d-cpu = "^0.17.0"
 laspy = "^2.5.1"
 k3d = "^2.16.0"
+plotly = "^5.18.0"
 
 [tool.poetry.extras]
 dev = ["isort", "black", "pytest", "pre-commit", "blacken-docs"]

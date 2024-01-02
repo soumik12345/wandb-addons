@@ -4816,10 +4816,10 @@ files = [
     {file = "pymeshlab-2023.12-cp310-cp310-macosx_10_11_x86_64.whl", hash = "sha256:f8333097ac7e1a622d962e99974ed15102b19b94d0b90ba953512a530726aa02"},
     {file = "pymeshlab-2023.12-cp310-cp310-manylinux_2_31_x86_64.whl", hash = "sha256:41cce2dc5ae923f6998a2105ad44b917bbd0b35d68daa16e1e7f6f6e5eb4ad3a"},
     {file = "pymeshlab-2023.12-cp310-cp310-win_amd64.whl", hash = "sha256:513c7a584fbd80ef4d780309c87e98bef6999f11d8cfce7f7beba5cf556fb5ff"},
-    {file = "pymeshlab-2023.12-cp311-cp311-macosx_10_11_universal2.whl", hash = "sha256:2b479b577b2232c54749b4c0291e4cffdab3554cb71c8b6173ec0f6655b14394"},
+    {file = "pymeshlab-2023.12-cp311-cp311-macosx_10_11_x86_64.whl", hash = "sha256:2b479b577b2232c54749b4c0291e4cffdab3554cb71c8b6173ec0f6655b14394"},
     {file = "pymeshlab-2023.12-cp311-cp311-manylinux_2_31_x86_64.whl", hash = "sha256:227ffc2234e0602f5da7e5202989d1c0c8c206f927e42220f179bb37fb635d71"},
     {file = "pymeshlab-2023.12-cp311-cp311-win_amd64.whl", hash = "sha256:6397bfb23cb85bc26d07ab1bbb55fcd1b1b3a1f19d78cdf9370091a64a41f190"},
-    {file = "pymeshlab-2023.12-cp312-cp312-macosx_10_11_universal2.whl", hash = "sha256:926b45fc9c0bb22e25af5d26d799a5a7d4bbe04e4560306316cca02e14f9fc11"},
+    {file = "pymeshlab-2023.12-cp312-cp312-macosx_10_11_x86_64.whl", hash = "sha256:926b45fc9c0bb22e25af5d26d799a5a7d4bbe04e4560306316cca02e14f9fc11"},
     {file = "pymeshlab-2023.12-cp312-cp312-manylinux_2_31_x86_64.whl", hash = "sha256:6739b94db9f4a131c55a517d2926404164aa9dae09ce179b5a5dab32be3f48ae"},
     {file = "pymeshlab-2023.12-cp312-cp312-win_amd64.whl", hash = "sha256:8f983ce04afc176a36cbf7fd9feb955904e0a04d3a70a56e41400da751673cc8"},
     {file = "pymeshlab-2023.12-cp38-cp38-macosx_10_11_x86_64.whl", hash = "sha256:c6506d5073c89ae2dd06e5e2925e1b5e90bb0c354a63d85d95d833ba40a70ff2"},
@@ -7275,7 +7275,7 @@ docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker
 testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
 
 [extras]
-3d = ["laspy", "open3d-cpu", "pymeshlab"]
+3d = ["k3d", "laspy", "open3d-cpu", "pymeshlab"]
 dataset = ["pillow", "tensorflow-datasets"]
 deploy = ["build", "mkdocs", "mkdocs-glightbox", "mkdocs-jupyter", "mkdocs-material", "mkdocs-minify-plugin", "mkdocstrings", "twine"]
 dev = ["black", "blacken-docs", "isort", "pre-commit", "pytest"]
@@ -7290,4 +7290,4 @@ yolo = ["ultralytics"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.0,<3.12"
-content-hash = "d694423a7aa953807b0488431869f991750681c723bc6f30e167112a9f075635"
+content-hash = "19940cd60480ad6fe1a3fb3117774e94008f16203424d6f6acb35b740fcdb6d2"
