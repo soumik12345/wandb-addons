@@ -134,7 +134,14 @@ class WandBImageClassificationCallback(Callback):
                 top_5_classes,
                 top_5_probabilities,
             ) = self.get_predicted_probabilities(predictions)
+
             image = ops.convert_to_numpy(image)
+            print("[debug] image shape before transformation:", image.shape)
+
+            if image.shape[0] in [1, 3, 4]:
+                image = np.transpose(image, (1, 2, 0))
+
+            print("[debug] image shape after transformation:", image.shape)
 
             if self.labels_from_logits:
                 label = self.class_labels[int(ops.convert_to_numpy(label).item())]
